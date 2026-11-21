@@ -3,10 +3,10 @@ import Link from "next/link";
 export default function NotFound() {
   return (
     <div className="centered-state">
-      <h1>Esse caminho ficou para trás.</h1>
-      <p>Volte para o seu espaço e continue de onde parou.</p>
+      <h1>Página não encontrada</h1>
+      <p>A página solicitada não está disponível.</p>
       <Link className="button primary" href="/tarefas">
-        Ir para minhas tarefas
+        Ir para tarefas
       </Link>
     </div>
   );

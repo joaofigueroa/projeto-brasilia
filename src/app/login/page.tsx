@@ -37,19 +37,14 @@ export default async function LoginPage({
           <span className="art-orbit art-orbit-two" />
         </div>
         <div className="login-story-copy">
-          <span className="login-story-kicker">PESSOAS. PROJETOS. POSSIBILIDADES.</span>
+          <span className="login-story-kicker">PROJETO BRASÍLIA</span>
           <h2>
-            Projetos diferentes.
-            <br />
-            Um mesmo lugar.
+            Gestão de tarefas
+            <br />e projetos.
           </h2>
-          <p>
-            Organize as ideias. Conecte as pessoas.
-            <br />
-            Faça o próximo passo acontecer.
-          </p>
+          <p>Consulte as tarefas da semana, acompanhe os status e gerencie os responsáveis.</p>
         </div>
-        <span className="login-story-footer">Feito para transformar planos em movimento.</span>
+        <span className="login-story-footer">Tarefas organizadas por semana e projeto.</span>
       </section>
       <section className="login-main">
         <div className="login-mobile-brand">
@@ -57,7 +52,7 @@ export default async function LoginPage({
         </div>
         <LoginForm emailChanged={params.updated === "email"} />
         <footer>
-          Brasília<span>O seu próximo capítulo começa aqui.</span>
+          Brasília<span>Gestão de tarefas e projetos.</span>
         </footer>
       </section>
     </main>

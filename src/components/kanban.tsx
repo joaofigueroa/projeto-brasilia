@@ -29,7 +29,6 @@ import {
   ListFilter,
   Plus,
   Search,
-  Sparkles,
   TrendingUp,
   Users,
   X,
@@ -227,11 +226,7 @@ function Column({
             <span>
               <Icon size={24} />
             </span>
-            <p>
-              {status === "done"
-                ? "As próximas conquistas moram aqui."
-                : "Espaço para os próximos passos."}
-            </p>
+            <p>Nenhuma tarefa neste status.</p>
           </div>
         )}
       </div>
@@ -267,12 +262,10 @@ export function Kanban({ data }: { data: BoardData }) {
         <div>
           <span className="page-eyebrow">
             <span className="eyebrow-line" />
-            SEU ESPAÇO DE TRABALHO
+            GESTÃO DE TAREFAS
           </span>
-          <h1>
-            Sua semana, <span>em movimento.</span>
-          </h1>
-          <p>Pessoas, projetos e próximos passos. Tudo em um só lugar.</p>
+          <h1>Tarefas</h1>
+          <p>Organize as tarefas da semana por projeto, responsável e status.</p>
         </div>
         <button
           className="button primary new-task"
@@ -333,7 +326,7 @@ export function Kanban({ data }: { data: BoardData }) {
           {formatDay(data.weekStart, { month: "long", year: "numeric" })}
         </span>
       </div>
-      <div className="board-toolbar">
+      <div className="board-toolbar" role="group" aria-label="Filtros de tarefas">
         <div className="week-controls">
           <button
             className="icon-button"
@@ -378,6 +371,25 @@ export function Kanban({ data }: { data: BoardData }) {
           </button>
         </div>
         <div className="board-filters">
+          <label className="assignee-filter project-filter">
+            <Layers3 size={16} />
+            <select
+              aria-label="Filtrar por projeto"
+              value={data.projectId ?? ""}
+              disabled={board.navigating}
+              onChange={(event) =>
+                board.navigate({ project: event.target.value || null, task: null })
+              }
+            >
+              <option value="">Todos os projetos</option>
+              {data.projects.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.name}
+                </option>
+              ))}
+            </select>
+            <ChevronDown size={13} />
+          </label>
           <form
             className="search-box"
             role="search"
@@ -406,6 +418,7 @@ export function Kanban({ data }: { data: BoardData }) {
             <select
               aria-label="Filtrar por responsável"
               value={data.assigneeId ?? ""}
+              disabled={board.navigating}
               onChange={(event) =>
                 board.navigate({ assignee: event.target.value || null, task: null })
               }
@@ -513,11 +526,7 @@ export function Kanban({ data }: { data: BoardData }) {
       <footer className="board-footer">
         <span>
           <GripVertical size={14} />
-          Arraste para organizar. Clique em um card para ver os detalhes.
-        </span>
-        <span>
-          <Sparkles size={14} />
-          Um passo de cada vez.
+          Arraste os cards para alterar o status. Clique para ver os detalhes.
         </span>
       </footer>
       <AnimatePresence>

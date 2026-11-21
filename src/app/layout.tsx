@@ -3,8 +3,8 @@ import { MotionProvider } from "@/components/motion-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: { default: "Brasília · Seu trabalho em movimento", template: "%s · Brasília" },
-  description: "Pessoas, projetos e próximos passos. Um espaço para organizar a sua semana.",
+  title: { default: "Brasília · Gestão de tarefas", template: "%s · Brasília" },
+  description: "Gestão de tarefas semanais, projetos, responsáveis e acessos.",
   robots: { index: false, follow: false },
 };
 

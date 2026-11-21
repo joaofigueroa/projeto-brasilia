@@ -52,7 +52,7 @@ export function TaskDialog({
   const editable = task ? task.canEdit : true;
   return (
     <Dialog
-      title={task ? "Um passo de cada vez." : "O próximo passo começa aqui."}
+      title={task ? "Detalhes da tarefa" : "Nova tarefa"}
       eyebrow={task ? "DETALHES DA TAREFA" : "NOVA TAREFA"}
       onClose={onClose}
     >
@@ -134,7 +134,7 @@ export function TaskDialog({
                 </span>
                 <textarea
                   name="description"
-                  placeholder="Adicione contexto, ideias e os próximos passos…"
+                  placeholder="Descreva a tarefa…"
                   defaultValue={task?.description}
                   rows={5}
                   maxLength={10000}
@@ -228,7 +228,7 @@ export function TaskDialog({
                     </label>
                   ))}
                 </div>
-                <small>As fotos ajudam a encontrar quem está à frente de cada entrega.</small>
+                <small>Selecione uma ou mais pessoas responsáveis.</small>
               </div>
               <label className="field">
                 <span>
@@ -303,7 +303,7 @@ export function TaskDialog({
             <div className="history-intro">
               <History size={20} />
               <div>
-                <h3>Cada passo tem uma história.</h3>
+                <h3>Histórico de alterações</h3>
                 <p>Veja quem alterou esta tarefa e o que mudou.</p>
               </div>
             </div>

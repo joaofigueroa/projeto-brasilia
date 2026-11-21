@@ -1,6 +1,6 @@
 # Projeto Brasília
 
-Um espaço para pessoas, projetos e tarefas semanais. Aplicação independente em **Next.js 16, React 19, TypeScript, Better Auth, Drizzle e Neon**, seguindo os padrões do monorepo Jovens Gênios.
+Plataforma de gestão de pessoas, projetos e tarefas semanais. Aplicação independente em **Next.js 16, React 19, TypeScript, Better Auth, Drizzle e Neon**, seguindo os padrões do monorepo Jovens Gênios.
 
 ## Primeira entrega
 
@@ -14,7 +14,7 @@ Um espaço para pessoas, projetos e tarefas semanais. Aplicação independente e
 - Histórico com autor, horário e valores anteriores/novos, preservado no banco.
 - Controle de versão para impedir que uma edição sobrescreva outra silenciosamente.
 - Visão transversal dos projetos e filtros por projeto, semana, responsável e texto, persistidos na URL.
-- Layout responsivo e animações discretas, com respeito a movimento reduzido.
+- Menu lateral retrátil, filtros acima do Kanban e layout responsivo com animações discretas e respeito a movimento reduzido.
 
 Os projetos iniciais são **Clínica estética**, **Vinhos** e **Peças automotivas**. A configuração e gestão do cadastro dos projetos pertence à próxima etapa. Nesta versão, todos os usuários autenticados podem visualizar os três projetos.
 

@@ -24,7 +24,7 @@ export function useBoard(data: BoardData) {
       if (!result.success) {
         setNotice({ message: result.error, error: true });
         router.refresh();
-      } else setNotice({ message: "Tarefa movimentada. Mais um passo dado.", error: false });
+      } else setNotice({ message: "Status da tarefa atualizado.", error: false });
     });
   }
   function dragStart(event: DragStartEvent) {
@@ -43,7 +43,7 @@ export function useBoard(data: BoardData) {
   function saved(week: string) {
     setCreating(null);
     navigate({ task: null, week });
-    setNotice({ message: "Tarefa salva. Vamos fazer acontecer.", error: false });
+    setNotice({ message: "Tarefa salva.", error: false });
   }
   return {
     tasks,

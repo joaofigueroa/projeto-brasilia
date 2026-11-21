@@ -30,12 +30,11 @@ export function Profile({ user }: { user: PublicUser }) {
       >
         <div>
           <span className="page-eyebrow">
-            <span className="eyebrow-line" />O SEU JEITO DE ESTAR AQUI
+            <span className="eyebrow-line" />
+            CONFIGURAÇÕES DA CONTA
           </span>
-          <h1>
-            Um espaço <span>com a sua cara.</span>
-          </h1>
-          <p>Mantenha seus dados atualizados e cuide do seu acesso.</p>
+          <h1>Meu perfil</h1>
+          <p>Edite seus dados, sua foto e sua senha.</p>
         </div>
       </motion.div>
       <div className="profile-grid">
@@ -51,7 +50,7 @@ export function Profile({ user }: { user: PublicUser }) {
               </span>
               <div>
                 <h2>Informações pessoais</h2>
-                <p>É assim que você aparece para as outras pessoas.</p>
+                <p>Nome, e-mail, foto e função profissional.</p>
               </div>
             </div>
             <form onSubmit={profile.submit}>
@@ -166,7 +165,7 @@ export function Profile({ user }: { user: PublicUser }) {
               <div className="settings-footer">
                 <span>
                   <Check size={15} />
-                  Você no centro dos seus projetos.
+                  Salve para atualizar seus dados.
                 </span>
                 <SubmitButton pending={profile.pending || profile.photoPending}>
                   Salvar perfil
@@ -181,7 +180,7 @@ export function Profile({ user }: { user: PublicUser }) {
               </span>
               <div>
                 <h2>Segurança da conta</h2>
-                <p>Uma senha só sua, para um espaço só seu.</p>
+                <p>Altere a senha usada para entrar na plataforma.</p>
               </div>
             </div>
             <form onSubmit={profile.submitPassword}>
@@ -234,15 +233,11 @@ export function Profile({ user }: { user: PublicUser }) {
               <Fingerprint size={30} />
             </span>
             <span className="eyebrow">SEU ACESSO</span>
-            <h2>
-              {user.role === "admin"
-                ? "Você cuida deste espaço."
-                : "Você faz parte dessa história."}
-            </h2>
+            <h2>{user.role === "admin" ? "Administrador" : "Colaborador"}</h2>
             <p>
               {user.role === "admin"
                 ? "Seu papel permite gerenciar pessoas, configurar acessos e acompanhar todos os projetos."
-                : "Acompanhe os projetos, crie tarefas e movimente as entregas pelas quais você é responsável."}
+                : "Acompanhe os projetos, crie tarefas e altere o status das tarefas pelas quais você é responsável."}
             </p>
             <span className="role-tag role-admin">
               {user.role === "admin" ? <ShieldCheck size={14} /> : <Users size={14} />}

@@ -7,8 +7,8 @@ export default function ErrorPage({ reset }: { reset: () => void }) {
       <span className="state-icon">
         <RefreshCw size={25} />
       </span>
-      <h1>Vamos tentar mais uma vez?</h1>
-      <p>Não foi possível carregar este espaço agora.</p>
+      <h1>Erro ao carregar a página</h1>
+      <p>Não foi possível carregar os dados. Tente novamente.</p>
       <button type="button" className="button primary" onClick={reset}>
         Tentar novamente
       </button>

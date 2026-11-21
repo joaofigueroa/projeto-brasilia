@@ -16,13 +16,9 @@ export function LoginForm({ emailChanged = false }: { emailChanged?: boolean }) 
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1 }}
     >
-      <span className="login-welcome">SEU ESPAÇO, SEU RITMO</span>
-      <h1>
-        Bom ter você
-        <br />
-        por aqui.
-      </h1>
-      <p>Entre para continuar construindo o que vem pela frente.</p>
+      <span className="login-welcome">ACESSO À PLATAFORMA</span>
+      <h1>Entrar</h1>
+      <p>Use seu e-mail e senha para acessar a plataforma.</p>
       {emailChanged && (
         <p className="success-note" role="status">
           E-mail atualizado. Entre com seu novo e-mail.
@@ -60,7 +56,7 @@ export function LoginForm({ emailChanged = false }: { emailChanged?: boolean }) 
               Entrando…
             </>
           ) : (
-            "Entrar no meu espaço"
+            "Entrar"
           )}
         </button>
       </form>

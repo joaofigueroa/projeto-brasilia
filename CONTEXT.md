@@ -29,4 +29,4 @@
 
 ## Próxima etapa confirmada
 
-Permitir configurar os projetos no produto. A entrega inicial cadastra Clínica estética, Vinhos e Peças automotivas nas migrations e oferece alternância rápida na lateral, identificação nos cards e filtro transversal. Não existem ainda telas de criação, edição ou exclusão de projetos.
+Permitir configurar os projetos no produto. A entrega inicial cadastra Clínica estética, Vinhos e Peças automotivas nas migrations e oferece alternância rápida nos filtros acima do quadro, identificação nos cards e filtro transversal. Não existem ainda telas de criação, edição ou exclusão de projetos.

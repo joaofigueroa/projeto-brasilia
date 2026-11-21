@@ -30,7 +30,7 @@ function PersonDialog({
   const passwordId = useId();
   return (
     <Dialog
-      title={user ? "Um acesso, novas possibilidades." : "Mais uma pessoa para somar."}
+      title={user ? "Editar pessoa" : "Adicionar pessoa"}
       eyebrow={user ? "CONFIGURAR PESSOA" : "ADICIONAR PESSOA"}
       onClose={onClose}
       variant="modal"
@@ -151,12 +151,14 @@ export function People({
         <div>
           <span className="page-eyebrow">
             <span className="eyebrow-line" />
-            QUEM FAZ ACONTECER
+            GESTÃO DE USUÁRIOS
           </span>
-          <h1>
-            Bons projetos começam <span>com pessoas.</span>
-          </h1>
-          <p>Conheça quem está construindo os próximos passos com você.</p>
+          <h1>Pessoas</h1>
+          <p>
+            {canManage
+              ? "Cadastre pessoas e configure seus papéis de acesso."
+              : "Consulte as pessoas cadastradas e suas funções."}
+          </p>
         </div>
         {canManage && (
           <button className="button primary" type="button" onClick={() => setEditing("new")}>
@@ -173,7 +175,7 @@ export function People({
           <BadgeCheck size={15} />
           {canManage
             ? "Você gerencia os acessos deste espaço"
-            : "Cada pessoa faz parte dessa história"}
+            : "Pessoas cadastradas na plataforma"}
         </span>
       </div>
       <motion.div
@@ -237,12 +239,7 @@ export function People({
         )}
       </AnimatePresence>
       <AnimatePresence>
-        {saved && (
-          <Toast
-            message="Pessoa salva. Cada pessoa faz a diferença."
-            onClose={() => setSaved(false)}
-          />
-        )}
+        {saved && <Toast message="Pessoa salva." onClose={() => setSaved(false)} />}
       </AnimatePresence>
     </div>
   );
