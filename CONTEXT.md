@@ -16,17 +16,22 @@
 | Prazo | dueDate | Data opcional de entrega; não determina automaticamente a semana. |
 | Histórico | taskEvent | Registro imutável de uma criação, edição ou movimentação, com autor e instante. |
 
-## Invariantes
+## Inteligência de mercado
 
-1. Cada tarefa pertence a exatamente um projeto e uma semana e tem pelo menos um responsável.
-2. As tarefas são visualizadas transversalmente; selecionar um projeto restringe a visão, sem mudar as permissões.
-3. Os status são `open`, `in_progress` e `done`. Movimentações em ambas as direções são permitidas e auditadas.
-4. Um administrador global pode editar todos os cards. Um colaborador pode editar somente os cards que administra e mover também os cards pelos quais é responsável.
-5. Um colaborador que cria uma tarefa deve ser o administrador inicial daquele card.
-6. Histórico e estado da tarefa são gravados atomicamente. Conflitos de versão não produzem alteração nem evento extra.
-7. Nome, foto, e-mail e função profissional não alteram o papel de acesso.
-8. Pessoas autenticadas podem consultar as tarefas, as pessoas e o histórico do espaço. Não há fronteira de autorização por projeto nesta etapa.
+**Território**: Recorte de análise: Brasil, grande região, unidade da federação ou município identificado pelo código do IBGE. Brasília é o município de referência do Distrito Federal; o DF não se divide em municípios.
 
-## Próxima etapa confirmada
+**Aba de análise**: Visão de um projeto com finalidade própria, como mercado endereçável, possíveis clientes, veículos, editais ou abordagem comercial. Cada projeto possui suas próprias abas e categorias.
 
-Permitir configurar os projetos no produto. A entrega inicial cadastra Clínica estética, Vinhos e Peças automotivas nas migrations e oferece alternância rápida nos filtros acima do quadro, identificação nos cards e filtro transversal. Não existem ainda telas de criação, edição ou exclusão de projetos.
+**Registro de inteligência**: Informação de um projeto e uma aba, associada a um território, ano de referência e fonte. Pode representar um indicador quantitativo, potencial cliente ou anotação de análise.
+
+**Mercado endereçável**: Estimativa de demanda compatível com a oferta do negócio, com premissas, unidade e fonte. População, frota ou número de registros não são automaticamente o mercado endereçável.
+
+**Frota registrada**: Estoque de veículos registrados em uma data. Ano de fabricação ou modelo é uma característica do veículo, distinta do ano de referência da medição.
+
+**Vendas**: Fluxo de veículos vendidos durante um período, distinto do estoque registrado e dos emplacamentos.
+
+**Emplacamentos**: Fluxo de veículos emplacados durante um período, identificado pela fonte que o apurou.
+
+**Possível cliente**: Organização mapeada para prospecção, com segmento, fonte e situação de abordagem. Não significa cliente ativo ou demanda confirmada.
+
+**Edital**: Publicação de contratação pública; a menção a um termo no objeto não confirma compatibilidade comercial ou elegibilidade para participar.

@@ -1,0 +1,45 @@
+{
+  "retrievedAt": "2026-11-21T20:59:56.827590+00:00",
+  "resources": [
+    {
+      "file": "map.json",
+      "url": "https://servicodados.ibge.gov.br/api/v3/malhas/paises/BR?formato=application/vnd.geo%2Bjson&qualidade=minima&intrarregiao=UF",
+      "sha256": "07c671aa87aa1ab296c446de6294df9827112782537b996c0a160284907e7c0f"
+    },
+    {
+      "file": "states.json",
+      "url": "https://servicodados.ibge.gov.br/api/v1/localidades/estados",
+      "sha256": "7ca1368dea3af83cba1af84ae8a7e88f1173c97586831d086cc8b3c1ba9c6596"
+    },
+    {
+      "file": "cities.json",
+      "url": "https://servicodados.ibge.gov.br/api/v1/localidades/municipios",
+      "sha256": "86ecdccdf97d72e7e5e46f0854cfcea8bacc28154cc1bc4ed0e6110e3a6c9c02"
+    },
+    {
+      "file": "population-states.json",
+      "url": "https://apisidra.ibge.gov.br/values/t/4714/n3/all/v/93/p/2022?formato=json",
+      "sha256": "612cab87a3e2252cc061227633ea86d1fed3f8aae9f569965872a54b1ac30be2"
+    },
+    {
+      "file": "population-cities.json",
+      "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/all/v/93/p/2022?formato=json",
+      "sha256": "bc464f32f97bbedfb5c986e58be0d2cdeb759b014fcbeb0de2facd62e34a50be"
+    },
+    {
+      "file": "fleet-2022.xls",
+      "url": "https://www.gov.br/transportes/pt-br/assuntos/transito/arquivos-senatran/estatisticas/renavam/2022/dezembro/frota_munic_modelo_dezembro_2022.xls/@@download/file",
+      "sha256": "e1cd2bcaefc448dcf490f3a8e00442fa643d5ebbd2e20f1f52b9126eca50a1f1"
+    },
+    {
+      "file": "fleet-2023.xls",
+      "url": "https://www.gov.br/transportes/pt-br/assuntos/transito/arquivos-senatran/estatisticas/renavam/2023/Dezembro/frota_munic_modelo_dezembro_2023.xls/@@download/file",
+      "sha256": "cc1b15439ad1871ef26e72454ae4407104022a5d2790b3b22648d4d9032c96a4"
+    },
+    {
+      "file": "fleet-2024.xlsx",
+      "url": "https://www.gov.br/transportes/pt-br/assuntos/transito/conteudo-Senatran/FrotapormunicipioetipoDezembro2024.xlsx/@@download/file",
+      "sha256": "7c3029ca0eb3ce481942e35eedfc02b5fb7690c1b906c492165d6abf85259137"
+    }
+  ]
+}

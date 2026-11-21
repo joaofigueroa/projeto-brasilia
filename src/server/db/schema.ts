@@ -6,6 +6,7 @@ import {
   index,
   integer,
   jsonb,
+  numeric,
   pgEnum,
   pgTable,
   text,
@@ -174,3 +175,66 @@ export const authSchema = {
   verification: verifications,
   rateLimit: rateLimits,
 };
+
+export const analysisTabs = pgTable(
+  "analysis_tabs",
+  {
+    id: uuid("id").primaryKey().$defaultFn(v7),
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projects.id),
+    name: text("name").notNull(),
+    kind: text("kind").notNull(),
+    position: integer("position").notNull().default(0),
+    settings: jsonb("settings").notNull().default(sql`'{"segments":[],"keywords":[]}'::jsonb`),
+    version: integer("version").notNull().default(1),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (table) => [index("analysis_tabs_project_id_idx").on(table.projectId)],
+);
+export const intelligenceRecords = pgTable(
+  "intelligence_records",
+  {
+    id: uuid("id").primaryKey().$defaultFn(v7),
+    tabId: uuid("tab_id")
+      .notNull()
+      .references(() => analysisTabs.id),
+    createdBy: uuid("created_by")
+      .notNull()
+      .references(() => users.id),
+    updatedBy: uuid("updated_by")
+      .notNull()
+      .references(() => users.id),
+    title: text("title").notNull(),
+    category: text("category").notNull().default(""),
+    metric: text("metric").notNull(),
+    value: numeric("value", { precision: 20, scale: 4 }),
+    unit: text("unit").notNull(),
+    year: integer("year").notNull(),
+    regionCode: text("region_code"),
+    stateCode: text("state_code"),
+    municipalityCode: text("municipality_code"),
+    territoryLabel: text("territory_label").notNull(),
+    sourceName: text("source_name").notNull(),
+    sourceUrl: text("source_url").notNull().default(""),
+    notes: text("notes").notNull().default(""),
+    status: text("status").notNull().default("new"),
+    details: jsonb("details").notNull().default(sql`'{}'::jsonb`),
+    importKey: text("import_key"),
+    version: integer("version").notNull().default(1),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (table) => [
+    index("intelligence_records_tab_id_idx").on(table.tabId),
+    index("intelligence_records_created_by_idx").on(table.createdBy),
+    index("intelligence_records_updated_by_idx").on(table.updatedBy),
+    index("intelligence_records_territory_idx").on(
+      table.stateCode,
+      table.municipalityCode,
+      table.year,
+    ),
+    uniqueIndex("intelligence_records_import_idx").on(table.tabId, table.importKey),
+  ],
+);

@@ -374,3 +374,212 @@ describe("authentication, roles and profiles", () => {
     expect(await response.json()).toBeNull();
   });
 });
+
+describe("project intelligence", () => {
+  const scope = () => ({ project: projects[1].id, tab: "", uf: "DF", year: 2022 });
+  async function tab(kind = "prospects", project = projects[1].id) {
+    const { listAnalysisTabs } = await import("@/server/repositories/intelligence");
+    return (await listAnalysisTabs(project)).find((t) => t.kind === kind)!;
+  }
+  async function services() {
+    return import("@/server/services/intelligence");
+  }
+  function fields(overrides = {}) {
+    return {
+      title: "Organização de teste",
+      category: "Supermercados",
+      metric: "context",
+      value: null,
+      unit: "organizações",
+      sourceName: "Fixture de teste",
+      sourceUrl: "https://www.gov.br/receitafederal/dados",
+      notes: "Dado isolado para validar a plataforma",
+      status: "new",
+      details: {},
+      ...overrides,
+    };
+  }
+  it("seeds distinct tabs and segments for each business", async () => {
+    const { listAnalysisTabs } = await import("@/server/repositories/intelligence");
+    const wine = await listAnalysisTabs(projects[1].id);
+    const parts = await listAnalysisTabs(projects[2].id);
+    expect(wine.find((t) => t.kind === "prospects")?.settings.segments).toContain(
+      "Boutiques de vinhos",
+    );
+    expect(parts.some((t) => t.kind === "vehicles")).toBe(true);
+    expect(wine.some((t) => t.kind === "vehicles")).toBe(false);
+    expect(new Set([...wine, ...parts].map((t) => t.id)).size).toBe(wine.length + parts.length);
+  });
+  it("resolves official geography and separates stock from annual sales", async () => {
+    const { getOfficialContext } = await import("@/server/integrations/official-statistics");
+    const { resolveTerritory } = await import("@/libs/territories");
+    expect(getOfficialContext(resolveTerritory({ region: "BR" }), 2022).fleet).toBe(115116532);
+    expect(getOfficialContext(resolveTerritory({ uf: "DF" }), 2022).fleet).toBe(2021627);
+    expect(getOfficialContext(resolveTerritory({ uf: "GO", city: "5208707" }), 2022).fleet).toBe(
+      1291865,
+    );
+    expect(getOfficialContext(resolveTerritory({ uf: "MG", city: "3106200" }), 2024).fleet).toBe(
+      2778234,
+    );
+    expect(getOfficialContext(resolveTerritory({ uf: "DF" }), 2026).fleet).toBeNull();
+    expect(() => resolveTerritory({ uf: "DF", city: "5208707" })).toThrow();
+  });
+  it("stores records by project, tab, territory and year without mixing other businesses", async () => {
+    const { saveIntelligenceRecord, getIntelligence } = await services();
+    const selected = await tab();
+    const id = await saveIntelligenceRecord({
+      scope: { ...scope(), tab: selected.id },
+      fields: fields(),
+    });
+    const exact = await getIntelligence({ ...scope(), tab: selected.id });
+    expect(exact.records.some((r) => r.id === id)).toBe(true);
+    expect(
+      (await getIntelligence({ ...scope(), tab: selected.id, year: 2023 })).records.some(
+        (r) => r.id === id,
+      ),
+    ).toBe(false);
+    expect(
+      (await getIntelligence({ ...scope(), tab: selected.id, uf: "GO" })).records.some(
+        (r) => r.id === id,
+      ),
+    ).toBe(false);
+    await expect(
+      getIntelligence({ ...scope(), project: projects[2].id, tab: selected.id }),
+    ).rejects.toThrow("Aba não encontrada");
+  });
+  it("rolls up municipal prospects to their state and region, while retaining their own territory", async () => {
+    const { saveIntelligenceRecord, getIntelligence } = await services();
+    const selected = await tab();
+    const id = await saveIntelligenceRecord({
+      scope: { ...scope(), uf: "GO", city: "5208707", tab: selected.id },
+      fields: fields({ title: "Fixture Goiânia" }),
+    });
+    expect(
+      (
+        await getIntelligence({ project: projects[1].id, tab: selected.id, uf: "GO", year: 2022 })
+      ).records.find((r) => r.id === id)?.territoryLabel,
+    ).toBe("Goiânia · GO");
+    expect(
+      (
+        await getIntelligence({
+          project: projects[1].id,
+          tab: selected.id,
+          region: "5",
+          year: 2022,
+        })
+      ).records.some((r) => r.id === id),
+    ).toBe(true);
+    expect(
+      (
+        await getIntelligence({
+          project: projects[1].id,
+          tab: selected.id,
+          region: "3",
+          year: 2022,
+        })
+      ).records.some((r) => r.id === id),
+    ).toBe(false);
+  });
+  it("allows administrators to add a project-specific tab and rejects collaborator writes", async () => {
+    const { saveAnalysisTab, saveIntelligenceRecord, getIntelligence } = await services();
+    const input = {
+      projectId: projects[1].id,
+      name: "Distribuição teste",
+      kind: "notes",
+      segments: ["Varejo"],
+      keywords: ["vinho"],
+    };
+    const id = await saveAnalysisTab(input);
+    expect(
+      (await getIntelligence({ project: projects[1].id, tab: id, uf: "DF", year: 2022 })).tab.name,
+    ).toBe(input.name);
+    session.viewer = collaborator;
+    expect(
+      (await getIntelligence({ project: projects[1].id, tab: id, uf: "DF", year: 2022 })).viewer.id,
+    ).toBe(collaborator.id);
+    await expect(saveAnalysisTab({ ...input, name: "Não permitido" })).rejects.toThrow(
+      "Somente administradores",
+    );
+    await expect(
+      saveIntelligenceRecord({ scope: { ...scope(), tab: id }, fields: fields() }),
+    ).rejects.toThrow("Somente administradores");
+  });
+  it("detects concurrent edits of records and tabs", async () => {
+    const { saveIntelligenceRecord, getIntelligence, saveAnalysisTab } = await services();
+    const selected = await tab();
+    const id = await saveIntelligenceRecord({
+      scope: { ...scope(), tab: selected.id },
+      fields: fields({ title: "Fixture concorrência" }),
+    });
+    await saveIntelligenceRecord({
+      scope: { ...scope(), tab: selected.id },
+      id,
+      version: 1,
+      fields: fields({ title: "Atualizado" }),
+    });
+    await expect(
+      saveIntelligenceRecord({
+        scope: { ...scope(), tab: selected.id },
+        id,
+        version: 1,
+        fields: fields({ title: "Obsoleto" }),
+      }),
+    ).rejects.toThrow("registro mudou");
+    const fresh = await getIntelligence({ ...scope(), tab: selected.id });
+    expect(fresh.records.find((r) => r.id === id)?.title).toBe("Atualizado");
+    const input = {
+      projectId: projects[1].id,
+      id: selected.id,
+      version: selected.version,
+      name: selected.name,
+      kind: selected.kind,
+      ...selected.settings,
+    };
+    await saveAnalysisTab(input);
+    await expect(saveAnalysisTab(input)).rejects.toThrow("aba foi alterada");
+  });
+  it("imports quoted CSV atomically and updates repeated observations without duplicating them", async () => {
+    const { importIntelligenceRecords, getIntelligence } = await services();
+    const selected = await tab("vehicles", projects[2].id);
+    const target = { project: projects[2].id, tab: selected.id, uf: "DF", year: 2022 };
+    const csv =
+      'title;source_name;source_url;metric;value;model;vehicle_type\n"Veículo; fixture";Fonte de teste;https://www.gov.br/transportes; sales;10;Modelo de teste;Automóvel';
+    expect(await importIntelligenceRecords({ scope: target, csv })).toBe(1);
+    expect(
+      await importIntelligenceRecords({ scope: target, csv: csv.replace(";10;", ";12;") }),
+    ).toBe(1);
+    const data = await getIntelligence(target);
+    const rows = data.records.filter((r) => r.title === "Veículo; fixture");
+    expect(rows).toHaveLength(1);
+    expect(rows[0].value).toBe(12);
+    expect(rows[0].metric).toBe("sales");
+    expect(rows[0].details.model).toBe("Modelo de teste");
+    const invalid = `${csv}\nInválido;Fonte de teste;https://www.gov.br/transportes;sales;erro;Modelo;Automóvel`;
+    await expect(importIntelligenceRecords({ scope: target, csv: invalid })).rejects.toThrow(
+      "Linha 3",
+    );
+    expect((await getIntelligence(target)).records).toHaveLength(data.records.length);
+  });
+  it("requires provenance and rejects invalid source protocols and numeric metrics without values", async () => {
+    const { saveIntelligenceRecord } = await services();
+    const selected = await tab();
+    await expect(
+      saveIntelligenceRecord({
+        scope: { ...scope(), tab: selected.id },
+        fields: fields({ sourceUrl: "javascript:alert(1)" }),
+      }),
+    ).rejects.toThrow();
+    await expect(
+      saveIntelligenceRecord({
+        scope: { ...scope(), tab: selected.id },
+        fields: fields({ metric: "sales" }),
+      }),
+    ).rejects.toThrow();
+    await expect(
+      saveIntelligenceRecord({
+        scope: { ...scope(), tab: selected.id },
+        fields: fields({ metric: "sales", value: 10, sourceUrl: "" }),
+      }),
+    ).rejects.toThrow();
+  });
+});

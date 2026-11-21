@@ -14,9 +14,15 @@ Plataforma de gestão de pessoas, projetos e tarefas semanais. Aplicação indep
 - Histórico com autor, horário e valores anteriores/novos, preservado no banco.
 - Controle de versão para impedir que uma edição sobrescreva outra silenciosamente.
 - Visão transversal dos projetos e filtros por projeto, semana, responsável e texto, persistidos na URL.
-- Menu lateral retrátil, filtros acima do Kanban e layout responsivo com animações discretas e respeito a movimento reduzido.
+- Seletor de projeto no menu lateral retrátil e filtros acima do Kanban e layout responsivo com animações discretas e respeito a movimento reduzido.
 
 Os projetos iniciais são **Clínica estética**, **Vinhos** e **Peças automotivas**. A configuração e gestão do cadastro dos projetos pertence à próxima etapa. Nesta versão, todos os usuários autenticados podem visualizar os três projetos.
+
+## Inteligência de mercado
+
+A tela **Business Intelligence** combina mapa interativo das 27 UFs, recortes por Brasil/região/UF/município e ano, e abas próprias de cada projeto. Administradores podem adicionar e configurar abas, registrar análises e possíveis clientes e importar CSV. População do Censo 2022 e frota de dezembro de 2022–2024 já estão carregadas; a aba de editais consulta o PNCP. Vendas, emplacamentos, estimativas e modelos de veículos podem ser registrados com fonte e unidade, sem inferência a partir da frota.
+
+Consulte [fontes, cobertura, permissões e formato de importação](docs/intelligence-data.md). A migration `0001_intelligence` deve ser aplicada antes de publicar esta versão.
 
 ## Desenvolvimento
 

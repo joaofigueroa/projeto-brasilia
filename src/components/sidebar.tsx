@@ -2,6 +2,7 @@
 import {
   FolderKanban,
   LogOut,
+  MapPinned,
   Menu,
   PanelLeftClose,
   PanelLeftOpen,
@@ -11,16 +12,19 @@ import {
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useId, useState } from "react";
 import { useNavigation } from "@/hooks/use-navigation";
 import { authClient } from "@/libs/auth-client";
-import type { PublicUser } from "@/types/domain";
+import type { Project, PublicUser } from "@/types/domain";
 import { Avatar } from "./avatar";
 import { Brand } from "./brand";
+import { ProjectSwitcher } from "./project-switcher";
 
-export function Sidebar({ viewer }: { viewer: PublicUser }) {
+export function Sidebar({ viewer, projects }: { viewer: PublicUser; projects: Project[] }) {
   const pathname = usePathname();
+  const params = useSearchParams();
+  const selectedProject = params.get("project");
   const navigationId = useId();
   const [expanded, setExpanded] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
@@ -28,6 +32,7 @@ export function Sidebar({ viewer }: { viewer: PublicUser }) {
   const { router } = useNavigation();
   const links = [
     { href: "/tarefas", label: "Tarefas", Icon: FolderKanban },
+    { href: "/inteligencia", label: "Business Intelligence", Icon: MapPinned },
     { href: "/pessoas", label: "Pessoas", Icon: Users },
     { href: "/perfil", label: "Meu perfil", Icon: UserRound },
   ];
@@ -87,6 +92,11 @@ export function Sidebar({ viewer }: { viewer: PublicUser }) {
             <X size={20} />
           </button>
         </div>
+        <ProjectSwitcher
+          projects={projects}
+          selectedId={selectedProject}
+          onSelect={() => setExpanded(false)}
+        />
         <div className="sidebar-navigation-heading">
           <span className="nav-label">NAVEGAÇÃO</span>
           <button
@@ -107,7 +117,7 @@ export function Sidebar({ viewer }: { viewer: PublicUser }) {
               <Link
                 key={href}
                 className={`nav-link ${pathname.startsWith(href) ? "active" : ""}`}
-                href={href}
+                href={`${href}${selectedProject ? `?project=${selectedProject}` : ""}`}
                 aria-label={label}
                 title={label}
                 aria-current={pathname.startsWith(href) ? "page" : undefined}
