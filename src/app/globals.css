@@ -2728,13 +2728,19 @@ textarea {
 @media (max-width: 760px) {
   .sidebar {
     transform: translateX(-100%);
+    visibility: hidden;
+    pointer-events: none;
     width: 255px;
     padding-top: 24px;
-    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    transition:
+      transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0.3s;
     z-index: 60;
   }
   .sidebar-open {
     transform: translateX(0);
+    visibility: visible;
+    pointer-events: auto;
   }
   .mobile-close {
     display: inline-flex;
