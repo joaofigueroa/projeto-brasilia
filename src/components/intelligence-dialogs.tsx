@@ -3,6 +3,7 @@ import { Download, FileUp, Info } from "lucide-react";
 import { AnimatePresence } from "motion/react";
 import { useId } from "react";
 import type { IntelligenceController } from "@/hooks/use-intelligence";
+import { periodLabel } from "@/libs/analysis-period";
 import { analysisLabels, metricLabels, prospectLabels } from "@/libs/intelligence-presentation";
 import type { IntelligenceData } from "@/types/intelligence";
 import { Dialog } from "./dialog";
@@ -24,12 +25,26 @@ export function IntelligenceDialogs({
         <Dialog
           key="record"
           title={record ? "Editar registro" : "Adicionar registro"}
-          eyebrow={`${data.project.name} · ${record?.territoryLabel ?? data.territory.label} · ${data.year}`}
+          eyebrow={`${data.project.name} · ${record?.territoryLabel ?? data.territory.label} · ${record?.year ?? periodLabel(data.years)}`}
           onClose={controller.closeRecord}
         >
           <form onSubmit={controller.saveRecord} className="bi-editor-form">
             <div className="bi-dialog-body">
               <fieldset disabled={controller.pending}>
+                <label className="field">
+                  <span>Ano de referência do registro</span>
+                  <select
+                    name="year"
+                    defaultValue={record?.year ?? data.year}
+                    disabled={Boolean(record)}
+                  >
+                    {data.years.map((year) => (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    ))}
+                  </select>
+                </label>
                 <label className="field">
                   <span>{data.tab.kind === "prospects" ? "Nome da organização" : "Título"}</span>
                   <input
@@ -79,11 +94,18 @@ export function IntelligenceDialogs({
                           : "context")
                     }
                   >
-                    {Object.entries(metricLabels).map(([value, label]) => (
-                      <option key={value} value={value}>
-                        {label}
-                      </option>
-                    ))}
+                    {Object.entries(metricLabels)
+                      .filter(
+                        ([value]) =>
+                          data.tab.kind !== "vehicles" ||
+                          value === "sales" ||
+                          value === "registrations",
+                      )
+                      .map(([value, label]) => (
+                        <option key={value} value={value}>
+                          {label}
+                        </option>
+                      ))}
                   </select>
                   <small>
                     Vendas, emplacamentos e frota são medidas distintas. Use a definição da fonte.
@@ -107,7 +129,11 @@ export function IntelligenceDialogs({
                       name="unit"
                       defaultValue={
                         record?.unit ??
-                        (data.tab.kind === "prospects" ? "organizações" : "unidades")
+                        (data.tab.kind === "prospects"
+                          ? "organizações"
+                          : data.tab.kind === "vehicles"
+                            ? "automóveis"
+                            : "unidades")
                       }
                       maxLength={40}
                       placeholder="veículos, organizações, BRL…"
@@ -120,21 +146,27 @@ export function IntelligenceDialogs({
                     <div className="field-row">
                       <label className="field">
                         <span>Marca</span>
-                        <input name="make" defaultValue={record?.details.make} maxLength={100} />
+                        <input
+                          name="make"
+                          defaultValue={record?.details.make}
+                          maxLength={100}
+                          required
+                        />
                       </label>
                       <label className="field">
                         <span>Modelo</span>
-                        <input name="model" defaultValue={record?.details.model} maxLength={100} />
+                        <input
+                          name="model"
+                          defaultValue={record?.details.model}
+                          maxLength={100}
+                          required
+                        />
                       </label>
                     </div>
                     <div className="field-row">
                       <label className="field">
                         <span>Tipo de veículo</span>
-                        <input
-                          name="vehicleType"
-                          defaultValue={record?.details.vehicleType}
-                          maxLength={80}
-                        />
+                        <input name="vehicleType" value="Automóvel" readOnly maxLength={80} />
                       </label>
                       <label className="field">
                         <span>Ano de fabricação</span>
@@ -145,7 +177,10 @@ export function IntelligenceDialogs({
                           placeholder="2022"
                           maxLength={4}
                         />
-                        <small>O ano de referência do registro é {data.year}.</small>
+                        <small>
+                          O ano de fabricação é uma característica do veículo. O ano do registro é
+                          selecionado acima.
+                        </small>
                       </label>
                     </div>
                   </>
@@ -273,11 +308,25 @@ export function IntelligenceDialogs({
         <Dialog
           key="import"
           title="Importar registros"
-          eyebrow={`${data.project.name} · ${data.territory.label} · ${data.year}`}
+          eyebrow={`${data.project.name} · ${data.territory.label} · ${periodLabel(data.years)}`}
           onClose={controller.closeImport}
         >
           <form onSubmit={controller.importCsv} className="bi-editor-form">
             <div className="bi-dialog-body">
+              <label className="field">
+                <span>Ano dos registros do lote</span>
+                <select name="year" defaultValue={data.year}>
+                  {data.years.map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
+                <small>
+                  Cada lote usa um ano de referência. Importe um lote por ano para comparar o
+                  período.
+                </small>
+              </label>
               <p className="bi-import-explanation">
                 As linhas serão associadas à aba “{data.tab.name}”, ao território e ao ano
                 selecionados. Até 500 linhas e 500 KB por arquivo.
@@ -321,7 +370,10 @@ export function IntelligenceDialogs({
                 </p>
                 <strong>Características de veículos</strong>
                 <code>make, model, vehicle_type, manufacture_year</code>
-                <p>Ano de fabricação não altera o ano de referência selecionado.</p>
+                <p>
+                  Ano de fabricação não altera o ano de referência selecionado. Na visão de modelos,
+                  use vehicle_type = Automóvel, com make, model e metric = sales ou registrations.
+                </p>
               </div>
               <p className="bi-form-note">
                 <Info size={15} />

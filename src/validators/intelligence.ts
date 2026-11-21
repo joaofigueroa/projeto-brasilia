@@ -6,21 +6,33 @@ const sourceUrl = z.union([
   z.url().refine((value) => /^https?:\/\//.test(value), "Use um endereço HTTP ou HTTPS."),
 ]);
 const optionalCode = z.string().optional();
-export const intelligenceFiltersSchema = z.object({
-  project: z.uuid().optional(),
-  tab: z.uuid().optional(),
-  region: z.enum(["BR", "1", "2", "3", "4", "5"]).optional(),
-  uf: z
-    .string()
-    .regex(/^[A-Z]{2}$/)
-    .optional(),
-  city: z
-    .string()
-    .regex(/^\d{7}$/)
-    .optional(),
-  year: z.coerce.number().int().min(2000).max(2100).default(2024),
-  metric: z.enum(metricKinds).default("fleet"),
-});
+export const intelligenceFiltersSchema = z
+  .object({
+    project: z.uuid().optional(),
+    tab: z.uuid().optional(),
+    region: z.enum(["BR", "1", "2", "3", "4", "5"]).optional(),
+    uf: z
+      .string()
+      .regex(/^[A-Z]{2}$/)
+      .optional(),
+    city: z
+      .string()
+      .regex(/^\d{7}$/)
+      .optional(),
+    year: z.coerce.number().int().min(2000).max(2100).default(2024),
+    years: z
+      .preprocess(
+        (value) => (typeof value === "string" ? value.split(",") : value),
+        z.array(z.coerce.number().int().min(2000).max(2100)).min(1).max(10),
+      )
+      .optional(),
+    map: z.enum(["states", "municipalities"]).default("states"),
+    metric: z.enum(metricKinds).default("registrations"),
+  })
+  .transform((input) => {
+    const years = [...new Set(input.years ?? [input.year])].sort((a, b) => a - b);
+    return { ...input, years, year: years[years.length - 1] };
+  });
 const scope = z.object({
   project: z.uuid(),
   tab: z.uuid(),

@@ -4628,3 +4628,350 @@ textarea {
   fill: transparent;
   stroke: none;
 }
+
+/* Complete outlines always sit above adjacent polygon fills. */
+.bi-map-outline-layer {
+  pointer-events: none;
+}
+.bi-map-outline {
+  fill: none;
+  stroke: #173d2d;
+  stroke-width: 2.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+.bi-map-outline.hovered-outline {
+  stroke: #174c34;
+  stroke-width: 3;
+}
+.bi-map-levels {
+  display: flex;
+  gap: 4px;
+  margin: 0 24px 13px;
+  padding: 3px;
+  background: #eef2eb;
+  border-radius: 7px;
+}
+.bi-map-levels button {
+  flex: 1;
+  border-radius: 5px;
+  padding: 7px;
+  color: #6a7b68;
+  font-size: 13px;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+.bi-map-levels button[aria-pressed="true"] {
+  color: #2e5b42;
+  background: #fff;
+  box-shadow: 0 1px 3px #24452a0c;
+}
+.bi-map-level-hint {
+  margin: 0 22px 14px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #718368;
+}
+.bi-map-local-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 12px 21px 0;
+}
+.bi-map-local-toolbar > div {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: #6c8062;
+}
+.bi-map-local-toolbar .text-button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+}
+.bi-map-local-toolbar .icon-button {
+  height: 28px;
+  width: 28px;
+  border: 1px solid #e2e9dd;
+  border-radius: 6px;
+}
+.bi-brazil-map.is-municipal {
+  overflow: hidden;
+}
+.bi-brazil-map.is-municipal .bi-map-state path {
+  stroke-width: 0.7;
+}
+.bi-year-filter > span {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 7px;
+  font-weight: 500;
+}
+.bi-period-picker {
+  position: relative;
+}
+.bi-period-trigger {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  justify-content: space-between;
+  width: 100%;
+  border: 1px solid #dfe7de;
+  background: #fbfcfa;
+  padding: 10px;
+  border-radius: 7px;
+  font-size: 14px;
+  color: #405d4c;
+}
+.bi-period-trigger > span {
+  flex: 1;
+  text-align: left;
+}
+.bi-period-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 44;
+  background: transparent;
+}
+.bi-period-popover {
+  position: absolute;
+  z-index: 45;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 275px;
+  padding: 16px;
+  border: 1px solid #dce7d8;
+  background: #fff;
+  border-radius: 11px;
+  box-shadow: 0 12px 35px #233e2b20;
+}
+.bi-period-popover > strong {
+  display: block;
+  color: #3c5b43;
+  font-size: 15px;
+  font-weight: 550;
+}
+.bi-period-popover > p {
+  color: #829078;
+  font-size: 12px;
+  margin: 7px 0 11px;
+}
+.bi-period-popover > .text-button {
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+.bi-period-years {
+  max-height: 235px;
+  overflow: auto;
+  border-top: 1px solid #e8eee3;
+  border-bottom: 1px solid #e8eee3;
+  padding: 7px 0;
+}
+.bi-period-years label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  cursor: pointer;
+  padding: 8px 4px;
+  border-radius: 5px;
+}
+.bi-period-years label:hover {
+  background: #f3f7ef;
+}
+.bi-period-years input {
+  width: 16px;
+  height: 16px;
+  accent-color: #416e4b;
+}
+.bi-period-years label > span {
+  font-size: 14px;
+  color: #47663f;
+  margin: 0;
+}
+.bi-period-years small {
+  margin-left: auto;
+  color: #8b9d80;
+  font-size: 10px;
+}
+.bi-period-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 14px;
+}
+.bi-period-footer > span {
+  font-size: 11px;
+  color: #879c78;
+}
+.bi-period-footer .button {
+  padding: 8px 11px;
+  font-size: 12px;
+}
+.bi-model-controls {
+  display: flex;
+  gap: 12px;
+  margin: 22px 0 15px;
+  flex-wrap: wrap;
+}
+.bi-model-controls label {
+  font-size: 12px;
+  color: #829474;
+  min-width: 0;
+}
+.bi-model-controls select {
+  display: block;
+  margin-top: 7px;
+  border: 1px solid #dfe9d7;
+  border-radius: 7px;
+  background: #fff;
+  padding: 10px 25px 10px 11px;
+  color: #5b7a49;
+  font-size: 14px;
+}
+.bi-model-period {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px;
+  background: #f6f9f0;
+  border: 1px solid #e4eddc;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+.bi-model-period > span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #708b5c;
+  font-size: 12px;
+}
+.bi-model-period > strong {
+  font-size: 13px;
+  font-weight: 500;
+  color: #5e8044;
+}
+.bi-model-table-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+  border: 1px solid #e2ebda;
+  border-radius: 9px;
+}
+.bi-model-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+.bi-model-table caption {
+  text-align: left;
+  padding: 13px;
+  font-size: 12px;
+  color: #7e946b;
+  border-bottom: 1px solid #e7efdf;
+}
+.bi-model-table thead th {
+  background: #f5f8ef;
+  color: #6c8b56;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 12px;
+  white-space: nowrap;
+}
+.bi-model-table td,
+.bi-model-table tbody th {
+  padding: 13px 12px;
+  border-top: 1px solid #ebf0e5;
+  vertical-align: top;
+  color: #638347;
+  font-weight: 400;
+}
+.bi-model-table tbody th {
+  min-width: 185px;
+}
+.bi-model-table tbody th strong {
+  display: block;
+  font-weight: 500;
+  color: #3b6135;
+  font-size: 13px;
+}
+.bi-model-table small {
+  display: block;
+  color: #8aa175;
+  font-size: 10px;
+  margin-top: 6px;
+  line-height: 1.6;
+}
+.bi-model-table td {
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.bi-model-table .bi-model-consolidated {
+  background: #fafcf6;
+}
+.bi-model-table td strong {
+  font-weight: 550;
+}
+.bi-model-sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 15px;
+  margin-top: 16px;
+}
+.bi-local-model-records {
+  border-top: 1px solid #e5eddc;
+  margin-top: 23px;
+  padding-top: 16px;
+  interpolate-size: allow-keywords;
+}
+.bi-local-model-records summary {
+  font-size: 13px;
+  color: #7e9768;
+  cursor: pointer;
+}
+.bi-local-model-records::details-content {
+  overflow: hidden;
+  height: 0;
+  opacity: 0;
+  transition:
+    height 0.25s ease,
+    opacity 0.25s ease,
+    content-visibility 0.25s allow-discrete;
+}
+.bi-local-model-records[open]::details-content {
+  height: auto;
+  opacity: 1;
+}
+@media (max-width: 1250px) {
+  .bi-map-levels {
+    margin-left: 17px;
+    margin-right: 17px;
+  }
+}
+@media (max-width: 760px) {
+  .bi-year-filter > span {
+    font-size: 11px;
+  }
+  .bi-period-trigger {
+    font-size: 13px;
+  }
+  .bi-model-controls {
+    gap: 10px;
+  }
+  .bi-model-controls select {
+    max-width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bi-map-levels button,
+  .bi-local-model-records::details-content {
+    transition: none;
+  }
+}

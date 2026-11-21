@@ -64,6 +64,14 @@ export type NoticeResult = {
   to: string;
   unavailable: boolean;
   terms: string[];
+  periods?: {
+    year: number;
+    from: string;
+    to: string;
+    consulted: number;
+    total: number;
+    unavailable: boolean;
+  }[];
 };
 export type IntelligenceData = {
   viewer: PublicUser;
@@ -73,6 +81,10 @@ export type IntelligenceData = {
   tab: AnalysisTab;
   territory: Territory;
   year: number;
+  years: number[];
+  mapView: "states" | "municipalities";
+  municipalMap: MunicipalMap | null;
+  models: CarModelReport;
   metric: MetricKind;
   records: IntelligenceRecord[];
   official: OfficialContext;
@@ -85,5 +97,32 @@ export type IntelligenceData = {
     population: number | null;
     fleet: number | null;
   }[];
-  cities: { code: string; name: string }[];
+  cities: { code: string; name: string; population: number | null; fleet: number | null }[];
+};
+
+export type MunicipalMap = {
+  state: string;
+  features: { code: string; name: string; path: string; center: number[] }[];
+};
+export type CarModelRow = {
+  key: string;
+  make: string;
+  model: string;
+  category: string;
+  territoryLabel: string;
+  sourceName: string;
+  unit: string;
+  values: { year: number; value: number | null; ambiguous: boolean }[];
+  total: number | null;
+  average: number | null;
+  complete: boolean;
+  sources: { name: string; url: string }[];
+};
+export type CarModelReport = {
+  rows: CarModelRow[];
+  recordIds: string[];
+  excluded: number;
+  officialAvailable: boolean;
+  officialYears: number[];
+  measure: "sales" | "registrations";
 };

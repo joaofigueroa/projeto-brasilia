@@ -2,9 +2,14 @@ import "server-only";
 import { createHash } from "node:crypto";
 import { v7 } from "uuid";
 import { parseCsv } from "@/libs/csv";
-import { cities, resolveTerritory } from "@/libs/territories";
-import { getMapStatistics, getOfficialContext } from "@/server/integrations/official-statistics";
-import { getPublicNotices } from "@/server/integrations/pncp";
+import { resolveTerritory } from "@/libs/territories";
+import { getMunicipalMap } from "@/server/integrations/municipal-maps";
+import {
+  getMapStatistics,
+  getMunicipalStatistics,
+  getOfficialContext,
+} from "@/server/integrations/official-statistics";
+import { getPublicNoticesForYears } from "@/server/integrations/pncp";
 import {
   insertAnalysisTab,
   insertIntelligenceRecords,
@@ -24,6 +29,7 @@ import {
   recordInputSchema,
   tabInputSchema,
 } from "@/validators/intelligence";
+import { getCarModelReport } from "./car-models";
 
 function fail(message: string): never {
   throw businessError(message);
@@ -57,11 +63,11 @@ export async function getIntelligence(raw: unknown): Promise<IntelligenceData> {
   const tab = input.tab ? tabs.find((t) => t.id === input.tab) : tabs[0];
   if (!tab) fail("Aba não encontrada neste projeto.");
   const scope = territory(input);
-  const official = getOfficialContext(scope, input.year);
+  const official = getOfficialContext(scope, input.years);
   const [records, notices] = await Promise.all([
-    listIntelligenceRecords(project.id, tab.id, scope, input.year),
+    listIntelligenceRecords(project.id, tab.id, scope, input.years),
     tab.kind === "opportunities"
-      ? getPublicNotices(scope, input.year, tab.settings.keywords)
+      ? getPublicNoticesForYears(scope, input.years, tab.settings.keywords)
       : Promise.resolve(null),
   ]);
   return {
@@ -72,17 +78,28 @@ export async function getIntelligence(raw: unknown): Promise<IntelligenceData> {
     tab,
     territory: scope,
     year: input.year,
-    metric: input.metric,
+    years: input.years,
+    mapView: input.map,
+    municipalMap: input.map === "municipalities" ? getMunicipalMap(scope.uf) : null,
+    models: getCarModelReport(
+      records,
+      scope,
+      input.years,
+      input.metric === "sales" ? "sales" : "registrations",
+    ),
+    metric:
+      tab.kind === "vehicles"
+        ? input.metric === "sales"
+          ? "sales"
+          : "registrations"
+        : input.metric,
     records,
     official,
     notices,
-    states: getMapStatistics(input.year),
-    cities: scope.uf
-      ? cities
-          .filter((c) => c.state === scope.uf)
-          .map((c) => ({ code: c.code, name: c.name }))
-          .sort((a, b) => a.name.localeCompare(b.name, "pt-BR"))
-      : [],
+    states: getMapStatistics(input.years),
+    cities: getMunicipalStatistics(scope.uf, input.years).sort((a, b) =>
+      a.name.localeCompare(b.name, "pt-BR"),
+    ),
   };
 }
 export async function saveAnalysisTab(raw: unknown) {

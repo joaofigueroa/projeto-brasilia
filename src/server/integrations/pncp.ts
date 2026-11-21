@@ -97,3 +97,31 @@ export async function getPublicNotices(
   result.items.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
   return result;
 }
+
+export async function getPublicNoticesForYears(
+  territory: Territory,
+  years: number[],
+  terms: string[],
+): Promise<NoticeResult> {
+  const results = await Promise.all(years.map((year) => getPublicNotices(territory, year, terms)));
+  const items = [
+    ...new Map(results.flatMap((result) => result.items).map((item) => [item.id, item])).values(),
+  ].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+  return {
+    items,
+    consulted: results.reduce((n, r) => n + r.consulted, 0),
+    total: results.reduce((n, r) => n + r.total, 0),
+    from: results[0].from,
+    to: results[results.length - 1].to,
+    unavailable: results.some((r) => r.unavailable),
+    terms,
+    periods: results.map((result, index) => ({
+      year: years[index],
+      from: result.from,
+      to: result.to,
+      consulted: result.consulted,
+      total: result.total,
+      unavailable: result.unavailable,
+    })),
+  };
+}

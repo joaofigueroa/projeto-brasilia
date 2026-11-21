@@ -42,11 +42,12 @@ export function useIntelligence(data: IntelligenceData) {
       const target = record
         ? {
             ...scope,
+            year: record.year,
             region: record.regionCode ?? undefined,
             uf: record.stateCode ?? undefined,
             city: record.municipalityCode ?? undefined,
           }
-        : scope;
+        : { ...scope, year: Number(form.get("year") ?? data.year) };
       const result = await saveIntelligenceRecordAction({
         scope: target,
         id: record?.id,
@@ -126,7 +127,7 @@ export function useIntelligence(data: IntelligenceData) {
     setError("");
     startTransition(async () => {
       const result = await importIntelligenceRecordsAction({
-        scope,
+        scope: { ...scope, year: Number(form.get("year") ?? data.year) },
         csv: hasFile ? await file.text() : pasted,
       });
       if (!result.success) {

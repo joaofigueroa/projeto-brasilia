@@ -582,4 +582,40 @@ describe("project intelligence", () => {
       }),
     ).rejects.toThrow();
   });
+  it("queries all selected years from PostgreSQL without including intervening years", async () => {
+    const { saveIntelligenceRecord, getIntelligence } = await services();
+    const selected = await tab("vehicles", projects[2].id);
+    const ids: string[] = [];
+    for (const [year, value] of [
+      [2022, 10],
+      [2023, 20],
+      [2024, 30],
+    ])
+      ids.push(
+        await saveIntelligenceRecord({
+          scope: { project: projects[2].id, tab: selected.id, uf: "DF", year },
+          fields: fields({
+            title: "Série Nivus",
+            metric: "sales",
+            value,
+            details: { make: "VW", model: "NIVUS", vehicleType: "Automóvel" },
+          }),
+        }),
+      );
+    const data = await getIntelligence({
+      project: projects[2].id,
+      tab: selected.id,
+      uf: "DF",
+      years: "2024,2022",
+      metric: "sales",
+    });
+    expect(data.years).toEqual([2022, 2024]);
+    expect(
+      data.records
+        .filter((row) => ids.includes(row.id))
+        .map((row) => row.year)
+        .sort(),
+    ).toEqual([2022, 2024]);
+    expect(data.models.rows.find((row) => row.model === "NIVUS")?.total).toBe(40);
+  });
 });

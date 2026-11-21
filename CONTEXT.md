@@ -20,6 +20,10 @@
 
 **Território**: Recorte de análise: Brasil, grande região, unidade da federação ou município identificado pelo código do IBGE. Brasília é o município de referência do Distrito Federal; o DF não se divide em municípios.
 
+**Período de análise**: Conjunto explícito de um a dez anos, consecutivos ou não. Registros mantêm seu ano de referência. Fluxos de modelos podem ser somados ou apresentados pela média dos anos disponíveis; lacunas ficam indicadas. Estoques anuais são comparados ou têm média, nunca somados como vendas.
+
+**Modelo de automóvel**: Marca e modelo classificados pela fonte como automóvel. A visão de modelos exclui comerciais leves, motocicletas, caminhões e demais tipos. Uma observação conserva indicador, ano, unidade, fonte e território exato; fontes ou níveis geográficos diferentes não são somados.
+
 **Aba de análise**: Visão de um projeto com finalidade própria, como mercado endereçável, possíveis clientes, veículos, editais ou abordagem comercial. Cada projeto possui suas próprias abas e categorias.
 
 **Registro de inteligência**: Informação de um projeto e uma aba, associada a um território, ano de referência e fonte. Pode representar um indicador quantitativo, potencial cliente ou anotação de análise.

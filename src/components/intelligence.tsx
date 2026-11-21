@@ -20,15 +20,17 @@ import { AnimatePresence, motion } from "motion/react";
 import { useId, useState } from "react";
 import type { IntelligenceController } from "@/hooks/use-intelligence";
 import { useIntelligence } from "@/hooks/use-intelligence";
+import { periodLabel } from "@/libs/analysis-period";
 import {
   analysisLabels,
-  compactNumber,
   formatNumber,
   metricLabels,
   prospectLabels,
 } from "@/libs/intelligence-presentation";
 import type { IntelligenceData, IntelligenceRecord } from "@/types/intelligence";
+import { AnalysisPeriodFilter } from "./analysis-period-filter";
 import { BrazilMap } from "./brazil-map";
+import { CarModelsView } from "./car-models-view";
 import { Toast } from "./feedback";
 import { IntelligenceDialogs } from "./intelligence-dialogs";
 
@@ -67,7 +69,7 @@ function EmptyRecords({
       <h3>Nenhum registro neste recorte</h3>
       <p>
         Não há {data.tab.kind === "prospects" ? "organizações mapeadas" : "registros cadastrados"}{" "}
-        para {data.territory.label} em {data.year}.
+        para {data.territory.label} em {periodLabel(data.years)}.
       </p>
       {data.viewer.role === "admin" && (
         <button
@@ -284,114 +286,20 @@ function VehiclesView({
   data: IntelligenceData;
   controller: IntelligenceController;
 }) {
-  const official = data.official;
-  const metric = data.metric === "context" || data.metric === "market_size" ? "fleet" : data.metric;
-  const numbers = metric === "fleet" ? official.types : [];
-  const maximum = Math.max(1, ...numbers.map((item) => item.value));
-  const seriesMax = Math.max(1, ...official.series.map((item) => item.value));
   return (
-    <>
-      <div className="bi-panel-intro">
-        <h3>Veículos por período</h3>
-        <p>Consulte o estoque registrado e mantenha vendas e emplacamentos em séries distintas.</p>
-      </div>
-      <div className="bi-vehicle-metric">
-        <label>
-          Indicador
-          <select
-            value={metric}
-            onChange={(e) => controller.navigate({ metric: e.target.value })}
-            aria-label="Indicador de veículos"
-          >
-            <option value="fleet">Frota registrada</option>
-            <option value="sales">Vendas</option>
-            <option value="registrations">Emplacamentos</option>
-          </select>
-        </label>
-        <span>
-          Referência: <strong>{data.year}</strong>
-        </span>
-      </div>
-      {metric === "fleet" ? (
-        <>
-          <div className="bi-fleet-total">
-            <span>Frota registrada · {data.territory.label}</span>
-            <strong>
-              {official.fleet === null ? "Sem dado para este ano" : formatNumber(official.fleet)}
-            </strong>
-            <small>veículos · posição de dezembro/{data.year} · Senatran</small>
-          </div>
-          <p className="bi-data-note">
-            <Info size={15} />O total inclui todos os tipos de veículos. Os dados carregados cobrem
-            2022, 2023 e 2024. Frota registrada não corresponde a vendas no ano.
-          </p>
-          {numbers.length > 0 && (
-            <section className="bi-vehicle-types">
-              <h4>Distribuição por tipo</h4>
-              {numbers.map((row) => (
-                <div key={row.label} className="bi-type-row">
-                  <div>
-                    <span>{row.label}</span>
-                    <strong>{formatNumber(row.value)}</strong>
-                  </div>
-                  <div className="bi-bar-track">
-                    <motion.div
-                      initial={{ scaleX: 0 }}
-                      animate={{ scaleX: row.value / maximum }}
-                      style={{ transformOrigin: "left" }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </section>
-          )}
-          {official.series.length > 0 && (
-            <section className="bi-fleet-series">
-              <h4>Frota em dezembro de cada ano</h4>
-              <div>
-                {official.series.map((row) => (
-                  <div key={row.year}>
-                    <strong>{compactNumber(row.value)}</strong>
-                    <div className="bi-series-bar-track">
-                      <motion.span
-                        initial={{ height: 0 }}
-                        animate={{ height: `${(row.value / seriesMax) * 100}%` }}
-                      />
-                    </div>
-                    <span>{row.year}</span>
-                  </div>
-                ))}
-              </div>
-              <p>Variações no estoque não representam quantidade vendida.</p>
-            </section>
-          )}
-        </>
-      ) : (
-        <div className="bi-data-note bi-measure-note">
-          <Info size={19} />
-          <span>
-            Esta primeira base oficial fornece estoque de frota. Para{" "}
-            {metric === "sales" ? "vendas" : "emplacamentos"}, cadastre ou importe uma fonte que
-            meça esse fluxo no ano selecionado. A plataforma mantém os indicadores separados.
-          </span>
-        </div>
-      )}
-      <div className="bi-section-title">
-        <h4>Dados complementares e modelos</h4>
-        <span>Fonte identificada em cada registro</span>
-      </div>
-      <p className="bi-inline-note">
-        Marca, modelo, tipo e ano de fabricação podem ser cadastrados ou importados por CSV. As
-        tabelas oficiais de tipos não fornecem vendas por modelo.
-      </p>
-      <RecordList
-        data={{
-          ...data,
-          records: data.records.filter((r) => r.metric === metric || r.metric === "context"),
-        }}
-        controller={controller}
-      />
-    </>
+    <CarModelsView
+      data={data}
+      controller={controller}
+      records={
+        <RecordList
+          data={{
+            ...data,
+            records: data.records.filter((record) => data.models.recordIds.includes(record.id)),
+          }}
+          controller={controller}
+        />
+      }
+    />
   );
 }
 function NoticesView({ data }: { data: IntelligenceData }) {
@@ -428,15 +336,21 @@ function NoticesView({ data }: { data: IntelligenceData }) {
                 correspondências
               </span>
               <p>
-                {notices.from.split("-").reverse().join("/")} a{" "}
-                {notices.to.split("-").reverse().join("/")} · Pregão eletrônico e dispensa. Primeira
-                página de cada modalidade, até 100 publicações. Resultados filtrados pelos termos no
-                objeto; a busca não examina os itens anexos.
+                Pregão eletrônico e dispensa. Primeira página de cada modalidade, até 100
+                publicações por ano selecionado. Resultados filtrados pelos termos no objeto; a
+                busca não examina os itens anexos.
               </p>
+              {(notices.periods ?? []).map((period) => (
+                <p key={period.year}>
+                  {period.year}: {period.from.split("-").reverse().join("/")} a{" "}
+                  {period.to.split("-").reverse().join("/")} · {period.consulted} publicações
+                  consultadas{period.unavailable ? " · consulta parcial ou indisponível" : ""}
+                </p>
+              ))}
               {notices.total > notices.consulted && (
                 <p>
-                  A fonte indica {formatNumber(notices.total)} publicações nesse período e
-                  modalidades. A amostra consultada não cobre todos os resultados.
+                  A fonte indica {formatNumber(notices.total)} publicações nos períodos consultados
+                  e modalidades. A amostra consultada não cobre todos os resultados.
                 </p>
               )}
             </div>
@@ -503,11 +417,25 @@ function Sources({ data }: { data: IntelligenceData }) {
           Senatran · frota por município e tipo
         </ExternalSource>
         <p>
-          Posição de dezembro de 2022, 2023 e 2024. No recorte e ano selecionados:{" "}
+          Posição de dezembro de 2022, 2023 e 2024. No recorte e período selecionados:{" "}
           {data.official.coveredMunicipalities} de {data.official.municipalities} códigos municipais
           com frota vinculada. Totais de UF preservam todas as linhas da fonte, inclusive municípios
           sem vínculo de nome.
         </p>
+        <p>
+          O mapa mostra somente automóveis. Para vários anos, usa a média dos estoques de dezembro,
+          com dados em todos os anos selecionados. Esse indicador não representa vendas.
+        </p>
+        <ExternalSource href="https://servicodados.ibge.gov.br/api/docs/malhas?versao=3">
+          IBGE · malhas de UFs e municípios
+        </ExternalSource>
+        {data.project.slug === "pecas-automotivas" && (
+          <p>
+            Modelos: rankings nacionais de automóveis da Fenabrave, 2022–2024, com os 50 primeiros
+            de cada ano. Os links dos boletins ficam na aba Veículos. Dados por UF e município
+            dependem de registros locais com fonte.
+          </p>
+        )}
         <ExternalSource href="https://www.gov.br/receitafederal/dados">
           Receita Federal · dados públicos de empresas
         </ExternalSource>
@@ -607,7 +535,9 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
             value={data.territory.city ?? ""}
             aria-label="Município da análise"
             disabled={!data.territory.uf || controller.navigating}
-            onChange={(e) => controller.navigate({ city: e.target.value || null })}
+            onChange={(e) =>
+              controller.navigate({ city: e.target.value || null, map: "municipalities" })
+            }
           >
             <option value="">{data.territory.uf ? "Toda a UF" : "Selecione uma UF"}</option>
             {data.cities.map((city) => (
@@ -617,28 +547,18 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
             ))}
           </select>
         </label>
-        <label className="bi-year-filter">
-          <span>Ano de referência</span>
-          <select
-            value={data.year}
-            aria-label="Ano da análise"
-            disabled={controller.navigating}
-            onChange={(e) => controller.navigate({ year: e.target.value })}
-          >
-            {Array.from(
-              { length: new Date().getFullYear() - 1999 },
-              (_, index) => new Date().getFullYear() - index,
-            ).map((year) => (
-              <option key={year} value={year}>
-                {year}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div className="bi-year-filter">
+          <span>Anos de referência</span>
+          <AnalysisPeriodFilter key={data.project.id} years={data.years} controller={controller} />
+        </div>
       </div>
       <div className="bi-workspace" aria-busy={controller.navigating}>
         <div className="bi-map-column">
-          <BrazilMap key={data.project.id} data={data} controller={controller} />
+          <BrazilMap
+            key={`${data.project.id}-${data.territory.uf ?? "BR"}-${data.mapView}`}
+            data={data}
+            controller={controller}
+          />
           <div className="bi-selected-territory">
             <Globe2 size={17} />
             <div>
@@ -671,7 +591,7 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
             <div>
               <MapPin size={16} />
               <h2>{data.territory.label}</h2>
-              <span>{data.year}</span>
+              <span>{periodLabel(data.years)}</span>
             </div>
             {canManage && (
               <button
@@ -749,7 +669,7 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
             )}
           </div>
           <motion.div
-            key={`${data.project.id}-${data.tab.id}-${data.territory.label}-${data.year}-${data.metric}`}
+            key={`${data.project.id}-${data.tab.id}-${data.territory.label}-${data.years.join(",")}-${data.metric}`}
             role="tabpanel"
             id={`${tabGroup}-panel`}
             aria-labelledby={`${tabGroup}-${data.tab.id}`}

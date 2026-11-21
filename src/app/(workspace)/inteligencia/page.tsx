@@ -17,7 +17,9 @@ export default async function IntelligencePage({
     region: params.region,
     city: params.city,
     year: params.year ?? 2024,
-    metric: params.metric ?? "fleet",
+    years: params.years,
+    map: params.map ?? (params.city ? "municipalities" : "states"),
+    metric: params.metric ?? "registrations",
   });
   if (!params.project) {
     const url = new URLSearchParams();

@@ -11,7 +11,7 @@ type FleetData = {
 const fleet = fleetSource as unknown as FleetData;
 function sum(rows: number[][]) {
   return rows.length
-    ? rows[0].map((_, i) => rows.reduce((total, r) => total + (r[i] ?? 0), 0))
+    ? rows[0].map((_, i) => rows.reduce((total, row) => total + (row[i] ?? 0), 0))
     : null;
 }
 function values(territory: Territory, year: number) {
@@ -25,19 +25,26 @@ function values(territory: Territory, year: number) {
       .flatMap((s) => (source.states[s.code] ? [source.states[s.code]] : [])),
   );
 }
-export function getOfficialContext(territory: Territory, year: number): OfficialContext {
+function average(rows: (number[] | null)[]) {
+  return rows.some((row) => !row)
+    ? null
+    : (rows[0]?.map(
+        (_, index) => rows.reduce((total, row) => total + (row?.[index] ?? 0), 0) / rows.length,
+      ) ?? null);
+}
+export function getOfficialContext(territory: Territory, year: number | number[]): OfficialContext {
+  const years = Array.isArray(year) ? year : [year];
   const includedStates = states.filter((s) =>
     !territory.uf ? s.region === territory.region || !territory.region : s.code === territory.uf,
   );
   const includedCities = cities.filter((c) =>
     territory.city ? c.code === territory.city : includedStates.some((s) => s.code === c.state),
   );
-  const numbers = values(territory, year);
-  const population = territory.city
-    ? (includedCities[0]?.population ?? null)
-    : includedStates.reduce((n, s) => n + (s.population ?? 0), 0);
+  const numbers = average(years.map((y) => values(territory, y)));
   return {
-    population,
+    population: territory.city
+      ? (includedCities[0]?.population ?? null)
+      : includedStates.reduce((n, s) => n + (s.population ?? 0), 0),
     fleet: numbers?.[0] ?? null,
     types: numbers
       ? fleet.headers
@@ -49,22 +56,35 @@ export function getOfficialContext(territory: Territory, year: number): Official
           .filter((x) => x.value > 0)
           .sort((a, b) => b.value - a.value)
       : [],
-    series: Object.keys(fleet.years)
-      .map(Number)
-      .flatMap((y) => {
-        const v = values(territory, y);
-        return v ? [{ year: y, value: v[0] }] : [];
-      }),
+    series: years.flatMap((y) => {
+      const row = values(territory, y);
+      return row ? [{ year: y, value: row[0] }] : [];
+    }),
     municipalities: includedCities.length,
-    coveredMunicipalities: includedCities.filter((c) => fleet.years[String(year)]?.cities[c.code])
-      .length,
+    coveredMunicipalities: includedCities.filter((c) =>
+      years.every((y) => fleet.years[String(y)]?.cities[c.code]),
+    ).length,
   };
 }
-export function getMapStatistics(year: number) {
+function carAverage(rows: (number[] | undefined)[]) {
+  return rows.every(Boolean) ? rows.reduce((n, row) => n + (row?.[1] ?? 0), 0) / rows.length : null;
+}
+export function getMapStatistics(year: number | number[]) {
+  const years = Array.isArray(year) ? year : [year];
   return states.map((s) => ({
     ...s,
-    fleet: fleet.years[String(year)]?.states[s.code]?.[0] ?? null,
+    fleet: carAverage(years.map((y) => fleet.years[String(y)]?.states[s.code])),
   }));
+}
+export function getMunicipalStatistics(uf: string | null, years: number[]) {
+  return uf
+    ? cities
+        .filter((c) => c.state === uf)
+        .map((city) => ({
+          ...city,
+          fleet: carAverage(years.map((y) => fleet.years[String(y)]?.cities[city.code])),
+        }))
+    : [];
 }
 export const officialSources = {
   population: "https://sidra.ibge.gov.br/tabela/4714",

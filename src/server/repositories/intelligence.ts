@@ -79,8 +79,9 @@ export function listIntelligenceRecords(
   projectId: string,
   tabId: string,
   territory: Territory,
-  year: number,
+  year: number | number[],
 ) {
+  const years = Array.isArray(year) ? year : [year];
   const scope = territory.city
     ? sql`r.municipality_code=${territory.city}`
     : territory.uf
@@ -89,6 +90,6 @@ export function listIntelligenceRecords(
         ? sql`r.region_code=${territory.region}`
         : sql`true`;
   return query<IntelligenceRecord>(
-    sql`SELECT r.id,r.tab_id AS "tabId",r.title,r.category,r.metric,r.value::float8 AS value,r.unit,r.year,r.region_code AS "regionCode",r.state_code AS "stateCode",r.municipality_code AS "municipalityCode",r.territory_label AS "territoryLabel",r.source_name AS "sourceName",r.source_url AS "sourceUrl",r.notes,r.status,r.details,r.version,r.updated_at::text AS "updatedAt" FROM intelligence_records r JOIN analysis_tabs t ON t.id=r.tab_id WHERE t.project_id=${projectId} AND r.tab_id=${tabId} AND r.year=${year} AND ${scope} ORDER BY r.updated_at DESC,r.id LIMIT 500`,
+    sql`SELECT r.id,r.tab_id AS "tabId",r.title,r.category,r.metric,r.value::float8 AS value,r.unit,r.year,r.region_code AS "regionCode",r.state_code AS "stateCode",r.municipality_code AS "municipalityCode",r.territory_label AS "territoryLabel",r.source_name AS "sourceName",r.source_url AS "sourceUrl",r.notes,r.status,r.details,r.version,r.updated_at::text AS "updatedAt" FROM intelligence_records r JOIN analysis_tabs t ON t.id=r.tab_id WHERE t.project_id=${projectId} AND r.tab_id=${tabId} AND r.year IN (SELECT jsonb_array_elements_text(${JSON.stringify(years)}::jsonb)::int) AND ${scope} ORDER BY r.updated_at DESC,r.id LIMIT 500`,
   );
 }
