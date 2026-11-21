@@ -1,0 +1,11 @@
+node_modules/
+.pnpm-store/
+.next/
+out/
+.env*
+!.env.example
+.local/
+coverage/
+*.tsbuildinfo
+.DS_Store
+output/
