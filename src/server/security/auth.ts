@@ -12,7 +12,11 @@ async function createAuth() {
   const { orm } = await getDatabase();
   return betterAuth({
     appName: "Brasília",
-    baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
+    baseURL:
+      process.env.BETTER_AUTH_URL ??
+      (process.env.VERCEL_PROJECT_PRODUCTION_URL
+        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+        : "http://localhost:3000"),
     trustedOrigins:
       process.env.NODE_ENV === "production"
         ? undefined

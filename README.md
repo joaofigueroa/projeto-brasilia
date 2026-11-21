@@ -120,4 +120,8 @@ Evolução do banco: `pnpm db:generate`, revisão do SQL gerado e `pnpm db:migra
 
 ## Publicação
 
-O projeto está pronto para build e execução em hospedagem Next.js. Configure `DATABASE_URL`, `BETTER_AUTH_SECRET` e `BETTER_AUTH_URL` no ambiente de destino, aplique as migrations e crie o administrador. O ambiente publicado deve usar Neon e HTTPS. O trabalho inicial não publica automaticamente a aplicação nem envia credenciais ao GitHub.
+Na Vercel, importe o repositório `joaofigueroa/projeto-brasilia` e use `main` como branch de produção. O projeto fixa Node.js 24, detecta Next.js e usa o lockfile pnpm nas instalações. Configure `DATABASE_URL` e `BETTER_AUTH_SECRET` somente no ambiente de produção. O segredo de autenticação da hospedagem é independente do ambiente local.
+
+`BETTER_AUTH_URL` pode definir explicitamente a origem HTTPS da aplicação. Quando omitido na Vercel, a autenticação usa o domínio canônico informado por `VERCEL_PROJECT_PRODUCTION_URL`. Não configure uma URL de localhost nas variáveis de produção. Mantenha as credenciais do banco de produção fora dos deployments de preview.
+
+As migrations e o primeiro administrador já foram preparados no Neon dedicado ao Brasília. Novas alterações de schema devem ser migradas e verificadas antes de promover uma versão que dependa delas. Credenciais e o arquivo privado de acesso não são enviados ao GitHub.
