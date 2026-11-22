@@ -97,3 +97,7 @@ O arquivo inteiro é validado antes da gravação. O lote usa uma única instru�
 ## Evolução
 
 Novas integrações devem conservar fonte, periodicidade, definição do indicador, abrangência e dimensão territorial. Receitas, vendas, emplacamentos e estoque são medidas distintas. Estimativas de mercado precisam registrar premissas nas notas. O cadastro dos projetos continua reservado à próxima etapa; as abas e os fluxos analíticos já podem variar entre os negócios existentes.
+
+## Sistema visual
+
+A interface usa o sistema compartilhado `src/app/design-system.css`, carregado após os estilos estruturais. Navegação escura, superfícies neutras, tipografia do sistema e azul para ações e foco. As cores geográficas do mapa e seus alvos de interação são preservados. Movimentos usam molas sem overshoot por padrão e respeitam movimento reduzido; superfícies translúcidas têm alternativas sólidas para redução de transparência e maior contraste. O mesmo sistema cobre login, tarefas, pessoas, perfil, BI, seletores e diálogos.

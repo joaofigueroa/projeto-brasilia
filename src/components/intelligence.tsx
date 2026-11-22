@@ -478,7 +478,7 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
         <div>
           <span className="page-eyebrow">
             <span className="eyebrow-line" />
-            BUSINESS INTELLIGENCE
+            ANÁLISE TERRITORIAL
           </span>
           <h1>Inteligência de mercado</h1>
           <p>Analise territórios, indicadores e oportunidades de cada projeto.</p>

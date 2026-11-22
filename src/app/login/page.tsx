@@ -39,10 +39,10 @@ export default async function LoginPage({
         <div className="login-story-copy">
           <span className="login-story-kicker">PROJETO BRASÍLIA</span>
           <h2>
-            Gestão de tarefas
-            <br />e projetos.
+            Tarefas, projetos
+            <br />e inteligência.
           </h2>
-          <p>Consulte as tarefas da semana, acompanhe os status e gerencie os responsáveis.</p>
+          <p>Planeje a semana, acompanhe sua equipe e consulte os dados de cada mercado.</p>
         </div>
         <span className="login-story-footer">Tarefas organizadas por semana e projeto.</span>
       </section>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { MotionProvider } from "@/components/motion-provider";
 import "./globals.css";
+import "./design-system.css";
 
 export const metadata: Metadata = {
   title: { default: "Brasília · Gestão de tarefas", template: "%s · Brasília" },

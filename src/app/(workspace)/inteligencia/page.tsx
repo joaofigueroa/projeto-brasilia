@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { Intelligence } from "@/components/intelligence";
 import { Topbar } from "@/components/topbar";
 import { getIntelligence } from "@/server/services/intelligence";
-export const metadata: Metadata = { title: "Business Intelligence" };
+export const metadata: Metadata = { title: "Inteligência de mercado" };
 export default async function IntelligencePage({
   searchParams,
 }: {
@@ -31,7 +31,7 @@ export default async function IntelligencePage({
   }
   return (
     <>
-      <Topbar title="Business Intelligence" viewer={data.viewer} />
+      <Topbar title="Inteligência de mercado" viewer={data.viewer} />
       <Intelligence data={data} />
     </>
   );

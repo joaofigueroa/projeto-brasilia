@@ -32,7 +32,7 @@ export function Sidebar({ viewer, projects }: { viewer: PublicUser; projects: Pr
   const { router } = useNavigation();
   const links = [
     { href: "/tarefas", label: "Tarefas", Icon: FolderKanban },
-    { href: "/inteligencia", label: "Business Intelligence", Icon: MapPinned },
+    { href: "/inteligencia", label: "Inteligência de mercado", Icon: MapPinned },
     { href: "/pessoas", label: "Pessoas", Icon: Users },
     { href: "/perfil", label: "Meu perfil", Icon: UserRound },
   ];

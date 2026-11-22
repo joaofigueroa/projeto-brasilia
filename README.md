@@ -24,6 +24,10 @@ A tela **Business Intelligence** combina mapas interativos de UFs e municípios,
 
 Consulte [fontes, cobertura, permissões e formato de importação](docs/intelligence-data.md). A migration `0001_intelligence` deve ser aplicada antes de publicar esta versão.
 
+## Interface
+
+O sistema visual compartilhado está em `src/app/design-system.css`. Aplica tipografia do sistema, navegação escura, ações em azul, superfícies com profundidade e feedback imediato de toque e clique. Segue a skill `apple-design` de emilkowalski/skills, com molas sem overshoot como padrão e alternativas para movimento reduzido, transparência reduzida e maior contraste. O mapa conserva as geometrias, as cores geográficas e os gestos aprovados.
+
 ## Desenvolvimento
 
 Requisitos: Node.js 22 ou superior e pnpm 10.
