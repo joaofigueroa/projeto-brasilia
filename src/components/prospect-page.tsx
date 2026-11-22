@@ -9,14 +9,13 @@ import {
   researchDate,
   researchPriorityLabels,
   researchSegmentLabels,
-  researchSpecializationLabels,
 } from "@/libs/commercial-research";
 import type { getProspectPage } from "@/server/services/prospect-page";
 import { Dialog } from "./dialog";
 import { ProspectFavoriteButton } from "./prospect-favorite-button";
-import { ProspectGoogle } from "./prospect-google";
 import { ProspectGoogleMap } from "./prospect-google-map";
 import { ProspectProfileEditor } from "./prospect-profile-editor";
+import { ProspectSpecialization } from "./prospect-specialization";
 import { CatalogReferences, RegistryDetails, ResearchLink } from "./research-profile";
 import { StateFlag } from "./state-flag";
 
@@ -25,7 +24,6 @@ const sections = [
   { id: "registry", label: "Cadastro" },
   { id: "commercial", label: "Oportunidade comercial" },
   { id: "sources", label: "Fontes e evidências" },
-  { id: "google", label: "Consultas do Google" },
 ] as const;
 export function ProspectPage({ data, backHref }: { data: Data; backHref: string }) {
   const { prospect, project, viewer } = data;
@@ -98,12 +96,7 @@ export function ProspectPage({ data, backHref }: { data: Data; backHref: string 
           </div>
           <h2 id={`${tabId}-overview`}>Perfil da empresa</h2>
           <p className="prospect-page-description">{prospect.summary}</p>
-          <div className="research-tags">
-            <span>{researchSpecializationLabels[prospect.specialization]}</span>
-            {prospect.brands.map((brand) => (
-              <span key={brand}>{brand}</span>
-            ))}
-          </div>
+          <ProspectSpecialization prospect={prospect} />
           <dl className="prospect-contact-list">
             {prospect.phone && (
               <div>
@@ -299,14 +292,6 @@ export function ProspectPage({ data, backHref }: { data: Data; backHref: string 
               </p>
             </aside>
           </div>
-        )}
-        {section === "google" && (
-          <ProspectGoogle
-            key={`${prospect.databaseId}-${prospect.google?.version ?? 0}`}
-            prospect={prospect}
-            projectId={project.id}
-            canManage={viewer.role === "admin"}
-          />
         )}
       </motion.section>
       <AnimatePresence>

@@ -1,0 +1,129 @@
+[
+  {
+    "name": "Audi",
+    "file": "/automakers/audi.svg",
+    "source": "https://www.audi.com/ci/en/intro/basics/rings.html",
+    "aliases": []
+  },
+  {
+    "name": "BMW",
+    "file": "/automakers/bmw.svg",
+    "source": "https://bmw.com",
+    "aliases": []
+  },
+  {
+    "name": "Chevrolet",
+    "file": "/automakers/chevrolet.svg",
+    "source": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/shopping-tools/download-catalog/02-pdf/2019-chevrolet-corvette-catalog.pdf",
+    "aliases": [
+      "GM",
+      "General Motors"
+    ]
+  },
+  {
+    "name": "Citroën",
+    "file": "/automakers/citroen.svg",
+    "source": "https://www.stellantis.com/en/brands/citroen",
+    "aliases": []
+  },
+  {
+    "name": "DS Automobiles",
+    "file": "/automakers/dsautomobiles.svg",
+    "source": "https://www.stellantis.com/en/brands/ds",
+    "aliases": [
+      "DS"
+    ]
+  },
+  {
+    "name": "Fiat",
+    "file": "/automakers/fiat.svg",
+    "source": "https://www.fcaci.com/x/FIATv15",
+    "aliases": []
+  },
+  {
+    "name": "Ford",
+    "file": "/automakers/ford.svg",
+    "source": "https://secure.ford.com/brochures/",
+    "aliases": []
+  },
+  {
+    "name": "Honda",
+    "file": "/automakers/honda.svg",
+    "source": "https://www.honda.ie",
+    "aliases": []
+  },
+  {
+    "name": "Hyundai",
+    "file": "/automakers/hyundai.svg",
+    "source": "https://www.hyundai.com",
+    "aliases": []
+  },
+  {
+    "name": "Jeep",
+    "file": "/automakers/jeep.svg",
+    "source": "https://commons.wikimedia.org/wiki/File:Jeep_logo.svg",
+    "aliases": []
+  },
+  {
+    "name": "Kia",
+    "file": "/automakers/kia.svg",
+    "source": "https://www.kia.com",
+    "aliases": []
+  },
+  {
+    "name": "Mitsubishi",
+    "file": "/automakers/mitsubishi.svg",
+    "source": "https://www.mitsubishi.com",
+    "aliases": []
+  },
+  {
+    "name": "Nissan",
+    "file": "/automakers/nissan.svg",
+    "source": "https://www.nissan.ie",
+    "aliases": []
+  },
+  {
+    "name": "Peugeot",
+    "file": "/automakers/peugeot.svg",
+    "source": "https://www.peugeot.co.uk",
+    "aliases": []
+  },
+  {
+    "name": "Porsche",
+    "file": "/automakers/porsche.svg",
+    "source": "https://www.porsche.com",
+    "aliases": []
+  },
+  {
+    "name": "Renault",
+    "file": "/automakers/renault.svg",
+    "source": "https://media.renaultgroup.com",
+    "aliases": []
+  },
+  {
+    "name": "Suzuki",
+    "file": "/automakers/suzuki.svg",
+    "source": "https://www.suzuki.ie",
+    "aliases": []
+  },
+  {
+    "name": "Toyota",
+    "file": "/automakers/toyota.svg",
+    "source": "https://www.toyota.com/brandguidelines/logo/",
+    "aliases": []
+  },
+  {
+    "name": "Volkswagen",
+    "file": "/automakers/volkswagen.svg",
+    "source": "https://www.vw.com",
+    "aliases": [
+      "VW"
+    ]
+  },
+  {
+    "name": "Volvo",
+    "file": "/automakers/volvo.svg",
+    "source": "https://www.media.volvocars.com/global/en-gb/logos",
+    "aliases": []
+  }
+]

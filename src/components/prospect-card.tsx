@@ -1,14 +1,11 @@
 "use client";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import {
-  researchPriorityLabels,
-  researchSegmentLabels,
-  researchSpecializationLabels,
-} from "@/libs/commercial-research";
+import { researchPriorityLabels, researchSegmentLabels } from "@/libs/commercial-research";
 import { prospectPageHref } from "@/libs/prospect-navigation";
 import type { ResearchProspect } from "@/types/commercial-research";
 import { ProspectFavoriteButton } from "./prospect-favorite-button";
+import { ProspectSpecialization } from "./prospect-specialization";
 export function ProspectCard({
   prospect,
   projectId,
@@ -42,10 +39,7 @@ export function ProspectCard({
         aria-label={`Ver perfil de ${prospect.name}`}
       >
         <strong>{prospect.name}</strong>
-        <span className="research-prospect-specialization">
-          {researchSpecializationLabels[prospect.specialization]}
-          {prospect.brands.length ? ` · ${prospect.brands.join(" / ")}` : ""}
-        </span>
+        <ProspectSpecialization prospect={prospect} compact />
         <span className="research-profile-level">
           {prospect.enrichmentLevel === "researched"
             ? "Com pesquisa comercial"

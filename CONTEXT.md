@@ -56,9 +56,11 @@
 
 **Perfil cadastral / comercial**: O primeiro conserva fatos da base CNPJ e lacunas explícitas. O segundo agrega evidências comerciais com fonte e data, editáveis por administradores com controle de versão. Abertura do CNPJ e fundação da marca permanecem separadas.
 
-**Consulta manual ao Google**: Nota, contagem e até cinco trechos registrados por administrador, com autoria, link e data da consulta. Não é sincronização pela API nem garantia de atualidade.
+**Consulta manual ao Google**: Nota, contagem e até cinco trechos registrados por administrador, com autoria, link e data da consulta. Não é sincronização pela API nem garantia de atualidade. Registros anteriores são preservados; a página atual não expõe um editor separado de consultas.
 
 
 **Favorito de prospecção**: Seleção pessoal de uma empresa por usuário autenticado, independente do papel administrativo, prioridade comercial ou situação de abordagem. A mesma empresa pode ser favorita de várias pessoas; nenhuma pessoa altera a seleção das demais.
 
-**Página do possível cliente**: Endereço próprio do perfil pesquisado, com contexto de projeto, resumo e ficha Google na área principal. Dados cadastrais, oportunidade, fontes e consultas são categorias de informação em abas; não são entidades diferentes.
+**Página do possível cliente**: Endereço próprio do perfil pesquisado, com contexto de projeto, resumo e ficha Google na área principal. Dados cadastrais, oportunidade e fontes são categorias de informação em abas; a ficha Google permanece aberta na área principal. Não existe uma aba redundante de consultas.
+
+**Identificação por montadora**: Especialistas mostram pequenas logos das marcas declaradas. Multimarcas usam logos sobrepostas; quando não há marcas declaradas, os símbolos são apenas ilustrativos. Perfis a confirmar mantêm essa indicação, sem logos que sugiram confirmação.

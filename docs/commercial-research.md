@@ -40,21 +40,21 @@ Opcionalmente, ambientes já configurados podem usar `GOOGLE_GENERATIVE_AI_API_K
 
 Cada empresa da pesquisa tem página própria em `/clientes/[id]`, autenticada e associada ao projeto. Os cards e as referências dos relatórios abrem essa página; o retorno conserva território, anos, filtros e página da lista. O resumo, contatos e iframe Google permanecem na área principal. O Google carrega ao entrar, sem expansão ou recolhimento; trocar as abas de informações não desmonta o mapa.
 
-As abas separam **Cadastro**, **Oportunidade comercial**, **Fontes e evidências** e **Consultas do Google**. Capital social permanece no cadastro, fora dos cards e do resumo. Edição comercial e registro de consultas continuam restritos a administradores.
+As abas separam **Cadastro**, **Oportunidade comercial** e **Fontes e evidências**. Capital social permanece no cadastro, fora dos cards e do resumo. A ficha Google fica aberta na área principal; a aba redundante de consultas foi removida. Edição comercial continua restrita a administradores.
 
 A busca incorporada gratuita usa nome, endereço e cidade, sem chave de API. Resultados podem ser ambíguos ou não existir para determinado CNPJ; a interface pede conferência e oferece refinamento temporário.
 
-Administradores podem fixar a ficha exata em **Consultas do Google → Registrar consulta → Ficha exata**, colando o código de Compartilhar → Incorporar um mapa. Apenas o endereço HTTPS `google.com/maps/embed?pb=…` é extraído e validado; o HTML não é renderizado. Endereços externos, API com chave, credenciais em URL e caminhos diferentes são rejeitados. A referência fica no JSON versionado da consulta, sem migration adicional.
+Referências de fichas exatas previamente salvas continuam válidas. Apenas o endereço HTTPS `google.com/maps/embed?pb=…` é extraído e validado; HTML não é renderizado. Endereços externos, API com chave, credenciais em URL e caminhos diferentes são rejeitados. O editor de consultas manuais não é exposto pela página atual, sem apagar os registros anteriores.
 
-O Google controla o conteúdo incorporado: nota e quantidade de avaliações podem aparecer, mas comentários completos são abertos pelo próprio Google Maps. Não se deve prometer leitura completa dos comentários dentro do iframe. Consultas manuais ficam em uma aba própria e continuam distintas da ficha atual.
+O Google controla o conteúdo incorporado: nota e quantidade de avaliações podem aparecer, mas comentários completos são abertos pelo próprio Google Maps. Não há scraping ou integração Places habilitada.
 
-Os cards mostram apenas os dados de prospecção e a estrela de favorito. O Google Maps fica na página do cliente; a aba de consultas oferece o link externo como alternativa. Administradores podem registrar nota, quantidade de avaliações, data e até cinco trechos breves, com autoria e fonte. A interface distingue consulta manual de sincronização e não mostra zero quando a nota é desconhecida. Não há scraping ou integração Places habilitada. A API Places exige faturamento; a chave de demonstração não oferece avaliações nem serve para produção.
+Os cards mostram dados de prospecção, estrela de favorito e identificação discreta por montadoras. A ficha Google e seu link externo ficam somente no perfil. Veja [origem e regras das logos](automaker-assets.md).
 
 ## Paginação e permissões
 
 Empresas: filtros e paginação no PostgreSQL com 10, 20 ou 50 resultados; contagem e filtros consideram a base completa, não só a página. Município, projeto e filtros ficam na URL. Trocar território ou filtro retorna à primeira página. Veículos, registros e editais paginam a base disponível, preservando seus limites de cobertura publicados. Paginar não expande a amostra PNCP nem o ranking da fonte.
 
-Somente administradores atualizam cadastro, editam perfis, registram Google ou conectam/geram IA. Pessoas autenticadas podem consultar os resultados. Todas as escritas validam papel e projeto no servidor, usam controle de versão ou lease e não confiam em permissões da interface.
+Somente administradores atualizam cadastro, editam perfis ou conectam/geram IA. Pessoas autenticadas podem consultar os resultados. Todas as escritas validam papel e projeto no servidor, usam controle de versão ou lease e não confiam em permissões da interface.
 
 
 ## Favoritos pessoais
