@@ -2563,3 +2563,13 @@ button:active:not(:disabled),
 .task-list .project-image img {
   object-fit: contain;
 }
+.project-form > .modal-footer,
+.delete-task-body + .modal-footer {
+  padding: 18px 28px;
+}
+@media (max-width: 760px) {
+  .project-form > .modal-footer,
+  .delete-task-body + .modal-footer {
+    padding: 18px 20px;
+  }
+}
