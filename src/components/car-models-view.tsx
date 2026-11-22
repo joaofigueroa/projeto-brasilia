@@ -104,7 +104,10 @@ export function CarModelsView({
       )}
       {report.rows.length > 0 ? (
         <>
-          <p className="bi-record-count">{filtered.length} linhas por modelo, fonte e território</p>
+          <p className="bi-record-count">
+            {filtered.length} {filtered.length === 1 ? "linha" : "linhas"} por modelo, fonte e
+            território
+          </p>
           <div className="bi-model-table-scroll">
             <table className="bi-model-table">
               <caption>

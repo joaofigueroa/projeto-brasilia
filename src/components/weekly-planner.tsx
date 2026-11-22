@@ -80,7 +80,8 @@ export function WeeklyPlanner({
           <div>
             <span className="section-caption">Conclusão da semana</span>
             <p>
-              {data.stats.done} de {data.stats.total} tarefas
+              {data.stats.done} de {data.stats.total}{" "}
+              {data.stats.total === 1 ? "tarefa" : "tarefas"}
             </p>
             <div className="completion-track">
               <span style={{ transform: `scaleX(${data.stats.completion / 100})` }} />
