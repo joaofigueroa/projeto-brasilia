@@ -1,6 +1,7 @@
 "use client";
 import {
   FolderKanban,
+  Folders,
   LogOut,
   MapPinned,
   Menu,
@@ -33,6 +34,7 @@ export function Sidebar({ viewer, projects }: { viewer: PublicUser; projects: Pr
   const links = [
     { href: "/tarefas", label: "Tarefas", Icon: FolderKanban },
     { href: "/inteligencia", label: "Inteligência de mercado", Icon: MapPinned },
+    ...(viewer.role === "admin" ? [{ href: "/projetos", label: "Projetos", Icon: Folders }] : []),
     { href: "/pessoas", label: "Pessoas", Icon: Users },
     { href: "/perfil", label: "Meu perfil", Icon: UserRound },
   ];

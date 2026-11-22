@@ -619,3 +619,156 @@ describe("project intelligence", () => {
     expect(data.models.rows.find((row) => row.model === "NIVUS")?.total).toBe(40);
   });
 });
+
+describe("administrator project management", () => {
+  async function projectServices() {
+    return import("@/server/services/projects");
+  }
+  const photo =
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jX1sAAAAASUVORK5CYII=";
+  it("creates a project and usable BI tabs together, including its photo", async () => {
+    const { createProject, getProjectManagement } = await projectServices();
+    const created = await createProject({
+      name: "  Novo negócio  ",
+      description: "  Análise de expansão.  ",
+      image: photo,
+    });
+    expect(created).toMatchObject({
+      name: "Novo negócio",
+      description: "Análise de expansão.",
+      image: photo,
+      version: 1,
+    });
+    expect((await getProjectManagement()).projects.find((p) => p.id === created.id)?.image).toBe(
+      photo,
+    );
+    const { listAnalysisTabs } = await import("@/server/repositories/intelligence");
+    const tabs = await listAnalysisTabs(created.id);
+    expect(tabs.map((tab) => tab.kind)).toEqual(["market", "prospects", "opportunities", "notes"]);
+    expect(tabs.every((tab) => tab.projectId === created.id)).toBe(true);
+    const { getIntelligence } = await import("@/server/services/intelligence");
+    expect((await getIntelligence({ project: created.id, uf: "DF", year: 2024 })).tab.id).toBe(
+      tabs[0].id,
+    );
+    const task = await createTask(input({ projectId: created.id }));
+    expect(
+      (await getBoard({ week: "2026-11-16", project: created.id })).tasks.some(
+        (item) => item.id === task,
+      ),
+    ).toBe(true);
+  });
+  it("edits metadata, removes a photo and preserves project identity, tasks and tabs", async () => {
+    const { createProject, saveProject } = await projectServices();
+    const created = await createProject({
+      name: "Projeto editável",
+      description: "Descrição inicial",
+      image: photo,
+    });
+    const task = await createTask(input({ projectId: created.id }));
+    const { listAnalysisTabs } = await import("@/server/repositories/intelligence");
+    const tabs = await listAnalysisTabs(created.id);
+    const updated = await saveProject({
+      id: created.id,
+      version: created.version,
+      name: "Nome atualizado",
+      description: "Outra descrição",
+      image: "",
+    });
+    expect(updated).toMatchObject({
+      id: created.id,
+      name: "Nome atualizado",
+      description: "Outra descrição",
+      image: null,
+      slug: created.slug,
+      color: created.color,
+      version: 2,
+    });
+    expect((await listAnalysisTabs(created.id)).map((t) => t.id)).toEqual(tabs.map((t) => t.id));
+    expect((await findTask(task))?.projectId).toBe(created.id);
+  });
+  it("rejects collaborator and unauthenticated management requests", async () => {
+    const { createProject, saveProject, getProjectManagement } = await projectServices();
+    const existing = (await listProjects())[0];
+    session.viewer = collaborator;
+    await expect(getProjectManagement()).rejects.toThrow("administradores");
+    await expect(
+      createProject({ name: "Não permitido", description: "", image: "" }),
+    ).rejects.toThrow("administradores");
+    await expect(saveProject({ ...existing, image: "" })).rejects.toThrow("administradores");
+    session.viewer = null;
+    await expect(getProjectManagement()).rejects.toThrow("Authentication required");
+    await expect(createProject({ name: "Sem sessão", description: "", image: "" })).rejects.toThrow(
+      "Authentication required",
+    );
+  });
+  it("rechecks administrator role in the write itself", async () => {
+    const { insertProject, updateProject } = await import("@/server/repositories/projects");
+    const existing = (await listProjects())[0];
+    expect(
+      await insertProject({
+        id: v7(),
+        actorId: collaborator.id,
+        name: "Bypass",
+        description: "",
+        image: "",
+        slug: v7(),
+        color: "blue",
+        tabs: [],
+      }),
+    ).toBeNull();
+    expect(
+      await updateProject({ ...existing, image: "", actorId: collaborator.id, name: "Bypass" }),
+    ).toBeNull();
+    expect((await listProjects())[0].name).toBe(existing.name);
+  });
+  it("prevents concurrent administrators from overwriting each other", async () => {
+    const { createProject, saveProject } = await projectServices();
+    const created = await createProject({ name: "Edição concorrente", description: "", image: "" });
+    const results = await Promise.allSettled([
+      saveProject({ ...created, image: "", name: "Primeira revisão" }),
+      saveProject({ ...created, image: "", name: "Segunda revisão" }),
+    ]);
+    expect(results.filter((result) => result.status === "fulfilled")).toHaveLength(1);
+    expect(results.filter((result) => result.status === "rejected")).toHaveLength(1);
+    expect((await listProjects()).find((p) => p.id === created.id)?.version).toBe(2);
+    await expect(saveProject({ ...created, image: "", name: "Valor antigo" })).rejects.toThrow(
+      "alterado",
+    );
+  });
+  it("validates names, descriptions and images before storage", async () => {
+    const { createProject } = await projectServices();
+    const count = (await listProjects()).length;
+    for (const overrides of [
+      { name: " " },
+      { name: "A" },
+      { description: "a".repeat(3001) },
+      { image: "https://example.com/photo.jpg" },
+      { image: "data:image/svg+xml;base64,PHN2Zz4=" },
+      { image: `data:image/png;base64,${"A".repeat(450001)}` },
+    ]) {
+      await expect(
+        createProject({ name: "Projeto válido", description: "", image: "", ...overrides }),
+      ).rejects.toThrow();
+    }
+    expect((await listProjects()).length).toBe(count);
+  });
+  it("rolls back a project if initial tab creation fails", async () => {
+    const { insertProject } = await import("@/server/repositories/projects");
+    const { listAnalysisTabs } = await import("@/server/repositories/intelligence");
+    const existingTab = (await listAnalysisTabs(projects[0].id))[0];
+    const id = v7();
+    await expect(
+      insertProject({
+        id,
+        actorId: admin.id,
+        name: "Atomic project",
+        description: "",
+        image: "",
+        slug: id,
+        color: "blue",
+        tabs: [{ id: existingTab.id, name: "Duplicate", kind: "market", position: 0 }],
+      }),
+    ).rejects.toThrow();
+    expect((await listProjects()).some((p) => p.id === id)).toBe(false);
+  });
+});

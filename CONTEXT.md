@@ -8,7 +8,7 @@
 | Pessoa | user | Identidade autenticável com nome, e-mail, foto e função profissional. |
 | Papel de acesso | role | `admin` ou `collaborator`, configurado por um administrador. |
 | Função profissional | jobTitle | Texto de apresentação do trabalho da pessoa; não concede permissões. |
-| Projeto | project | Iniciativa à qual uma tarefa obrigatoriamente pertence. |
+| Projeto | project | Iniciativa à qual uma tarefa obrigatoriamente pertence; tem nome, foto opcional e descrição, geridos por administradores. |
 | Tarefa / card | task | Unidade de trabalho planejada em uma semana. |
 | Responsável | assignee | Pessoa vinculada à execução de uma tarefa; pode movimentá-la. |
 | Administrador do card | administrator | Pessoa que pode editar os dados e os responsáveis daquele card, independentemente do papel global. |

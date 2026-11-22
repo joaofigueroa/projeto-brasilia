@@ -1,0 +1,137 @@
+{
+  "AC": {
+    "file": "/flags/AC.png",
+    "source": "https://www.correios.com.br/acesso-a-informacao/institucional/agenda-de-autoridades/imagem/icones-bandeiras/icon-bandeira_do_acre",
+    "sha256": "52a5468663a5530cefd2d8b2c3c13a4e8c81474ad90729422befca1383e509ec"
+  },
+  "AL": {
+    "file": "/flags/AL.png",
+    "source": "https://www.correios.com.br/acesso-a-informacao/institucional/agenda-de-autoridades/imagem/icones-bandeiras/bandeira_de_alagoas",
+    "sha256": "d448bf5cb31c15745e09dadf1b62d8ca53112a3b488a1b4b5e5cf3d7ae99a86b"
+  },
+  "AP": {
+    "file": "/flags/AP.png",
+    "source": "https://www.correios.com.br/acesso-a-informacao/institucional/agenda-de-autoridades/imagem/icones-bandeiras/bandeira_do_amapa",
+    "sha256": "e318d2081557b00349786efe00032d578d7d84a27fdd51310b2e03160c9b3d6e"
+  },
+  "AM": {
+    "file": "/flags/AM.png",
+    "source": "https://www.correios.com.br/acesso-a-informacao/institucional/agenda-de-autoridades/imagem/icones-bandeiras/bandeira_do_amazonas",
+    "sha256": "874ab3f680381ca39a0b3ff44ffd3eec62d822e3cf46d388996c4399a71bbaaa"
+  },
+  "BA": {
+    "file": "/flags/BA.png",
+    "source": "https://www.correios.com.br/acesso-a-informacao/institucional/agenda-de-autoridades/imagem/icones-bandeiras/bandeira_da_bahia",
+    "sha256": "b089e27f7ed9569bbaace6393238540294f488995710efcf16277764e5419c1f"
+  },
+  "CE": {
+    "file": "/flags/CE.png",
+    "source": "https://www.correios.com.br/acesso-a-informacao/institucional/agenda-de-autoridades/imagem/icones-bandeiras/bandeira_do_ceara",
+    "sha256": "556e44135d2c78d70e8b444bade732d29bc0fcbfea18ea4524dcaf239b6132f0"
+  },
+  "DF": {
+    "file": "/flags/DF.png",
+    "source": "https://www.correios.com.br/acesso-a-informacao/institucional/agenda-de-autoridades/imagem/icones-bandeiras/bandeira_do_distrito_federal_brasil",
+    "sha256": "8be960bd8425eccb8fb23b52f18f4d3b1eab256ff4aefa25cfd57a927da653dc"
+  },
+  "ES": {
+    "file": "/flags/ES.png",
+    "source": "https://www.correios.com.br/acesso-a-informacao/institucional/agenda-de-autoridades/imagem/icones-bandeiras/bandeira_do_espirito_santo",
+    "sha256": "07773300769d6f54897d4f93702cf3292fc1b865a7159e2a86e6968b3d2f9067"
+  },
+  "GO": {
+    "file": "/flags/GO.png",
+    "source": "https://www.correios.com.br/acesso-a-informacao/institucional/agenda-de-autoridades/imagem/icones-bandeiras/bandeira_de_goias",
+    "sha256": "c92e8af5178a34b6f4e3f56a47be243f92f020e007fdad9a9982dd3e1ed8c1bb"
+  },
+  "MA": {
+    "file": "/flags/MA.png",
+    "source": "https://www.correios.com.br/acesso-a-informacao/institucional/agenda-de-autoridades/imagem/icones-bandeiras/bandeira_do_maranhao",
+    "sha256": "7561ca9d551a37e819c26632657df01a5f707d8bb173feffd50176bec89d0ac7"
+  },
+  "MT": {
+    "file": "/flags/MT.png",
+    "source": "https://www.correios.com.br/acesso-a-informacao/institucional/agenda-de-autoridades/imagem/icones-bandeiras/bandeira_de_mato_grosso",
+    "sha256": "206ad65636ee6017af63f3d6e020c6d488bbeb1c54694079f31c1aef67c8885d"
+  },
+  "MS": {
+    "file": "/flags/MS.png",
+    "source": "https://www.correios.com.br/acesso-a-informacao/institucional/agenda-de-autoridades/imagem/icones-bandeiras/bandeira_de_mato_grosso_do_sul",
+    "sha256": "2583a0a4e820d2c5dc6c707c0566e34285084281a6b34d11654341098e49d4f2"
+  },
+  "MG": {
+    "file": "/flags/MG.png",
+    "source": "https://www.correios.com.br/acesso-a-informacao/institucional/agenda-de-autoridades/imagem/icones-bandeiras/bandeira_de_minas_gerais",
+    "sha256": "2e29191b644e2d97bd5f8fb5b8b05f96d28ee53fae69e8c24222cac8c03e7cba"
+  },
+  "PA": {
+    "file": "/flags/PA.png",
+    "source": "https://www.correios.com.br/acesso-a-informacao/institucional/agenda-de-autoridades/imagem/icones-bandeiras/bandeira_do_para",
+    "sha256": "01c5df0cd72b387defb19707d991379a373e268737144b3bcdad67d841c26a98"
+  },
+  "PB": {
+    "file": "/flags/PB.png",
+    "source": "https://www.correios.com.br/acesso-a-informacao/institucional/agenda-de-autoridades/imagem/icones-bandeiras/bandeira_da_paraiba",
+    "sha256": "8156f96a16bc0b360704bfb5370e88fa50972e3309db98c11c73bb6f62540301"
+  },
+  "PR": {
+    "file": "/flags/PR.png",
+    "source": "https://www.correios.com.br/acesso-a-informacao/institucional/agenda-de-autoridades/imagem/icones-bandeiras/bandeira_do_parana",
+    "sha256": "d37ed87d7cad7bfba7a791d9b614f621f2bd29084dad3d323ae14feb9292cbfe"
+  },
+  "PE": {
+    "file": "/flags/PE.png",
+    "source": "https://www.correios.com.br/acesso-a-informacao/institucional/agenda-de-autoridades/imagem/icones-bandeiras/bandeira_de_pernambuco",
+    "sha256": "4995dc30aacc00a872e6213e4e765eabb3f4e44d59d7fe1d1bf8da7542d4e362"
+  },
+  "PI": {
+    "file": "/flags/PI.png",
+    "source": "https://www.correios.com.br/acesso-a-informacao/institucional/agenda-de-autoridades/imagem/icones-bandeiras/bandeira_do_piaui",
+    "sha256": "81b133a382a6500f2435d25fbf0d7f1a3dd5b1fe635422a9d5b89b28599262e3"
+  },
+  "RJ": {
+    "file": "/flags/RJ.png",
+    "source": "https://www.correios.com.br/acesso-a-informacao/institucional/agenda-de-autoridades/imagem/icones-bandeiras/bandeira_rio_de_janeiro",
+    "sha256": "93c14e4038be45e460925d73ef0d182b6b3da1d8511c6531004af5afad208269"
+  },
+  "RN": {
+    "file": "/flags/RN.png",
+    "source": "https://www.correios.com.br/acesso-a-informacao/institucional/agenda-de-autoridades/imagem/icones-bandeiras/bandeira_do_rio_grande_do_norte",
+    "sha256": "5c5a12ed9fee360c05ed0cf66a8d514de2b42dcc856170683eac1af735746471"
+  },
+  "RS": {
+    "file": "/flags/RS.png",
+    "source": "https://www.correios.com.br/acesso-a-informacao/institucional/agenda-de-autoridades/imagem/icones-bandeiras/bandeira_do_rio_grande_do_sul",
+    "sha256": "2b582846f4e60965d4514b92086967ef625f959d1ed62a6dde5fd1731bed5faf"
+  },
+  "RO": {
+    "file": "/flags/RO.png",
+    "source": "https://www.correios.com.br/acesso-a-informacao/institucional/agenda-de-autoridades/imagem/icones-bandeiras/bandeira_de_rondonia",
+    "sha256": "5f724edf3224d4aab242d4ca75112e20356eb1fddf1b344209d8c33cd62db53d"
+  },
+  "RR": {
+    "file": "/flags/RR.png",
+    "source": "https://www.correios.com.br/acesso-a-informacao/institucional/agenda-de-autoridades/imagem/icones-bandeiras/bandeira_de_roraima",
+    "sha256": "05a20ee7213ae27bd2aec032fa916dfd84b70a851bc7657a219df71d7f3a5f2f"
+  },
+  "SC": {
+    "file": "/flags/SC.png",
+    "source": "https://www.correios.com.br/acesso-a-informacao/institucional/agenda-de-autoridades/imagem/icones-bandeiras/bandeira_de_santa_catarina",
+    "sha256": "73c2b8c9d64b5ef6a277b0eea15f421ef3d3a9bdf0109496c220c10f69f02fb0"
+  },
+  "SP": {
+    "file": "/flags/SP.png",
+    "source": "https://www.correios.com.br/acesso-a-informacao/institucional/agenda-de-autoridades/imagem/icones-bandeiras/bandeira_sao_paulo",
+    "sha256": "938d345a634e41d3ddc5396880f2e861bbaee1e1af8e867a7d7b1ca724496223"
+  },
+  "SE": {
+    "file": "/flags/SE.png",
+    "source": "https://www.correios.com.br/acesso-a-informacao/institucional/agenda-de-autoridades/imagem/icones-bandeiras/bandeira_de_sergipe",
+    "sha256": "a2527b07ff24a6fc99cdbd68b286f3bc7d830f72c734cf53e57d81dcfabb09fa"
+  },
+  "TO": {
+    "file": "/flags/TO.png",
+    "source": "https://www.correios.com.br/acesso-a-informacao/institucional/agenda-de-autoridades/imagem/icones-bandeiras/bandeira_do_tocantins",
+    "sha256": "ba77e75ccd4d45a6dd679d06f95c185d661ad6af4d1f987b8db9d6173713d692"
+  }
+}

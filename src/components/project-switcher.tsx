@@ -6,6 +6,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigation } from "@/hooks/use-navigation";
 import type { Project } from "@/types/domain";
+import { ProjectImage } from "./project-image";
 export function ProjectSwitcher({
   projects,
   selectedId,
@@ -60,9 +61,7 @@ export function ProjectSwitcher({
         aria-controls={open ? id : undefined}
         onClick={toggle}
       >
-        <span className={`project-switcher-icon project-${selected?.color ?? "lilac"}`}>
-          <Layers3 size={19} />
-        </span>
+        <ProjectImage project={selected} size="md" />
         <span className="project-switcher-label">
           <small>Projeto</small>
           <strong>{selected?.name ?? "Todos os projetos"}</strong>
@@ -109,7 +108,7 @@ export function ProjectSwitcher({
                       aria-pressed={project.id === selected?.id}
                       onClick={() => select(project.id)}
                     >
-                      <span className={`project-switcher-dot project-${project.color}`} />
+                      <ProjectImage project={project} />
                       <span>{project.name}</span>
                       {project.id === selected?.id && <Check size={16} />}
                     </button>

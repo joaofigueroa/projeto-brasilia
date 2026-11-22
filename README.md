@@ -16,13 +16,13 @@ Plataforma de gestão de pessoas, projetos e tarefas semanais. Aplicação indep
 - Visão transversal dos projetos e filtros por projeto, semana, responsável e texto, persistidos na URL.
 - Seletor de projeto no menu lateral retrátil e filtros acima do Kanban e layout responsivo com animações discretas e respeito a movimento reduzido.
 
-Os projetos iniciais são **Clínica estética**, **Vinhos** e **Peças automotivas**. A configuração e gestão do cadastro dos projetos pertence à próxima etapa. Nesta versão, todos os usuários autenticados podem visualizar os três projetos.
+Os projetos iniciais são **Clínica estética**, **Vinhos** e **Peças automotivas**. Administradores podem criar e editar projetos na página **Projetos**, com nome, foto opcional e descrição. Todos os usuários autenticados podem selecionar os projetos no Kanban e no BI. Projetos novos recebem quatro abas iniciais de análise, configuráveis pelos administradores. Alterações de nome preservam a identidade do projeto, as tarefas e as abas existentes; edições concorrentes exigem reabrir a versão atual antes de salvar.
 
 ## Inteligência de mercado
 
 A tela **Business Intelligence** combina mapas interativos de UFs e municípios, recortes por Brasil/região/UF/município e seleção de um ou mais anos. Administradores podem configurar abas, registrar análises e possíveis clientes e importar CSV. O mapa usa população do Censo 2022 ou estoque de automóveis de dezembro de 2022–2024, com média anual para múltiplos anos. A aba de veículos mostra apenas modelos de automóveis, com colunas anuais, soma ou média e fonte identificada. Estão carregados os rankings nacionais da Fenabrave de 2022–2024 e as publicações anuais de automóveis do Sincodiv-DF de 2022–2025. O DF e o recorte cadastral Brasília usam os dados locais do DF, com cobertura e fonte identificadas. Outros territórios dependem de dados locais com fonte; não recebem números nacionais por aproximação. A aba de editais consulta o PNCP para cada ano selecionado.
 
-Consulte [fontes, cobertura, permissões e formato de importação](docs/intelligence-data.md). A migration `0001_intelligence` deve ser aplicada antes de publicar esta versão.
+Consulte [fontes, cobertura, permissões e formato de importação](docs/intelligence-data.md). As migrations até `0002_special_misty_knight` devem ser aplicadas antes de publicar esta versão.
 
 ## Interface
 
@@ -30,7 +30,7 @@ O sistema visual compartilhado está em `src/app/design-system.css`. A identidad
 
 O Kanban combina planejamento semanal, filtro local por dia do prazo, progresso compacto e vistas de quadro ou lista. A lista conserva abertura de detalhes, histórico e alteração de status com as mesmas permissões do quadro. Trocar de semana encerra o filtro de dia. Os filtros de projeto, pessoa e texto continuam na URL.
 
-No BI, o período fica no cabeçalho, as abas organizam a análise e a busca territorial fica junto ao mapa. **Expandir análise** amplia o relatório e preserva o mapa montado, incluindo zoom e posição. No celular, as abas usam um seletor nativo. O relatório de automóveis reúne busca, marca, indicador e consolidação nos mesmos controles, sem alterar fontes ou regras de agregação. O mapa mantém geometrias, cores geográficas e gestos. Movimentos respeitam a preferência por movimento reduzido.
+No BI, o período fica no cabeçalho, as abas organizam a análise e a busca territorial fica junto ao mapa. **Expandir análise** amplia o relatório e preserva o mapa montado, incluindo zoom e posição. No celular, as abas usam um seletor nativo. O relatório de automóveis reúne busca, marca, indicador e consolidação nos mesmos controles, sem alterar fontes ou regras de agregação. O mapa mantém geometrias, cores geográficas e gestos. As siglas permanecem no mapa; as bandeiras das 27 UFs aparecem no hover, no card abaixo do mapa e no contexto do território selecionado. Os arquivos estão em `public/flags`, obtidos da galeria oficial dos Correios com fontes registradas em `src/data/state-flags.json`. Movimentos respeitam a preferência por movimento reduzido.
 
 ## Desenvolvimento
 
@@ -89,6 +89,7 @@ O setup não sobrescreve uma configuração Neon existente. Para manter os dois 
 | Editar todos os campos | Sim | Sim | Não | Não |
 | Mover entre status | Sim | Sim | Sim | Não |
 | Gerenciar pessoas e papéis | Sim | Não | Não | Não |
+| Criar e editar projetos | Sim | Não | Não | Não |
 | Alterar o próprio perfil e senha | Sim | Sim | Sim | Sim |
 
 Um colaborador pode administrar um card sem ser administrador do espaço. A função profissional não concede permissões. A aplicação relê o usuário no servidor; alterações de papel não dependem de dados enviados pelo cliente. Um administrador não pode remover o próprio papel administrativo.

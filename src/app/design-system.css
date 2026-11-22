@@ -2233,3 +2233,253 @@ button:active:not(:disabled),
     min-height: 36px;
   }
 }
+/* Project management follows the same directory and ruled-surface vocabulary. */
+.project-image {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  background: #e9eae4;
+  border: 1px solid #243a3210;
+  border-radius: 6px;
+  overflow: hidden;
+  color: var(--muted);
+}
+.project-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.project-image-sm {
+  width: 24px;
+  height: 24px;
+}
+.project-image-md {
+  width: 32px;
+  height: 32px;
+}
+.project-image-lg {
+  width: 80px;
+  height: 80px;
+  border-radius: 9px;
+}
+.project-image.project-lilac {
+  background: #eeebf2;
+  color: #82629c;
+}
+.project-image.project-rose {
+  background: #f5e9ea;
+  color: #a4616a;
+}
+.project-image.project-blue {
+  background: #e6edf3;
+  color: #4b7495;
+}
+.project-switcher-options {
+  max-height: min(500px, calc(100dvh - 190px));
+  overflow-y: auto;
+}
+.project-switcher-options button {
+  min-height: 42px;
+}
+.project-switcher-options button > .project-image {
+  flex: 0 0 24px;
+}
+.project-switcher-trigger > .project-image {
+  flex-shrink: 0;
+}
+.sidebar-collapsed .project-switcher-trigger {
+  justify-content: center;
+  padding: 8px;
+}
+.projects-page {
+  max-width: 1400px;
+}
+.projects-description {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.projects-directory-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  border-top: 2px solid var(--ink);
+  border-bottom: 1px solid var(--line);
+  padding: 15px 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+.project-entry {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 26px 0;
+  border-bottom: 1px solid var(--line);
+}
+.project-entry-content {
+  flex: 1;
+  min-width: 0;
+}
+.project-entry h2 {
+  font-size: 21px;
+  font-weight: 550;
+  letter-spacing: -0.6px;
+  overflow-wrap: anywhere;
+}
+.project-entry-content > p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin-top: 7px;
+  max-width: 720px;
+}
+.project-entry > .button {
+  align-self: flex-start;
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+.project-entry-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 14px;
+}
+.project-entry-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.project-entry-links a:hover {
+  color: var(--green);
+}
+.project-form fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 26px 28px;
+}
+.project-form > .form-error {
+  margin: 0 28px 20px;
+}
+.project-photo-field {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--line);
+}
+.project-photo-field strong {
+  font-weight: 550;
+  font-size: 13px;
+}
+.project-photo-field p {
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 6px;
+}
+.project-photo-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 10px;
+}
+.project-photo-upload {
+  position: relative;
+  cursor: pointer;
+  min-height: 34px;
+  font-size: 11px;
+  padding: 8px 10px;
+  overflow: hidden;
+}
+.project-photo-upload input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+.project-photo-upload:focus-within {
+  outline: 2px solid var(--green);
+  outline-offset: 3px;
+}
+.project-photo-actions .text-button {
+  font-size: 11px;
+}
+.project-form fieldset:disabled .project-photo-upload {
+  opacity: 0.5;
+  cursor: wait;
+}
+@media (min-width: 761px) {
+  .sidebar-collapsed .project-switcher-trigger > .project-image {
+    width: 28px;
+    height: 28px;
+  }
+}
+@media (max-width: 760px) {
+  .project-entry {
+    gap: 14px;
+    padding: 22px 0;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .project-entry > .project-image {
+    width: 58px;
+    height: 58px;
+    border-radius: 7px;
+  }
+  .project-entry h2 {
+    font-size: 18px;
+  }
+  .project-entry-content {
+    flex-basis: calc(100% - 74px);
+  }
+  .project-entry > .button {
+    margin-left: 72px;
+    margin-top: 0;
+  }
+  .projects-directory-heading {
+    font-size: 10px;
+  }
+  .project-form fieldset {
+    padding: 24px 20px;
+  }
+  .project-form > .form-error {
+    margin-inline: 20px;
+  }
+  .project-photo-field {
+    gap: 14px;
+  }
+  .project-photo-field > .project-image {
+    width: 70px;
+    height: 70px;
+  }
+  .project-photo-actions {
+    gap: 8px;
+  }
+}
+.state-flag {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 28px;
+  height: 20px;
+  object-fit: contain;
+  border: 1px solid #526b5720;
+  border-radius: 2px;
+  background: #fff;
+}
+.bi-map-tooltip > .state-flag {
+  float: left;
+  margin: 0 8px 5px 0;
+}
+.bi-map-callout > .state-flag {
+  width: 34px;
+  height: 24px;
+}

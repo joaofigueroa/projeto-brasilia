@@ -98,7 +98,10 @@ export const projects = pgTable("projects", {
   slug: text("slug").notNull().unique(),
   description: text("description").notNull().default(""),
   color: text("color").notNull(),
+  image: text("image"),
+  version: integer("version").notNull().default(1),
   createdAt: createdAt(),
+  updatedAt: updatedAt(),
 });
 export const tasks = pgTable(
   "tasks",

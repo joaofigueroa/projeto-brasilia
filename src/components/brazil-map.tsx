@@ -8,6 +8,7 @@ import { useMapViewport } from "@/hooks/use-map-viewport";
 import { periodLabel } from "@/libs/analysis-period";
 import { compactNumber, formatNumber } from "@/libs/intelligence-presentation";
 import type { IntelligenceData } from "@/types/intelligence";
+import { StateFlag } from "./state-flag";
 export function BrazilMap({
   data,
   controller,
@@ -37,6 +38,9 @@ export function BrazilMap({
   );
   const active = features.find((shape) => shape.code === (hovered ?? selected));
   const activeStats = active ? statistics.get(active.code) : undefined;
+  const activeFlag = municipal
+    ? data.states.find((state) => state.code === data.territory.uf)
+    : active;
   const selectedShape = features.find((shape) => shape.code === selected);
   const hoveredShape = features.find((shape) => shape.code === hovered);
   const maximum = Math.max(1, ...features.map((shape) => statistics.get(shape.code)?.[layer] ?? 0));
@@ -314,6 +318,7 @@ export function BrazilMap({
             role="tooltip"
             style={{ left: pointer.x, top: pointer.y }}
           >
+            {!municipal && <StateFlag code={hoveredShape.code} name={hoveredShape.name} />}
             <strong>{hoveredShape.name}</strong>
             <span>{title(hoveredShape).slice(hoveredShape.name.length + 2)}</span>
           </div>
@@ -339,7 +344,7 @@ export function BrazilMap({
                       : "Selecione uma UF no mapa"}
               </span>
             </div>
-            {active && !municipal && <span className="bi-map-uf">{active.code}</span>}
+            {activeFlag && <StateFlag code={activeFlag.code} name={activeFlag.name} />}
           </motion.div>
         </AnimatePresence>
       </div>

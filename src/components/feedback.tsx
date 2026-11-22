@@ -18,15 +18,17 @@ export function FormError({ message }: { message: string }) {
 }
 export function SubmitButton({
   pending,
+  disabled = false,
   children,
   className = "button primary",
 }: {
   pending: boolean;
+  disabled?: boolean;
   children: React.ReactNode;
   className?: string;
 }) {
   return (
-    <button type="submit" className={className} disabled={pending}>
+    <button type="submit" className={className} disabled={pending || disabled}>
       {pending && <LoaderCircle size={17} className="spin" />}
       {pending ? "Salvando…" : children}
     </button>

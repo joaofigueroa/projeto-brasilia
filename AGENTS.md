@@ -18,7 +18,7 @@ Aplicação independente que segue os padrões de engenharia do monorepo Jovens 
 - Valide entradas de services com Zod. Use UUIDv7 e índices em todas as chaves estrangeiras. Identificadores de código e SQL ficam em inglês.
 - Use funções, sem classes. Não adicione `useMemo` ou `useCallback` manuais.
 - O driver Neon HTTP não suporta transações interativas. Preserve a atomicidade das tarefas, atribuições e eventos e o controle de versão.
-- A configuração de projetos é a próxima etapa; preserve os três projetos iniciais e a visão transversal.
+- Projetos são criados e editados apenas por administradores. Preserve os três projetos iniciais, sua identidade, suas abas e a visão transversal.
 - Preserve animações discretas, navegação por teclado, foco visível, responsividade e respeito a movimento reduzido.
 - Não versione credenciais, arquivos `.env.local`, bancos locais ou arquivos de acesso. Não registre senhas em logs; mantenha o logging de argumentos das Server Actions desativado.
 - Antes da entrega, execute os checks adequados: `pnpm check-types`, `pnpm check`, `pnpm test` e `pnpm build`.

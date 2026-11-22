@@ -96,7 +96,7 @@ O arquivo inteiro é validado antes da gravação. O lote usa uma única instru�
 
 ## Evolução
 
-Novas integrações devem conservar fonte, periodicidade, definição do indicador, abrangência e dimensão territorial. Receitas, vendas, emplacamentos e estoque são medidas distintas. Estimativas de mercado precisam registrar premissas nas notas. O cadastro dos projetos continua reservado à próxima etapa; as abas e os fluxos analíticos já podem variar entre os negócios existentes.
+Novas integrações devem conservar fonte, periodicidade, definição do indicador, abrangência e dimensão territorial. Receitas, vendas, emplacamentos e estoque são medidas distintas. Estimativas de mercado precisam registrar premissas nas notas. Administradores podem criar e editar projetos com nome, foto e descrição. Novos projetos começam com quatro abas genéricas; segmentos e fluxos podem ser configurados em seguida. Alterar o nome mantém as abas e os registros associados ao mesmo projeto.
 
 ## Sistema visual
 

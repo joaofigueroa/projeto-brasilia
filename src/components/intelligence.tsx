@@ -30,6 +30,7 @@ import { BrazilMap } from "./brazil-map";
 import { CarModelsView } from "./car-models-view";
 import { Toast } from "./feedback";
 import { IntelligenceDialogs } from "./intelligence-dialogs";
+import { StateFlag } from "./state-flag";
 
 const regions = [
   { code: "1", name: "Norte" },
@@ -641,7 +642,17 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
             controller={controller}
           />
           <div className="bi-selected-territory">
-            <Globe2 size={17} />
+            {data.territory.uf ? (
+              <StateFlag
+                code={data.territory.uf}
+                name={
+                  data.states.find((state) => state.code === data.territory.uf)?.name ??
+                  data.territory.uf
+                }
+              />
+            ) : (
+              <Globe2 size={17} />
+            )}
             <div>
               <span>Recorte selecionado</span>
               <strong>{data.territory.label}</strong>
@@ -671,7 +682,17 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
           <div className="report-heading">
             <div className="analysis-territory-heading">
               <span className="section-caption">
-                <MapPin size={13} />
+                {data.territory.uf ? (
+                  <StateFlag
+                    code={data.territory.uf}
+                    name={
+                      data.states.find((state) => state.code === data.territory.uf)?.name ??
+                      data.territory.uf
+                    }
+                  />
+                ) : (
+                  <MapPin size={13} />
+                )}
                 {data.territory.city
                   ? `Município · IBGE ${data.territory.city}`
                   : data.territory.level === "country"

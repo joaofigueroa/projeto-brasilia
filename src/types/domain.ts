@@ -15,6 +15,8 @@ export type Project = {
   id: string;
   name: string;
   slug: string;
+  image: string | null;
+  version: number;
   color: string;
   description: string;
 };
