@@ -2737,7 +2737,7 @@ button:active:not(:disabled),
 }
 .research-prospect-facts {
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
+  grid-template-columns: 1fr;
   gap: 10px;
   margin-top: auto;
 }
@@ -2751,12 +2751,6 @@ button:active:not(:disabled),
   font-size: 12px;
   font-weight: 500;
   margin-top: 5px;
-}
-.research-prospect-facts small {
-  display: block;
-  font-size: 9px;
-  line-height: 1.5;
-  margin-top: 3px;
 }
 .research-prospect-bottom {
   display: flex;

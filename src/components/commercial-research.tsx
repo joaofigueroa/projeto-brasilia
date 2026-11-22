@@ -4,7 +4,6 @@ import { AnimatePresence } from "motion/react";
 import { useId, useState } from "react";
 import type { IntelligenceController } from "@/hooks/use-intelligence";
 import {
-  researchCurrency,
   researchDate,
   researchPriorityLabels,
   researchSegmentLabels,
@@ -274,15 +273,6 @@ export function ResearchedProspects({
               <div className="research-prospect-facts">
                 <span>
                   CNPJ desde <b>{prospect.registry?.openedAt?.slice(0, 4) ?? "A confirmar"}</b>
-                </span>
-                <span>
-                  Capital social{" "}
-                  <b>
-                    {prospect.registry?.capital == null
-                      ? "A confirmar"
-                      : researchCurrency(prospect.registry.capital)}
-                  </b>
-                  {prospect.registry?.branch && <small>Da pessoa jurídica, não da filial</small>}
                 </span>
               </div>
               <div className="research-prospect-bottom">
