@@ -5001,3 +5001,67 @@ textarea {
 .bi-model-coverage .bi-model-sources {
   margin-bottom: 0;
 }
+
+.bi-brazil-map {
+  overflow: hidden;
+}
+.bi-map-state path {
+  pointer-events: all;
+  cursor: pointer;
+}
+.bi-brazil-map.is-zoomed {
+  touch-action: none;
+  cursor: grab;
+}
+.bi-brazil-map.is-zoomed .bi-map-state path {
+  cursor: grab;
+}
+.bi-brazil-map.is-dragging,
+.bi-brazil-map.is-dragging .bi-map-state path {
+  cursor: grabbing;
+  user-select: none;
+}
+.bi-map-tooltip {
+  position: fixed;
+  z-index: 90;
+  pointer-events: none;
+  width: 216px;
+  border: 1px solid #dce6de;
+  border-radius: 9px;
+  background: #fff;
+  color: var(--ink);
+  padding: 10px 12px;
+  box-shadow: 0 5px 20px #173d2d20;
+  animation: map-tooltip-in 0.14s ease-out;
+}
+.bi-map-tooltip strong,
+.bi-map-tooltip span {
+  display: block;
+}
+.bi-map-tooltip strong {
+  font-size: 13px;
+}
+.bi-map-tooltip span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+@keyframes map-tooltip-in {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bi-map-tooltip {
+    animation: none;
+  }
+}
+.bi-map-state.is-missing:not(.is-selected):not(.is-hovered) path {
+  stroke: #a8b9ad;
+}

@@ -28,7 +28,7 @@ A correspondência Senatran → IBGE usa UF e normalização exata do nome, com 
 
 ## Mapas e consolidação
 
-O mapa alterna entre estados e municípios da UF selecionada. Clicar em um município atualiza o painel e o seletor de território; o mapa municipal permite zoom e navegação por teclado. Contornos selecionados e em hover são desenhados em uma camada sobre todas as áreas, evitando que vizinhos ocultem a borda. DF conserva sua geometria e um alvo ampliado no mapa nacional. Códigos recentes sem geometria no arquivo oficial são sinalizados.
+O mapa alterna entre estados e municípios da UF selecionada. Clicar em um município atualiza o painel e o seletor de território; os mapas de estados e municípios permitem zoom de 1× a 6×, arraste por mouse ou toque quando ampliados e identificação por nome junto ao cursor. Um gesto de arraste não seleciona o território ao soltar. O mapa municipal mantém navegação por teclado. Áreas sem dados continuam clicáveis; a hachura indica falta de cobertura completa para os anos selecionados. Contornos selecionados e em hover são desenhados em uma camada sobre todas as áreas, evitando que vizinhos ocultem a borda. DF conserva sua geometria e um alvo ampliado no mapa nacional. Códigos recentes sem geometria no arquivo oficial são sinalizados.
 
 A camada Automóveis usa apenas a classificação AUTOMOVEL da Senatran, não o total de veículos. Para múltiplos anos, mostra a média dos estoques de dezembro e exige dados para todos os anos selecionados; uma lacuna deixa o indicador indisponível. Não representa vendas.
 

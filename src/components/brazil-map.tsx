@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useId, useRef, useState } from "react";
 import statePaths from "@/data/brazil-map.json";
 import type { IntelligenceController } from "@/hooks/use-intelligence";
+import { useMapViewport } from "@/hooks/use-map-viewport";
 import { periodLabel } from "@/libs/analysis-period";
 import { compactNumber, formatNumber } from "@/libs/intelligence-presentation";
 import type { IntelligenceData } from "@/types/intelligence";
@@ -18,7 +19,9 @@ export function BrazilMap({
   const [layer, setLayer] = useState<"population" | "fleet">(
     data.project.slug === "pecas-automotivas" ? "fleet" : "population",
   );
-  const [zoom, setZoom] = useState(1);
+  const viewport = useMapViewport();
+  const { zoom } = viewport;
+  const [pointer, setPointer] = useState<{ x: number; y: number } | null>(null);
   const links = useRef<Record<string, HTMLAnchorElement | null>>({});
   const id = useId();
   const municipal = data.mapView === "municipalities" && Boolean(data.municipalMap);
@@ -42,12 +45,8 @@ export function BrazilMap({
     data.years.length > 1
       ? `automóveis · média anual · ${period}`
       : `automóveis registrados · dez/${period}`;
-  const center = municipal && zoom > 1 ? (selectedShape?.center ?? [290, 280]) : [290, 280];
-  const width = 580 / zoom,
-    height = 560 / zoom;
-  const left = Math.max(0, Math.min(580 - width, center[0] - width / 2)),
-    top = Math.max(0, Math.min(560 - height, center[1] - height / 2));
   function select(code: string) {
+    if (controller.navigating) return;
     setHovered(code);
     controller.navigate(
       municipal ? { city: code, map: "municipalities" } : { uf: code, region: null, city: null },
@@ -79,6 +78,7 @@ export function BrazilMap({
     <section
       className="bi-map-card"
       aria-label={municipal ? "Mapa interativo de municípios" : "Mapa interativo do Brasil"}
+      aria-busy={controller.navigating}
     >
       <div className="bi-map-heading">
         <div>
@@ -96,10 +96,11 @@ export function BrazilMap({
       <div className="bi-map-levels" role="group" aria-label="Nível geográfico do mapa">
         <button
           type="button"
+          disabled={controller.navigating}
           aria-pressed={data.mapView === "states"}
           onClick={() => {
             setHovered(null);
-            setZoom(1);
+            viewport.reset();
             controller.navigate({ map: "states" });
           }}
         >
@@ -107,10 +108,11 @@ export function BrazilMap({
         </button>
         <button
           type="button"
+          disabled={controller.navigating}
           aria-pressed={data.mapView === "municipalities"}
           onClick={() => {
             setHovered(null);
-            setZoom(1);
+            viewport.reset();
             controller.navigate({ map: "municipalities" });
           }}
         >
@@ -132,27 +134,28 @@ export function BrazilMap({
           Automóveis <small>{period}</small>
         </button>
       </div>
-      {municipal && (
+      {
         <div className="bi-map-local-toolbar">
           <button
             type="button"
             className="text-button"
+            disabled={controller.navigating}
             onClick={() => {
               setHovered(null);
-              setZoom(1);
-              controller.navigate({ map: "states" });
+              viewport.reset();
+              if (municipal) controller.navigate({ map: "states" });
             }}
           >
             <ArrowLeft size={13} />
-            Ver estados
+            {municipal ? "Ver estados" : "Centralizar mapa"}
           </button>
           <div>
             <button
               type="button"
               className="icon-button"
-              aria-label="Reduzir mapa municipal"
+              aria-label="Reduzir zoom do mapa"
               disabled={zoom === 1}
-              onClick={() => setZoom(Math.max(1, zoom - 1))}
+              onClick={() => viewport.changeZoom(zoom - 1)}
             >
               <Minus size={15} />
             </button>
@@ -160,20 +163,33 @@ export function BrazilMap({
             <button
               type="button"
               className="icon-button"
-              aria-label="Ampliar mapa municipal"
-              disabled={zoom === 4}
-              onClick={() => setZoom(Math.min(4, zoom + 1))}
+              aria-label="Ampliar zoom do mapa"
+              disabled={zoom === 6}
+              onClick={() => viewport.changeZoom(zoom + 1, selectedShape?.center)}
             >
               <Plus size={15} />
             </button>
           </div>
         </div>
-      )}
+      }
       <div className="bi-map-canvas">
         <svg
-          viewBox={`${left} ${top} ${width} ${height}`}
+          viewBox={viewport.viewBox}
+          {...viewport.handlers}
+          onPointerMove={(event) => {
+            viewport.handlers.onPointerMove(event);
+            if (event.pointerType === "mouse")
+              setPointer({
+                x: Math.min(event.clientX + 14, window.innerWidth - 230),
+                y: Math.max(8, event.clientY - 60),
+              });
+          }}
+          onPointerLeave={() => {
+            setPointer(null);
+            setHovered(null);
+          }}
           aria-labelledby={id}
-          className={`bi-brazil-map ${municipal ? "is-municipal" : ""}`}
+          className={`bi-brazil-map ${municipal ? "is-municipal" : ""} ${zoom > 1 ? "is-zoomed" : ""} ${viewport.dragging ? "is-dragging" : ""}`}
         >
           <title id={id}>
             {municipal
@@ -182,6 +198,7 @@ export function BrazilMap({
           </title>
           <defs>
             <pattern id={`${id}-pattern`} patternUnits="userSpaceOnUse" width="7" height="7">
+              <rect width="7" height="7" fill="#f3f6f2" />
               <path d="M0 7L7 0" stroke="#c9d4ce" strokeWidth="1" />
             </pattern>
           </defs>
@@ -210,16 +227,17 @@ export function BrazilMap({
                 tabIndex={municipal ? (shape.code === (selected ?? features[0]?.code) ? 0 : -1) : 0}
                 aria-label={`Selecionar ${municipal ? "município " : ""}${title(shape)}`}
                 aria-current={shape.code === selected ? "true" : undefined}
+                aria-disabled={controller.navigating}
                 onKeyDown={(event) => arrow(event, index)}
                 onClick={(event) => {
                   event.preventDefault();
                   select(shape.code);
                 }}
-                onMouseEnter={() => setHovered(shape.code)}
-                onMouseLeave={() => setHovered(null)}
+                onPointerEnter={() => setHovered(shape.code)}
+                onPointerLeave={() => setHovered(null)}
                 onFocus={() => setHovered(shape.code)}
                 onBlur={() => setHovered(null)}
-                className={`bi-map-state ${shape.code === selected ? "is-selected" : ""} ${shape.code === hovered ? "is-hovered" : ""} ${!municipal && !data.territory.uf && data.states.find((s) => s.code === shape.code)?.region === data.territory.region ? "is-regional" : ""}`}
+                className={`bi-map-state ${value == null ? "is-missing" : ""} ${shape.code === selected ? "is-selected" : ""} ${shape.code === hovered ? "is-hovered" : ""} ${!municipal && !data.territory.uf && data.states.find((s) => s.code === shape.code)?.region === data.territory.region ? "is-regional" : ""}`}
               >
                 <title>{title(shape)}</title>
                 <path d={shape.path} fill={color} fillRule="evenodd" />
@@ -272,8 +290,8 @@ export function BrazilMap({
                       event.preventDefault();
                       select("DF");
                     }}
-                    onMouseEnter={() => setHovered("DF")}
-                    onMouseLeave={() => setHovered(null)}
+                    onPointerEnter={() => setHovered("DF")}
+                    onPointerLeave={() => setHovered(null)}
                     onFocus={() => setHovered("DF")}
                     onBlur={() => setHovered(null)}
                     className={`bi-df-target ${selected === "DF" ? "is-selected" : ""}`}
@@ -290,6 +308,16 @@ export function BrazilMap({
                 </g>
               ))}
         </svg>
+        {pointer && hoveredShape && !viewport.dragging && (
+          <div
+            className="bi-map-tooltip"
+            role="tooltip"
+            style={{ left: pointer.x, top: pointer.y }}
+          >
+            <strong>{hoveredShape.name}</strong>
+            <span>{title(hoveredShape).slice(hoveredShape.name.length + 2)}</span>
+          </div>
+        )}
         <AnimatePresence mode="wait">
           <motion.div
             key={active?.code ?? data.territory.label}
@@ -321,6 +349,12 @@ export function BrazilMap({
           código IBGE informado.
         </p>
       )}
+      {layer === "fleet" && data.states.every((state) => state.fleet === null) && (
+        <p className="bi-map-level-hint">
+          Sem cobertura de automóveis para todos os anos selecionados. As áreas hachuradas continuam
+          clicáveis. A base do mapa cobre 2022–2024; ajuste os anos ou escolha População 2022.
+        </p>
+      )}
       <div className="bi-map-legend">
         <span>Menor</span>
         <i />
@@ -331,8 +365,8 @@ export function BrazilMap({
         <MousePointer2 size={14} />
         <span>
           {municipal
-            ? "Clique em um município ou use o filtro. No mapa, use as setas e Enter. Amplie após selecionar para centralizar o recorte."
-            : "Passe o mouse ou use Tab para identificar. Clique ou pressione Enter para selecionar."}
+            ? "Clique para selecionar. Com zoom, arraste com mouse ou toque para mover o mapa. Use as setas e Enter para percorrer os municípios."
+            : "Passe o mouse ou use Tab para identificar. Clique ou pressione Enter para selecionar. Com zoom, arraste com mouse ou toque."}
         </span>
       </div>
       <div className="bi-map-attribution">
