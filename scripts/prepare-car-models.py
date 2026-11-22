@@ -7,7 +7,8 @@ import argparse,json,re,hashlib
 import pdfplumber
 parser=argparse.ArgumentParser();parser.add_argument('input',type=Path);args=parser.parse_args()
 root=Path(__file__).resolve().parent.parent
-result={}
+output=root/'src/data/official/car-models.json'
+result=json.loads(output.read_text()) if output.exists() else {}
 for year in [2022,2023,2024]:
  file=args.input/f'{year}.pdf'
  with pdfplumber.open(file) as pdf:
@@ -24,4 +25,4 @@ for year in [2022,2023,2024]:
   url=f'https://www.fenabrave.org.br/portal/files/{year}_12_{"02" if year==2024 else "2"}.pdf'
   result[str(year)]={'sourceUrl':url,'sourceName':'Fenabrave · ranking anual de automóveis','page':7,'sha256':hashlib.sha256(file.read_bytes()).hexdigest(),'rows':rows}
   print(year,len(rows),'models',next(r['value'] for r in rows if r['model']=='NIVUS'))
-(root/'src/data/official/car-models.json').write_text(json.dumps(result,ensure_ascii=False,separators=(',',':')))
+output.write_text(json.dumps(result,ensure_ascii=False,separators=(',',':')))

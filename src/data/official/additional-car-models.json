@@ -1,0 +1,709 @@
+{
+  "retrievedAt": "2026-11-22T19:24:07.452506+00:00",
+  "publications": [
+    {
+      "uf": "MT",
+      "city": null,
+      "year": 2024,
+      "sourceName": "Fenabrave-MT · ranking anual de automóveis",
+      "sourceUrl": "https://fenabravemt.com.br/wp-content/uploads/2025/01/Auto.pdf",
+      "catalogUrl": "https://fenabravemt.com.br/2025/01/10/emplacamentos-dezembro-2024/",
+      "sourceKind": "industry",
+      "periodStart": "2024-01-01",
+      "periodEnd": "2024-12-31",
+      "pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "sha256": "182506ca8674cc54400f70e5b8e503488cd640c129a173092d5128989ab6f39d",
+      "publishedRows": 135,
+      "listedTotal": 31513,
+      "sectionTotal": 31541,
+      "sectionTotalSourceUrl": "https://fenabravemt.com.br/wp-content/uploads/2025/01/Emplacamentos-Fenabrave-MT-Dez-PDF.pdf",
+      "sectionTotalPage": 4,
+      "classification": "Segmento Auto, conforme classificação da Fenabrave-MT. Não inclui Comercial Leve, Moto, Caminhão ou Ônibus.",
+      "notes": [
+        "A lista publicada soma 31.513 emplacamentos; o resumo anual da entidade informa 31.541 automóveis. A diferença de 28 não foi atribuída a modelos. A lista não representa cobertura integral do mercado estadual."
+      ],
+      "rows": [
+        {
+          "make": "HYUNDAI",
+          "model": "CRETA",
+          "value": 2359
+        },
+        {
+          "make": "VW",
+          "model": "POLO",
+          "value": 1831
+        },
+        {
+          "make": "GM",
+          "model": "ONIX",
+          "value": 1431
+        },
+        {
+          "make": "TOYOTA",
+          "model": "COROLLA CROSS",
+          "value": 1412
+        },
+        {
+          "make": "HYUNDAI",
+          "model": "HB20",
+          "value": 1354
+        },
+        {
+          "make": "GM",
+          "model": "TRACKER",
+          "value": 1245
+        },
+        {
+          "make": "FIAT",
+          "model": "ARGO",
+          "value": 1219
+        },
+        {
+          "make": "NISSAN",
+          "model": "KICKS",
+          "value": 1087
+        },
+        {
+          "make": "FIAT",
+          "model": "MOBI",
+          "value": 1048
+        },
+        {
+          "make": "VW",
+          "model": "T CROSS",
+          "value": 1022
+        },
+        {
+          "make": "TOYOTA",
+          "model": "COROLLA",
+          "value": 992
+        },
+        {
+          "make": "JEEP",
+          "model": "COMPASS",
+          "value": 872
+        },
+        {
+          "make": "DACIA",
+          "model": "DUSTER",
+          "value": 868
+        },
+        {
+          "make": "GM",
+          "model": "ONIX PLUS",
+          "value": 824
+        },
+        {
+          "make": "HONDA",
+          "model": "HR-V",
+          "value": 758
+        },
+        {
+          "make": "FIAT",
+          "model": "FASTBACK",
+          "value": 752
+        },
+        {
+          "make": "JEEP",
+          "model": "RENEGADE",
+          "value": 739
+        },
+        {
+          "make": "FIAT",
+          "model": "PULSE",
+          "value": 734
+        },
+        {
+          "make": "VW",
+          "model": "NIVUS",
+          "value": 724
+        },
+        {
+          "make": "TOYOTA",
+          "model": "HILUX SW4",
+          "value": 687
+        },
+        {
+          "make": "RENAULT",
+          "model": "KWID",
+          "value": 625
+        },
+        {
+          "make": "GWM",
+          "model": "HAVAL H6",
+          "value": 611
+        },
+        {
+          "make": "TOYOTA",
+          "model": "YARIS HB",
+          "value": 592
+        },
+        {
+          "make": "CAOA CHERY",
+          "model": "TIGGO 7",
+          "value": 588
+        },
+        {
+          "make": "TOYOTA",
+          "model": "YARIS SEDAN",
+          "value": 555
+        },
+        {
+          "make": "VW",
+          "model": "VIRTUS",
+          "value": 550
+        },
+        {
+          "make": "BYD",
+          "model": "SONG",
+          "value": 493
+        },
+        {
+          "make": "FIAT",
+          "model": "CRONOS",
+          "value": 444
+        },
+        {
+          "make": "HYUNDAI",
+          "model": "HB20S",
+          "value": 358
+        },
+        {
+          "make": "CAOA CHERY",
+          "model": "TIGGO 5X",
+          "value": 328
+        },
+        {
+          "make": "BYD",
+          "model": "DOLPHIN MINI",
+          "value": 306
+        },
+        {
+          "make": "NISSAN",
+          "model": "VERSA",
+          "value": 302
+        },
+        {
+          "make": "RENAULT",
+          "model": "KARDIAN",
+          "value": 268
+        },
+        {
+          "make": "JEEP",
+          "model": "COMMANDER",
+          "value": 257
+        },
+        {
+          "make": "HONDA",
+          "model": "CITY",
+          "value": 234
+        },
+        {
+          "make": "GM",
+          "model": "SPIN",
+          "value": 232
+        },
+        {
+          "make": "BYD",
+          "model": "DOLPHIN",
+          "value": 208
+        },
+        {
+          "make": "VW",
+          "model": "TAOS",
+          "value": 189
+        },
+        {
+          "make": "CITROEN",
+          "model": "C3",
+          "value": 152
+        },
+        {
+          "make": "CAOA CHERY",
+          "model": "TIGGO 8",
+          "value": 147
+        },
+        {
+          "make": "PEUGEOT",
+          "model": "208",
+          "value": 135
+        },
+        {
+          "make": "FORD",
+          "model": "TERRITORY",
+          "value": 130
+        },
+        {
+          "make": "HONDA",
+          "model": "CITY HATCH",
+          "value": 105
+        },
+        {
+          "make": "VOLVO",
+          "model": "XC60",
+          "value": 88
+        },
+        {
+          "make": "CITROEN",
+          "model": "C3 AIRCROSS",
+          "value": 83
+        },
+        {
+          "make": "PEUGEOT",
+          "model": "2008",
+          "value": 81
+        },
+        {
+          "make": "GWM",
+          "model": "ORA 03",
+          "value": 79
+        },
+        {
+          "make": "NISSAN",
+          "model": "SENTRA",
+          "value": 76
+        },
+        {
+          "make": "GM",
+          "model": "TRAILBLAZER",
+          "value": 76
+        },
+        {
+          "make": "MITSUBISHI",
+          "model": "PAJERO",
+          "value": 75
+        },
+        {
+          "make": "RENAULT",
+          "model": "SANDERO",
+          "value": 68
+        },
+        {
+          "make": "HONDA",
+          "model": "ZR-V",
+          "value": 64
+        },
+        {
+          "make": "MITSUBISHI",
+          "model": "ECLIPSE CROSS",
+          "value": 58
+        },
+        {
+          "make": "BMW",
+          "model": "X1",
+          "value": 56
+        },
+        {
+          "make": "BMW",
+          "model": "320I",
+          "value": 54
+        },
+        {
+          "make": "BYD",
+          "model": "KING",
+          "value": 49
+        },
+        {
+          "make": "TOYOTA",
+          "model": "RAV4",
+          "value": 48
+        },
+        {
+          "make": "BYD",
+          "model": "SEAL",
+          "value": 42
+        },
+        {
+          "make": "VW",
+          "model": "JETTA",
+          "value": 39
+        },
+        {
+          "make": "LAND ROVER",
+          "model": "DISCOVERY",
+          "value": 38
+        },
+        {
+          "make": "LAND ROVER",
+          "model": "DEFENDER",
+          "value": 35
+        },
+        {
+          "make": "BYD",
+          "model": "YUAN",
+          "value": 35
+        },
+        {
+          "make": "AUDI",
+          "model": "Q5",
+          "value": 30
+        },
+        {
+          "make": "VOLVO",
+          "model": "EX30",
+          "value": 30
+        },
+        {
+          "make": "HONDA",
+          "model": "CIVIC",
+          "value": 29
+        },
+        {
+          "make": "FORD",
+          "model": "BRONCO",
+          "value": 29
+        },
+        {
+          "make": "CITROEN",
+          "model": "BASALT",
+          "value": 29
+        },
+        {
+          "make": "AUDI",
+          "model": "Q3",
+          "value": 28
+        },
+        {
+          "make": "VW",
+          "model": "TIGUAN",
+          "value": 26
+        },
+        {
+          "make": "LAND ROVER",
+          "model": "RANGE ROVER",
+          "value": 25
+        },
+        {
+          "make": "VOLVO",
+          "model": "XC90",
+          "value": 24
+        },
+        {
+          "make": "HONDA",
+          "model": "CRV",
+          "value": 22
+        },
+        {
+          "make": "GM",
+          "model": "EQUINOX",
+          "value": 17
+        },
+        {
+          "make": "CITROEN",
+          "model": "C4 CACTUS",
+          "value": 17
+        },
+        {
+          "make": "FORD",
+          "model": "MUSTANG",
+          "value": 16
+        },
+        {
+          "make": "LAND ROVER",
+          "model": "EVOQUE",
+          "value": 16
+        },
+        {
+          "make": "BMW",
+          "model": "X4",
+          "value": 16
+        },
+        {
+          "make": "M.BENZ",
+          "model": "GLE",
+          "value": 16
+        },
+        {
+          "make": "BMW",
+          "model": "X3",
+          "value": 14
+        },
+        {
+          "make": "M.BENZ",
+          "model": "CLASSE C",
+          "value": 14
+        },
+        {
+          "make": "M.BENZ",
+          "model": "CLA200",
+          "value": 13
+        },
+        {
+          "make": "M.BENZ",
+          "model": "GLC",
+          "value": 12
+        },
+        {
+          "make": "BMW",
+          "model": "X6",
+          "value": 11
+        },
+        {
+          "make": "AUDI",
+          "model": "Q8",
+          "value": 10
+        },
+        {
+          "make": "BMW",
+          "model": "X5",
+          "value": 8
+        },
+        {
+          "make": "M.BENZ",
+          "model": "CLASSE GLA",
+          "value": 7
+        },
+        {
+          "make": "JAGUAR",
+          "model": "FPACE",
+          "value": 7
+        },
+        {
+          "make": "LAND ROVER",
+          "model": "VELAR",
+          "value": 7
+        },
+        {
+          "make": "VOLVO",
+          "model": "XC40",
+          "value": 7
+        },
+        {
+          "make": "M.BENZ",
+          "model": "CLASSE GLB",
+          "value": 7
+        },
+        {
+          "make": "VOLVO",
+          "model": "C40",
+          "value": 6
+        },
+        {
+          "make": "MINI",
+          "model": "COUNTRYMAN",
+          "value": 6
+        },
+        {
+          "make": "MINI",
+          "model": "COOPER",
+          "value": 5
+        },
+        {
+          "make": "GM",
+          "model": "CRUZE SEDAN",
+          "value": 5
+        },
+        {
+          "make": "AUDI",
+          "model": "A3 SEDAN",
+          "value": 5
+        },
+        {
+          "make": "HYUNDAI",
+          "model": "PALISADE",
+          "value": 5
+        },
+        {
+          "make": "GM",
+          "model": "CAMARO",
+          "value": 4
+        },
+        {
+          "make": "KIA",
+          "model": "SPORTAGE",
+          "value": 4
+        },
+        {
+          "make": "GM",
+          "model": "CRUZE HB",
+          "value": 4
+        },
+        {
+          "make": "BMW",
+          "model": "330E",
+          "value": 4
+        },
+        {
+          "make": "BMW",
+          "model": "IX3",
+          "value": 4
+        },
+        {
+          "make": "BMW",
+          "model": "IX1",
+          "value": 4
+        },
+        {
+          "make": "AUDI",
+          "model": "A3",
+          "value": 3
+        },
+        {
+          "make": "AUDI",
+          "model": "A5",
+          "value": 3
+        },
+        {
+          "make": "BMW",
+          "model": "M3",
+          "value": 3
+        },
+        {
+          "make": "BMW",
+          "model": "M2",
+          "value": 3
+        },
+        {
+          "make": "AUDI",
+          "model": "Q7",
+          "value": 3
+        },
+        {
+          "make": "BMW",
+          "model": "X2",
+          "value": 3
+        },
+        {
+          "make": "BMW",
+          "model": "IX",
+          "value": 3
+        },
+        {
+          "make": "BYD",
+          "model": "TAN",
+          "value": 3
+        },
+        {
+          "make": "TOYOTA",
+          "model": "CAMRY",
+          "value": 2
+        },
+        {
+          "make": "JEEP",
+          "model": "CHEROKEE",
+          "value": 2
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "CORVETTE",
+          "value": 2
+        },
+        {
+          "make": "JEEP",
+          "model": "WRANGLER",
+          "value": 2
+        },
+        {
+          "make": "HYUNDAI",
+          "model": "TUCSON",
+          "value": 2
+        },
+        {
+          "make": "M.BENZ",
+          "model": "G63AMG",
+          "value": 2
+        },
+        {
+          "make": "BMW",
+          "model": "420I",
+          "value": 2
+        },
+        {
+          "make": "KIA",
+          "model": "STONIC",
+          "value": 2
+        },
+        {
+          "make": "FORD",
+          "model": "MUSTANG MACH-E",
+          "value": 2
+        },
+        {
+          "make": "HONDA",
+          "model": "CIVIC TYPE-R",
+          "value": 2
+        },
+        {
+          "make": "ALFA ROMEO",
+          "model": "147",
+          "value": 1
+        },
+        {
+          "make": "ART TUBOS",
+          "model": "A4",
+          "value": 1
+        },
+        {
+          "make": "HONDA",
+          "model": "ACCORD",
+          "value": 1
+        },
+        {
+          "make": "KIA",
+          "model": "CARNIVAL",
+          "value": 1
+        },
+        {
+          "make": "FIAT",
+          "model": "DOBLO",
+          "value": 1
+        },
+        {
+          "make": "AUDI",
+          "model": "RS5",
+          "value": 1
+        },
+        {
+          "make": "PEUGEOT",
+          "model": "3008",
+          "value": 1
+        },
+        {
+          "make": "TOYOTA",
+          "model": "ETIOS HB",
+          "value": 1
+        },
+        {
+          "make": "JAGUAR",
+          "model": "EPACE",
+          "value": 1
+        },
+        {
+          "make": "BMW",
+          "model": "530E",
+          "value": 1
+        },
+        {
+          "make": "AUDI",
+          "model": "RS6 AVANT",
+          "value": 1
+        },
+        {
+          "make": "AUDI",
+          "model": "RSQ8",
+          "value": 1
+        },
+        {
+          "make": "BYD",
+          "model": "HAN",
+          "value": 1
+        },
+        {
+          "make": "RENAULT",
+          "model": "MEGANE ETECH",
+          "value": 1
+        },
+        {
+          "make": "BMW",
+          "model": "I4",
+          "value": 1
+        }
+      ]
+    }
+  ]
+}

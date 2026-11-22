@@ -137,6 +137,15 @@ export type CarModelReport = {
   coverage: CarModelCoverage;
 };
 export type CarModelCoverage = {
+  scopeIncluded: boolean;
+  targets: {
+    uf: string;
+    stateName: string;
+    capitalCode: string;
+    capitalName: string;
+    stateYears: number[];
+    capitalYears: number[];
+  }[];
   availableYears: number[];
   missingYears: number[];
   notes: string[];

@@ -1,4 +1,5 @@
 import "server-only";
+import { isVehicleTerritoryIncluded } from "@/libs/vehicle-scope";
 import { getPublishedCarModels } from "@/server/integrations/published-car-models";
 import type {
   CarModelReport,
@@ -32,7 +33,11 @@ export function getCarModelReport(
 ): CarModelReport {
   const eligible = records.filter(
     (record) =>
-      isCarModelRecord(record) && record.metric === measure && years.includes(record.year),
+      isVehicleTerritoryIncluded(territory.uf, territory.city) &&
+      isVehicleTerritoryIncluded(record.stateCode, record.municipalityCode) &&
+      isCarModelRecord(record) &&
+      record.metric === measure &&
+      years.includes(record.year),
   );
   const published = getPublishedCarModels(territory, years, measure);
   const grouped = new Map<
@@ -118,8 +123,8 @@ export function getCarModelReport(
         category: "Automóveis",
         region: data.uf ? territory.region : null,
         uf: data.uf,
-        city: null,
-        territoryLabel: data.uf === "DF" ? "Distrito Federal · área integral" : "Brasil",
+        city: data.city,
+        territoryLabel: data.territoryLabel,
         year: data.year,
         unit: "automóveis",
         sourceName: data.sourceName,

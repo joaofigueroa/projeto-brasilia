@@ -448,9 +448,9 @@ function Sources({ data }: { data: IntelligenceData }) {
         </ExternalSource>
         {data.project.slug === "pecas-automotivas" && (
           <p>
-            Modelos: rankings nacionais de automóveis da Fenabrave, 2022–2024, com os 50 primeiros
-            de cada ano. Os links dos boletins ficam na aba Veículos. Dados por UF e município
-            dependem de registros locais com fonte.
+            Modelos: rankings nacionais de automóveis da Fenabrave, 2022–2025; DF e Brasília,
+            2022–2025; Mato Grosso, 2024. A aba Veículos detalha os anos disponíveis por UF e
+            capital. A cobertura dos demais territórios permanece incompleta.
           </p>
         )}
         <ExternalSource href="https://www.gov.br/receitafederal/dados">

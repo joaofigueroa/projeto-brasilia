@@ -7,6 +7,7 @@ import { usePagination } from "@/hooks/use-pagination";
 import { periodLabel } from "@/libs/analysis-period";
 import { formatNumber } from "@/libs/intelligence-presentation";
 import type { IntelligenceData } from "@/types/intelligence";
+import { CarModelTerritories } from "./car-model-territories";
 import { Pagination } from "./pagination";
 export function CarModelsView({
   data,
@@ -33,6 +34,17 @@ export function CarModelsView({
         .includes(query.toLocaleLowerCase("pt-BR")),
   );
   const pagination = usePagination(filtered, `${query}-${make}`);
+  function showCoverage() {
+    setCoverageOpen(true);
+    requestAnimationFrame(() => {
+      document.getElementById(coverageId)?.scrollIntoView({
+        block: "start",
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "instant"
+          : "smooth",
+      });
+    });
+  }
   return (
     <>
       <div className="bi-panel-intro">
@@ -222,11 +234,35 @@ export function CarModelsView({
       ) : (
         <div className="bi-empty">
           <CarFront size={26} />
-          <h3>Sem dados de modelos neste recorte</h3>
+          <h3>
+            {report.coverage.scopeIncluded
+              ? "Sem publicação verificada neste recorte"
+              : "Município fora desta etapa"}
+          </h3>
           <p>
-            Não há quantidades verificadas para os anos e o território selecionados. A frota não foi
-            convertida em vendas. Cadastros e importações locais precisam informar a fonte.
+            {report.coverage.scopeIncluded
+              ? "Não há quantidades por modelo carregadas para este território e os anos selecionados. Consulte a cobertura por UF e capital. Sem publicação não significa nenhuma venda."
+              : "A lista de modelos contempla UFs e capitais nesta etapa. As demais cidades serão incluídas conforme sua definição."}
           </p>
+          {!report.coverage.scopeIncluded && data.territory.uf && (
+            <button
+              type="button"
+              className="button secondary"
+              onClick={() =>
+                controller.navigate({
+                  uf: data.territory.uf,
+                  city: null,
+                  region: null,
+                  map: "states",
+                })
+              }
+            >
+              Consultar a unidade federativa
+            </button>
+          )}
+          <button type="button" className="button secondary" onClick={showCoverage}>
+            Ver cobertura de UFs e capitais
+          </button>
           {data.territory.level !== "country" && (
             <button
               type="button"
@@ -307,10 +343,16 @@ export function CarModelsView({
                   lacunas ficam identificadas como parciais.
                 </p>
                 <p>
-                  Cobertura pública carregada: Brasil, 2022–2024 (Fenabrave nacional); Distrito
-                  Federal, 2022–2025 (Sincodiv-DF). Outros estados e municípios usam somente
-                  registros locais com fonte.
+                  Brasil: 2022–2025 (Fenabrave nacional). Distrito Federal e Brasília: 2022–2025
+                  (Sincodiv-DF). Mato Grosso: 2024 (Fenabrave-MT). Os demais territórios ainda
+                  dependem de séries locais verificáveis.
                 </p>
+                <CarModelTerritories
+                  coverage={report.coverage}
+                  years={data.years}
+                  territory={data.territory}
+                  controller={controller}
+                />
                 <div className="bi-model-sources">
                   {report.coverage.sources.map((source) => (
                     <a

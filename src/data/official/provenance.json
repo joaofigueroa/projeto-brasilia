@@ -224,6 +224,27 @@
           "sha256": "047a6482d74ab0c92d23bd98615e9bd061dc38ffce0f113619862239505480a8"
         }
       ]
+    },
+    {
+      "retrievedAt": "2026-11-22T19:24:07.452506+00:00",
+      "directory": "expanded-models",
+      "resources": [
+        {
+          "file": "MT-2024.pdf",
+          "url": "https://fenabravemt.com.br/wp-content/uploads/2025/01/Auto.pdf",
+          "sha256": "182506ca8674cc54400f70e5b8e503488cd640c129a173092d5128989ab6f39d"
+        },
+        {
+          "file": "MT-2024-summary.pdf",
+          "url": "https://fenabravemt.com.br/wp-content/uploads/2025/01/Emplacamentos-Fenabrave-MT-Dez-PDF.pdf",
+          "sha256": "e7947b4e7ae2cce470ef8057604e0a7b141bbb7cbd8f7c933ab569cf36ae9f32"
+        },
+        {
+          "file": "BR-2025.pdf",
+          "url": "https://www.fenabrave.org.br/portal/files/2025_12_02.pdf",
+          "sha256": "a0be3dcbd504f3774d3facba7882eeccac82b683aeedd5ee1531cb1a05d43eab"
+        }
+      ]
     }
   ]
 }

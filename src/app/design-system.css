@@ -2773,6 +2773,58 @@ button:active:not(:disabled),
   margin-left: -7px;
   box-shadow: -2px 0 0 var(--surface);
 }
+.vehicle-territories {
+  margin: 24px 0;
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+}
+.vehicle-territories h4 {
+  font-size: 15px;
+  font-weight: 550;
+  margin: 0 0 10px;
+}
+.vehicle-territories-table {
+  min-width: 440px;
+}
+.vehicle-territories-table td {
+  width: 50%;
+  vertical-align: top;
+}
+.vehicle-territory-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 0;
+  border: 0;
+  color: var(--ink);
+  background: transparent;
+  font-size: 12px;
+  font-weight: 550;
+  text-align: left;
+  cursor: pointer;
+}
+.vehicle-territory-link:hover,
+.vehicle-territory-link[aria-current] {
+  color: var(--green);
+}
+.vehicle-coverage-years {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin-top: 8px;
+}
+.vehicle-coverage-years > span {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+.vehicle-coverage-years > .available {
+  color: var(--ink);
+}
+.vehicle-coverage-years > span > span {
+  display: block;
+  font-size: 8px;
+}
 .research-prospect-facts {
   display: grid;
   grid-template-columns: 1fr;
