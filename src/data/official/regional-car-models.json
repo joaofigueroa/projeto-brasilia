@@ -1,0 +1,2865 @@
+{
+  "retrievedAt": "2026-11-21T23:54:43.695936+00:00",
+  "publications": [
+    {
+      "uf": "DF",
+      "year": 2022,
+      "sourceName": "Sincodiv-DF · ranking anual de automóveis",
+      "sourceUrl": "https://sincodivdf.com.br/wp-content/uploads/2026/06/2022-ranking-dos-modelos.pdf",
+      "catalogUrl": "https://sincodivdf.com.br/emplacamentos/",
+      "sourceKind": "industry",
+      "periodStart": "2022-01-01",
+      "periodEnd": "2022-12-31",
+      "pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "sha256": "017eb40a1845be8c760d9273f63927069b76c6ecb2145faa2994e8add0c21a9c",
+      "publishedTotal": 32580,
+      "publishedRows": 122,
+      "classification": "AUTOMÓVEIS, conforme classificação da publicação Sincodiv-DF.",
+      "rows": [
+        {
+          "make": "HYUNDAI",
+          "model": "CRETA",
+          "value": 2311,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "TRACKER",
+          "value": 2299,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "ONIX HATCH",
+          "value": 2216,
+          "issue": ""
+        },
+        {
+          "make": "VW",
+          "model": "T CROSS",
+          "value": 2115,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "ONIX SEDAN",
+          "value": 2068,
+          "issue": ""
+        },
+        {
+          "make": "TOYOTA",
+          "model": "COROLLA",
+          "value": 1705,
+          "issue": ""
+        },
+        {
+          "make": "HYUNDAI",
+          "model": "HB20",
+          "value": 1685,
+          "issue": ""
+        },
+        {
+          "make": "HONDA",
+          "model": "CITY",
+          "value": 1673,
+          "issue": ""
+        },
+        {
+          "make": "RENAULT",
+          "model": "KWID",
+          "value": 1593,
+          "issue": ""
+        },
+        {
+          "make": "VW",
+          "model": "NIVUS",
+          "value": 1375,
+          "issue": ""
+        },
+        {
+          "make": "VW",
+          "model": "GOL",
+          "value": 1338,
+          "issue": ""
+        },
+        {
+          "make": "FIAT",
+          "model": "ARGO",
+          "value": 1290,
+          "issue": ""
+        },
+        {
+          "make": "FIAT",
+          "model": "MOBI",
+          "value": 1232,
+          "issue": ""
+        },
+        {
+          "make": "NISSAN",
+          "model": "KICKS",
+          "value": 991,
+          "issue": ""
+        },
+        {
+          "make": "PEUGEOT",
+          "model": "208",
+          "value": 875,
+          "issue": ""
+        },
+        {
+          "make": "FIAT",
+          "model": "CRONOS",
+          "value": 853,
+          "issue": ""
+        },
+        {
+          "make": "TOYOTA",
+          "model": "YARIS HATCH",
+          "value": 734,
+          "issue": ""
+        },
+        {
+          "make": "HONDA",
+          "model": "HR-V",
+          "value": 585,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "CRUZE SEDAN",
+          "value": 526,
+          "issue": ""
+        },
+        {
+          "make": "HYUNDAI",
+          "model": "HB20 SEDAN",
+          "value": 466,
+          "issue": ""
+        },
+        {
+          "make": "TOYOTA",
+          "model": "YARIS SEDAN",
+          "value": 438,
+          "issue": ""
+        },
+        {
+          "make": "FIAT",
+          "model": "FASTBACK",
+          "value": 425,
+          "issue": ""
+        },
+        {
+          "make": "TOYOTA",
+          "model": "COROLLA HIBRIDO",
+          "value": 382,
+          "issue": ""
+        },
+        {
+          "make": "NISSAN",
+          "model": "VERSA",
+          "value": 380,
+          "issue": ""
+        },
+        {
+          "make": "VW",
+          "model": "POLO",
+          "value": 292,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "SPIN",
+          "value": 279,
+          "issue": ""
+        },
+        {
+          "make": "RENAULT",
+          "model": "SANDERO",
+          "value": 257,
+          "issue": ""
+        },
+        {
+          "make": "CITROEN",
+          "model": "C4 CACTUS",
+          "value": 234,
+          "issue": ""
+        },
+        {
+          "make": "CITROEN",
+          "model": "C3",
+          "value": 220,
+          "issue": ""
+        },
+        {
+          "make": "VW",
+          "model": "VIRTUS",
+          "value": 178,
+          "issue": ""
+        },
+        {
+          "make": "JAC",
+          "model": "E JS1",
+          "value": 161,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "320I",
+          "value": 141,
+          "issue": ""
+        },
+        {
+          "make": "RENAULT",
+          "model": "CAPTUR",
+          "value": 111,
+          "issue": ""
+        },
+        {
+          "make": "PEUGEOT",
+          "model": "2008",
+          "value": 89,
+          "issue": ""
+        },
+        {
+          "make": "FIAT",
+          "model": "SIENA",
+          "value": 86,
+          "issue": ""
+        },
+        {
+          "make": "HONDA",
+          "model": "CIVIC",
+          "value": 85,
+          "issue": ""
+        },
+        {
+          "make": "KIA",
+          "model": "STONIC",
+          "value": 85,
+          "issue": ""
+        },
+        {
+          "make": "VW",
+          "model": "VOYAGE",
+          "value": 77,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "CRUZE HATCH",
+          "value": 65,
+          "issue": ""
+        },
+        {
+          "make": "RENAULT",
+          "model": "LOGAN",
+          "value": 57,
+          "issue": ""
+        },
+        {
+          "make": "PEUGEOT",
+          "model": "3008",
+          "value": 49,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "CLASSE C",
+          "value": 44,
+          "issue": ""
+        },
+        {
+          "make": "PORSCHE",
+          "model": "911",
+          "value": 38,
+          "issue": ""
+        },
+        {
+          "make": "MINI",
+          "model": "COOPER",
+          "value": 35,
+          "issue": ""
+        },
+        {
+          "make": "KIA",
+          "model": "CERATO",
+          "value": 34,
+          "issue": ""
+        },
+        {
+          "make": "JAC",
+          "model": "E-J7",
+          "value": 29,
+          "issue": ""
+        },
+        {
+          "make": "VW",
+          "model": "JETTA",
+          "value": 28,
+          "issue": ""
+        },
+        {
+          "make": "HONDA",
+          "model": "WR-V",
+          "value": 22,
+          "issue": ""
+        },
+        {
+          "make": "CHERY",
+          "model": "ARRIZO",
+          "value": 20,
+          "issue": ""
+        },
+        {
+          "make": "CITROEN",
+          "model": "C4",
+          "value": 19,
+          "issue": ""
+        },
+        {
+          "make": "PORSCHE",
+          "model": "TAYCAN",
+          "value": 18,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "330E",
+          "value": 17,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "CLA",
+          "value": 16,
+          "issue": ""
+        },
+        {
+          "make": "PORSCHE",
+          "model": "PANAMERA",
+          "value": 14,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "A5",
+          "value": 12,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "AMG",
+          "value": 12,
+          "issue": ""
+        },
+        {
+          "make": "CHERY",
+          "model": "ICAR",
+          "value": 11,
+          "issue": ""
+        },
+        {
+          "make": "FIAT",
+          "model": "500E",
+          "value": 11,
+          "issue": ""
+        },
+        {
+          "make": "RENAULT",
+          "model": "ZOE",
+          "value": 10,
+          "issue": ""
+        },
+        {
+          "make": "SUBARU",
+          "model": "XV",
+          "value": 10,
+          "issue": ""
+        },
+        {
+          "make": "MINI",
+          "model": "COUNTRYMAN",
+          "value": 9,
+          "issue": ""
+        },
+        {
+          "make": "FIAT",
+          "model": "UNO",
+          "value": 7,
+          "issue": ""
+        },
+        {
+          "make": "FORD",
+          "model": "MUSTANG",
+          "value": 7,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "GLA",
+          "value": 7,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "A3",
+          "value": 6,
+          "issue": ""
+        },
+        {
+          "make": "HONDA",
+          "model": "CR-V",
+          "value": 6,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "A3 HIBRIDO",
+          "value": 5,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "RS",
+          "value": 5,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "I3 BEV",
+          "value": 5,
+          "issue": ""
+        },
+        {
+          "make": "PORSCHE",
+          "model": "BOXTER",
+          "value": 5,
+          "issue": ""
+        },
+        {
+          "make": "PORSCHE",
+          "model": "CAYMAN",
+          "value": 5,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "A3 SEDAN",
+          "value": 4,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "A6",
+          "value": 4,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "Q8",
+          "value": 4,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "420I",
+          "value": 4,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "530E",
+          "value": 4,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "530I LIMOUSINE",
+          "value": 4,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "CLASSE E",
+          "value": 4,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "A4",
+          "value": 3,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "330 I",
+          "value": 3,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "M3",
+          "value": 3,
+          "issue": ""
+        },
+        {
+          "make": "HONDA",
+          "model": "FIT",
+          "value": 3,
+          "issue": ""
+        },
+        {
+          "make": "NISSAN",
+          "model": "LEAF",
+          "value": 3,
+          "issue": ""
+        },
+        {
+          "make": "TOYOTA",
+          "model": "CAMRY",
+          "value": 3,
+          "issue": ""
+        },
+        {
+          "make": "VW",
+          "model": "FOX",
+          "value": 3,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "118I",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "HONDA",
+          "model": "ACCORD",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "A250",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "C 300",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "PEUGEOT",
+          "model": "E2008 GT",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "TESLA",
+          "model": "MODEL S PLAID",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "A6 LIMOUSINE",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "F5",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "Q5",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "218I",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "525I",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "745LE",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "I440",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "630I",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "BYD",
+          "model": "D1 GS 180EV",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "CHAMONIX",
+          "model": "S90",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "CAMARO",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "CORVET",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "CITROEN",
+          "model": "BERLINGO MULTI",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "FORD",
+          "model": "MAVERICK",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "HYUNDAI",
+          "model": "SONATA",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "JAGUAR",
+          "model": "F-TYPE",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "KIA",
+          "model": "RIO",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "LAMBORGHIN",
+          "model": "HURACAN EVO",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "LEXUS",
+          "model": "LS500H",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "CLASSE A",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "CLK320",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "EQS",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "EQB",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "MINI",
+          "model": "HATCH",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "MINI",
+          "model": "JCW HATCH",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "MINI",
+          "model": "ONE",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "VW",
+          "model": "KARMANN",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "VOLVO",
+          "model": "C30",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "VOLVO",
+          "model": "S90 T8",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "VOLVO",
+          "model": "SX40",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "WAKE",
+          "model": "WAY",
+          "value": 1,
+          "issue": ""
+        }
+      ]
+    },
+    {
+      "uf": "DF",
+      "year": 2023,
+      "sourceName": "Sincodiv-DF · ranking anual de automóveis",
+      "sourceUrl": "https://sincodivdf.com.br/wp-content/uploads/2026/06/2023-ranking-dos-modelos.pdf",
+      "catalogUrl": "https://sincodivdf.com.br/emplacamentos/",
+      "sourceKind": "industry",
+      "periodStart": "2023-01-01",
+      "periodEnd": "2023-12-31",
+      "pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "sha256": "137db582fe473ecea31b44e1ce9bad126aebf4074b42b14fae0996277c3648cb",
+      "publishedTotal": 36853,
+      "publishedRows": 112,
+      "classification": "AUTOMÓVEIS, conforme classificação da publicação Sincodiv-DF.",
+      "rows": [
+        {
+          "make": "VW",
+          "model": "POLO",
+          "value": 2366,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "ONIX HATCH",
+          "value": 2243,
+          "issue": ""
+        },
+        {
+          "make": "HYUNDAI",
+          "model": "CRETA",
+          "value": 2098,
+          "issue": ""
+        },
+        {
+          "make": "VW",
+          "model": "T CROSS",
+          "value": 2097,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "TRACKER",
+          "value": 1976,
+          "issue": ""
+        },
+        {
+          "make": "HONDA",
+          "model": "HR-V",
+          "value": 1877,
+          "issue": ""
+        },
+        {
+          "make": "FIAT",
+          "model": "FASTBACK",
+          "value": 1671,
+          "issue": ""
+        },
+        {
+          "make": "NISSAN",
+          "model": "KICKS",
+          "value": 1538,
+          "issue": ""
+        },
+        {
+          "make": "RENAULT",
+          "model": "KWID",
+          "value": 1511,
+          "issue": ""
+        },
+        {
+          "make": "HYUNDAI",
+          "model": "HB20",
+          "value": 1510,
+          "issue": ""
+        },
+        {
+          "make": "TOYOTA",
+          "model": "COROLLA",
+          "value": 1492,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "ONIX SEDAN",
+          "value": 1467,
+          "issue": ""
+        },
+        {
+          "make": "VW",
+          "model": "NIVUS",
+          "value": 1449,
+          "issue": ""
+        },
+        {
+          "make": "FIAT",
+          "model": "ARGO",
+          "value": 1329,
+          "issue": ""
+        },
+        {
+          "make": "HONDA",
+          "model": "CITY",
+          "value": 1175,
+          "issue": ""
+        },
+        {
+          "make": "FIAT",
+          "model": "MOBI",
+          "value": 1142,
+          "issue": ""
+        },
+        {
+          "make": "PEUGEOT",
+          "model": "208",
+          "value": 1029,
+          "issue": ""
+        },
+        {
+          "make": "FIAT",
+          "model": "CRONOS",
+          "value": 946,
+          "issue": ""
+        },
+        {
+          "make": "CITROEN",
+          "model": "C3",
+          "value": 895,
+          "issue": ""
+        },
+        {
+          "make": "VW",
+          "model": "VIRTUS",
+          "value": 821,
+          "issue": ""
+        },
+        {
+          "make": "BYD",
+          "model": "DOLPHIN",
+          "value": 744,
+          "issue": ""
+        },
+        {
+          "make": "TOYOTA",
+          "model": "YARIS SEDAN",
+          "value": 656,
+          "issue": ""
+        },
+        {
+          "make": "TOYOTA",
+          "model": "COROLLA HIBRIDO",
+          "value": 549,
+          "issue": ""
+        },
+        {
+          "make": "TOYOTA",
+          "model": "YARIS HATCH",
+          "value": 493,
+          "issue": ""
+        },
+        {
+          "make": "HYUNDAI",
+          "model": "HB20 SEDAN",
+          "value": 449,
+          "issue": ""
+        },
+        {
+          "make": "NISSAN",
+          "model": "VERSA",
+          "value": 373,
+          "issue": ""
+        },
+        {
+          "make": "NISSAN",
+          "model": "SENTRA",
+          "value": 348,
+          "issue": ""
+        },
+        {
+          "make": "RENAULT",
+          "model": "SANDERO",
+          "value": 260,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "SPIN",
+          "value": 251,
+          "issue": ""
+        },
+        {
+          "make": "VW",
+          "model": "GOL",
+          "value": 234,
+          "issue": ""
+        },
+        {
+          "make": "JAC",
+          "model": "E JS1",
+          "value": 220,
+          "issue": ""
+        },
+        {
+          "make": "PEUGEOT",
+          "model": "2008",
+          "value": 185,
+          "issue": ""
+        },
+        {
+          "make": "CITROEN",
+          "model": "C4 CACTUS",
+          "value": 132,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "320I",
+          "value": 126,
+          "issue": ""
+        },
+        {
+          "make": "BYD",
+          "model": "SEAL AWD",
+          "value": 123,
+          "issue": ""
+        },
+        {
+          "make": "KIA",
+          "model": "STONIC",
+          "value": 117,
+          "issue": ""
+        },
+        {
+          "make": "VW",
+          "model": "JETTA",
+          "value": 101,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "CRUZE SEDAN",
+          "value": 71,
+          "issue": ""
+        },
+        {
+          "make": "GWM",
+          "model": "ORA 03",
+          "value": 63,
+          "issue": ""
+        },
+        {
+          "make": "PORSCHE",
+          "model": "911",
+          "value": 58,
+          "issue": ""
+        },
+        {
+          "make": "RENAULT",
+          "model": "E-KWID INTENS",
+          "value": 40,
+          "issue": ""
+        },
+        {
+          "make": "MINI",
+          "model": "COOPER",
+          "value": 37,
+          "issue": ""
+        },
+        {
+          "make": "CHERY",
+          "model": "ARRIZO",
+          "value": 34,
+          "issue": ""
+        },
+        {
+          "make": "PORSCHE",
+          "model": "PANAMERA",
+          "value": 31,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "GLA",
+          "value": 29,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "A3 HYBRIDO",
+          "value": 28,
+          "issue": ""
+        },
+        {
+          "make": "PEUGEOT",
+          "model": "3008",
+          "value": 27,
+          "issue": ""
+        },
+        {
+          "make": "PORSCHE",
+          "model": "TAYCAN",
+          "value": 25,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "330E",
+          "value": 24,
+          "issue": ""
+        },
+        {
+          "make": "RENAULT",
+          "model": "LOGAN",
+          "value": 24,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "C 300",
+          "value": 22,
+          "issue": ""
+        },
+        {
+          "make": "MINI",
+          "model": "COUNTRYMAN",
+          "value": 22,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "C 200",
+          "value": 21,
+          "issue": ""
+        },
+        {
+          "make": "JAC",
+          "model": "E-J7",
+          "value": 20,
+          "issue": ""
+        },
+        {
+          "make": "PORSCHE",
+          "model": "BOXTER",
+          "value": 20,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "A5",
+          "value": 19,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "CRUZE HATCH",
+          "value": 18,
+          "issue": ""
+        },
+        {
+          "make": "HONDA",
+          "model": "CIVIC",
+          "value": null,
+          "issue": "Total anual publicado (18) difere da soma mensal (34)."
+        },
+        {
+          "make": "HONDA",
+          "model": "ZR-V TOURING",
+          "value": 16,
+          "issue": ""
+        },
+        {
+          "make": "PEUGEOT",
+          "model": "E2008 GT",
+          "value": 15,
+          "issue": ""
+        },
+        {
+          "make": "FORD",
+          "model": "MUSTANG",
+          "value": 13,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "CLA",
+          "value": 13,
+          "issue": ""
+        },
+        {
+          "make": "RENAULT",
+          "model": "CAPTUR",
+          "value": 13,
+          "issue": ""
+        },
+        {
+          "make": "PORSCHE",
+          "model": "CAYMAN",
+          "value": 12,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "A4",
+          "value": 11,
+          "issue": ""
+        },
+        {
+          "make": "TOYOTA",
+          "model": "CAMRY",
+          "value": 11,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "AMG",
+          "value": 9,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "420I",
+          "value": 5,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "M3",
+          "value": 5,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "A200",
+          "value": 5,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "EQE 300",
+          "value": 5,
+          "issue": ""
+        },
+        {
+          "make": "NISSAN",
+          "model": "LEAF",
+          "value": 5,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "I4",
+          "value": 4,
+          "issue": ""
+        },
+        {
+          "make": "BYD",
+          "model": "HAN AWD",
+          "value": 4,
+          "issue": ""
+        },
+        {
+          "make": "HONDA",
+          "model": "ACCORD HYB TRNG",
+          "value": 4,
+          "issue": ""
+        },
+        {
+          "make": "LEXUS",
+          "model": "ES300H",
+          "value": 4,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "I440",
+          "value": 3,
+          "issue": ""
+        },
+        {
+          "make": "CHERY",
+          "model": "ICAR EQ1",
+          "value": 3,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "BOLT EUV PREMIER",
+          "value": 3,
+          "issue": ""
+        },
+        {
+          "make": "MINI",
+          "model": "JCW HATCH",
+          "value": 3,
+          "issue": ""
+        },
+        {
+          "make": "VW",
+          "model": "VOYAGE",
+          "value": 3,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "A3",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "A5 SPORT BACK",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "118I",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "530 LIMOUSINE",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "530E",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "M2 COUPE",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "M3 COMPETITION",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "FIAT",
+          "model": "500E",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "EQA 250",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "ASTON MARTIN",
+          "model": "VANT V8CP",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "A6 SEDAN",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "E TRON",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "328I",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "430I",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "540I",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "I7 XDRIVE",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "TTS COUPE",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "CHAMONIX",
+          "model": "S90",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "CAMARO",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "CORVETTE",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "DAF",
+          "model": "XF FTT 530",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "FERRARI",
+          "model": "296 GTB",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "HYUNDAI",
+          "model": "STARIA BUS",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "JAGUAR",
+          "model": "F-TYPE",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "KIA",
+          "model": "OPTIMA",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "63 SL AMG",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "A250",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "CLASSE E",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "E300 EXCLUSIVE",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "EQB",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "EQC400",
+          "value": 1,
+          "issue": ""
+        }
+      ]
+    },
+    {
+      "uf": "DF",
+      "year": 2024,
+      "sourceName": "Sincodiv-DF · ranking anual de automóveis",
+      "sourceUrl": "https://sincodivdf.com.br/wp-content/uploads/2026/06/RANKING-POR-MODELO-DEZEMBRO-2024.pdf",
+      "catalogUrl": "https://sincodivdf.com.br/emplacamentos/",
+      "sourceKind": "industry",
+      "periodStart": "2024-01-01",
+      "periodEnd": "2024-12-31",
+      "pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "sha256": "f2886b6b504bd2aeafa8f1d0d87ae6a7007a1b42fb003ca8d40489a5d85690e2",
+      "publishedTotal": 44307,
+      "publishedRows": 109,
+      "classification": "AUTOMÓVEIS, conforme classificação da publicação Sincodiv-DF.",
+      "rows": [
+        {
+          "make": "BYD",
+          "model": "DOLPHIN MINI",
+          "value": 2308,
+          "issue": ""
+        },
+        {
+          "make": "VW",
+          "model": "POLO",
+          "value": 2167,
+          "issue": ""
+        },
+        {
+          "make": "FIAT",
+          "model": "FASTBACK",
+          "value": 2150,
+          "issue": ""
+        },
+        {
+          "make": "HYUNDAI",
+          "model": "CRETA",
+          "value": 2107,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "TRACKER",
+          "value": 1996,
+          "issue": ""
+        },
+        {
+          "make": "HONDA",
+          "model": "HRV",
+          "value": 1947,
+          "issue": ""
+        },
+        {
+          "make": "VW",
+          "model": "TCROSS",
+          "value": 1900,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "ONIX HATCH",
+          "value": 1888,
+          "issue": ""
+        },
+        {
+          "make": "HYUNDAI",
+          "model": "HB20 HATCH",
+          "value": 1869,
+          "issue": ""
+        },
+        {
+          "make": "FIAT",
+          "model": "ARGO",
+          "value": 1762,
+          "issue": ""
+        },
+        {
+          "make": "BYD",
+          "model": "DOLPHIN",
+          "value": 1646,
+          "issue": ""
+        },
+        {
+          "make": "NISSAN",
+          "model": "KICKS",
+          "value": 1517,
+          "issue": ""
+        },
+        {
+          "make": "VW",
+          "model": "NIVUS",
+          "value": 1419,
+          "issue": ""
+        },
+        {
+          "make": "FIAT",
+          "model": "CRONOS",
+          "value": 1417,
+          "issue": ""
+        },
+        {
+          "make": "TOYOTA",
+          "model": "COROLLA",
+          "value": 1415,
+          "issue": ""
+        },
+        {
+          "make": "FIAT",
+          "model": "MOBI",
+          "value": 1412,
+          "issue": ""
+        },
+        {
+          "make": "RENAULT",
+          "model": "KWID",
+          "value": 1246,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "ONIX SEDAN",
+          "value": 1141,
+          "issue": ""
+        },
+        {
+          "make": "TOYOTA",
+          "model": "YARIS SEDAN",
+          "value": 1128,
+          "issue": ""
+        },
+        {
+          "make": "VW",
+          "model": "VIRTUS",
+          "value": 1037,
+          "issue": ""
+        },
+        {
+          "make": "BYD",
+          "model": "KING",
+          "value": 1019,
+          "issue": ""
+        },
+        {
+          "make": "GWM",
+          "model": "ORA",
+          "value": 809,
+          "issue": ""
+        },
+        {
+          "make": "HONDA",
+          "model": "CITY HATCH",
+          "value": 705,
+          "issue": ""
+        },
+        {
+          "make": "PEUGEOT",
+          "model": "208",
+          "value": 702,
+          "issue": ""
+        },
+        {
+          "make": "TOYOTA",
+          "model": "YARIS HATCH",
+          "value": 678,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "SPIN",
+          "value": 621,
+          "issue": ""
+        },
+        {
+          "make": "HONDA",
+          "model": "CITY SEDAN",
+          "value": 621,
+          "issue": ""
+        },
+        {
+          "make": "NISSAN",
+          "model": "SENTRA",
+          "value": 551,
+          "issue": ""
+        },
+        {
+          "make": "JAC",
+          "model": "EJS1",
+          "value": 535,
+          "issue": ""
+        },
+        {
+          "make": "HYUNDAI",
+          "model": "HB20 SEDAN",
+          "value": 521,
+          "issue": ""
+        },
+        {
+          "make": "RENAULT",
+          "model": "KARDIAN",
+          "value": 511,
+          "issue": ""
+        },
+        {
+          "make": "CITROEN",
+          "model": "C3",
+          "value": 495,
+          "issue": ""
+        },
+        {
+          "make": "BYD",
+          "model": "SEAL",
+          "value": 411,
+          "issue": ""
+        },
+        {
+          "make": "NISSAN",
+          "model": "VERSA",
+          "value": 397,
+          "issue": ""
+        },
+        {
+          "make": "PEUGEOT",
+          "model": "2008",
+          "value": 324,
+          "issue": ""
+        },
+        {
+          "make": "TOYOTA",
+          "model": "COROLLA PREMIUM",
+          "value": 240,
+          "issue": ""
+        },
+        {
+          "make": "HONDA",
+          "model": "ZR-V",
+          "value": 172,
+          "issue": ""
+        },
+        {
+          "make": "CITROEN",
+          "model": "C3 AIRCROSS",
+          "value": 138,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "320I",
+          "value": 107,
+          "issue": ""
+        },
+        {
+          "make": "VW",
+          "model": "JETTA",
+          "value": 92,
+          "issue": ""
+        },
+        {
+          "make": "RENAULT",
+          "model": "SANDERO",
+          "value": 91,
+          "issue": ""
+        },
+        {
+          "make": "CITROEN",
+          "model": "BASALT",
+          "value": 86,
+          "issue": ""
+        },
+        {
+          "make": "BYD",
+          "model": "YUAN",
+          "value": 69,
+          "issue": ""
+        },
+        {
+          "make": "HONDA",
+          "model": "CIVIC",
+          "value": 64,
+          "issue": ""
+        },
+        {
+          "make": "KIA",
+          "model": "STONIC",
+          "value": 62,
+          "issue": ""
+        },
+        {
+          "make": "PORSCHE",
+          "model": "911",
+          "value": 59,
+          "issue": ""
+        },
+        {
+          "make": "RENAULT",
+          "model": "E-KWID INTENS",
+          "value": 56,
+          "issue": ""
+        },
+        {
+          "make": "LEXUS",
+          "model": "ES 300",
+          "value": 47,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "CLA",
+          "value": 46,
+          "issue": ""
+        },
+        {
+          "make": "CITROEN",
+          "model": "C4 CACTUS",
+          "value": 39,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "C200",
+          "value": 39,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "C300",
+          "value": 39,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "GLA",
+          "value": 38,
+          "issue": ""
+        },
+        {
+          "make": "PORSCHE",
+          "model": "BOXTER",
+          "value": 35,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "330E",
+          "value": 31,
+          "issue": ""
+        },
+        {
+          "make": "PEUGEOT",
+          "model": "E2008 GT",
+          "value": 31,
+          "issue": ""
+        },
+        {
+          "make": "MINI",
+          "model": "COOPER",
+          "value": 28,
+          "issue": ""
+        },
+        {
+          "make": "FORD",
+          "model": "MUSTANG",
+          "value": 24,
+          "issue": ""
+        },
+        {
+          "make": "RENAULT",
+          "model": "LOGAN",
+          "value": 22,
+          "issue": ""
+        },
+        {
+          "make": "MINI",
+          "model": "COUNTRYMAN",
+          "value": 21,
+          "issue": ""
+        },
+        {
+          "make": "PORSCHE",
+          "model": "PANAMERA",
+          "value": 20,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "A5",
+          "value": 18,
+          "issue": ""
+        },
+        {
+          "make": "PORSCHE",
+          "model": "CAYMAN",
+          "value": 17,
+          "issue": ""
+        },
+        {
+          "make": "JAC",
+          "model": "EJS1 EXTREME",
+          "value": 16,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "A3",
+          "value": 13,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "I4",
+          "value": 13,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "CRUZE SEDAN",
+          "value": 10,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "GLB",
+          "value": 10,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "530E",
+          "value": 9,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "M3",
+          "value": 9,
+          "issue": ""
+        },
+        {
+          "make": "HONDA",
+          "model": "ACCORD",
+          "value": 8,
+          "issue": ""
+        },
+        {
+          "make": "JAC",
+          "model": "EJ7",
+          "value": 8,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "AMG",
+          "value": 8,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "M2 COUPE",
+          "value": 7,
+          "issue": ""
+        },
+        {
+          "make": "BYD",
+          "model": "SONG",
+          "value": 7,
+          "issue": ""
+        },
+        {
+          "make": "PORSCHE",
+          "model": "TAYCAN",
+          "value": 7,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "A4",
+          "value": 6,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "420I",
+          "value": 6,
+          "issue": ""
+        },
+        {
+          "make": "PEUGEOT",
+          "model": "3008",
+          "value": 6,
+          "issue": ""
+        },
+        {
+          "make": "DODGE",
+          "model": "CHALLENGER",
+          "value": 5,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "I5 M60",
+          "value": 4,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "CAMARO",
+          "value": 4,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "CRUZE HATCH",
+          "value": 4,
+          "issue": ""
+        },
+        {
+          "make": "ZEEKR",
+          "model": "X FLAGSHIP",
+          "value": 4,
+          "issue": ""
+        },
+        {
+          "make": "BYD",
+          "model": "HAN",
+          "value": 3,
+          "issue": ""
+        },
+        {
+          "make": "CHERY",
+          "model": "ICAR EQ1",
+          "value": 3,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "A200",
+          "value": 3,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "E300 EXCLUSIVE",
+          "value": 3,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "EQB",
+          "value": 3,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "118I",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "218I",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "CHAMONIX",
+          "model": "S90",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "EQA 250",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "MINI",
+          "model": "JCW HATCH",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "A5 SPORT BACK",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "425I",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "430I",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "540I",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "I7XDRIVE",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "BOLT EUV PREMIER",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "LAMBORGHINI",
+          "model": "HURACANTE",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "EQE 300",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "EQS 450",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "SL63S EP",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "NISSAN",
+          "model": "GT-R T-SPEC",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "RENAULT",
+          "model": "CAPTUR",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "TOYOTA",
+          "model": "CAMRY HV",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "VOLVO",
+          "model": "S60",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "VOLVO",
+          "model": "S90 B5",
+          "value": 1,
+          "issue": ""
+        }
+      ]
+    },
+    {
+      "uf": "DF",
+      "year": 2025,
+      "sourceName": "Sincodiv-DF · ranking anual de automóveis",
+      "sourceUrl": "https://sincodivdf.com.br/wp-content/uploads/2026/06/RANKING-POR-MODELO-DEZEMBRO-2025.pdf",
+      "catalogUrl": "https://sincodivdf.com.br/emplacamentos/",
+      "sourceKind": "industry",
+      "periodStart": "2025-01-01",
+      "periodEnd": "2025-12-31",
+      "pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "sha256": "047a6482d74ab0c92d23bd98615e9bd061dc38ffce0f113619862239505480a8",
+      "publishedTotal": 50029,
+      "publishedRows": 120,
+      "classification": "AUTOMÓVEIS, conforme classificação da publicação Sincodiv-DF.",
+      "rows": [
+        {
+          "make": "BYD",
+          "model": "SONG",
+          "value": 4246,
+          "issue": ""
+        },
+        {
+          "make": "BYD",
+          "model": "DOLPHIN MINI",
+          "value": 3534,
+          "issue": ""
+        },
+        {
+          "make": "FIAT",
+          "model": "ARGO",
+          "value": 2978,
+          "issue": ""
+        },
+        {
+          "make": "VW",
+          "model": "POLO",
+          "value": 2582,
+          "issue": ""
+        },
+        {
+          "make": "BYD",
+          "model": "KING",
+          "value": 2508,
+          "issue": ""
+        },
+        {
+          "make": "HYUNDAI",
+          "model": "CRETA",
+          "value": 2198,
+          "issue": ""
+        },
+        {
+          "make": "HONDA",
+          "model": "HRV",
+          "value": 2160,
+          "issue": ""
+        },
+        {
+          "make": "FIAT",
+          "model": "FASTBACK",
+          "value": 2083,
+          "issue": ""
+        },
+        {
+          "make": "VW",
+          "model": "TCROSS",
+          "value": 2019,
+          "issue": ""
+        },
+        {
+          "make": "HYUNDAI",
+          "model": "HB20 HATCH",
+          "value": 1694,
+          "issue": ""
+        },
+        {
+          "make": "VW",
+          "model": "NIVUS",
+          "value": 1693,
+          "issue": ""
+        },
+        {
+          "make": "BYD",
+          "model": "DOLPHIN",
+          "value": 1649,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "ONIX HATCH",
+          "value": 1530,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "TRACKER",
+          "value": 1467,
+          "issue": ""
+        },
+        {
+          "make": "NISSAN",
+          "model": "KICKS",
+          "value": 1436,
+          "issue": ""
+        },
+        {
+          "make": "FIAT",
+          "model": "MOBI",
+          "value": 1187,
+          "issue": ""
+        },
+        {
+          "make": "FIAT",
+          "model": "CRONOS",
+          "value": 1069,
+          "issue": ""
+        },
+        {
+          "make": "TOYOTA",
+          "model": "COROLLA",
+          "value": 1028,
+          "issue": ""
+        },
+        {
+          "make": "RENAULT",
+          "model": "KWID",
+          "value": 1023,
+          "issue": ""
+        },
+        {
+          "make": "VW",
+          "model": "TERA",
+          "value": 927,
+          "issue": ""
+        },
+        {
+          "make": "VW",
+          "model": "VIRTUS",
+          "value": 904,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "ONIX SEDAN",
+          "value": 734,
+          "issue": ""
+        },
+        {
+          "make": "CITROEN",
+          "model": "BASALT",
+          "value": 644,
+          "issue": ""
+        },
+        {
+          "make": "RENAULT",
+          "model": "KARDIAN",
+          "value": 637,
+          "issue": ""
+        },
+        {
+          "make": "HONDA",
+          "model": "CITY HATCH",
+          "value": 594,
+          "issue": ""
+        },
+        {
+          "make": "HONDA",
+          "model": "CITY SEDAN",
+          "value": 579,
+          "issue": ""
+        },
+        {
+          "make": "NISSAN",
+          "model": "SENTRA",
+          "value": 557,
+          "issue": ""
+        },
+        {
+          "make": "BYD",
+          "model": "YUAN",
+          "value": 518,
+          "issue": ""
+        },
+        {
+          "make": "CITROEN",
+          "model": "C3",
+          "value": 516,
+          "issue": ""
+        },
+        {
+          "make": "PEUGEOT",
+          "model": "2008",
+          "value": 503,
+          "issue": ""
+        },
+        {
+          "make": "PEUGEOT",
+          "model": "208",
+          "value": 438,
+          "issue": ""
+        },
+        {
+          "make": "HYUNDAI",
+          "model": "HB20 SEDAN",
+          "value": 428,
+          "issue": ""
+        },
+        {
+          "make": "BYD",
+          "model": "SEAL",
+          "value": 382,
+          "issue": ""
+        },
+        {
+          "make": "GWM",
+          "model": "ORA",
+          "value": 355,
+          "issue": ""
+        },
+        {
+          "make": "NISSAN",
+          "model": "VERSA",
+          "value": 344,
+          "issue": ""
+        },
+        {
+          "make": "CHEVROLET",
+          "model": "SPIN",
+          "value": 327,
+          "issue": ""
+        },
+        {
+          "make": "TOYOTA",
+          "model": "COROLLA PREMIUM",
+          "value": 261,
+          "issue": ""
+        },
+        {
+          "make": "GEELY",
+          "model": "EX2",
+          "value": 234,
+          "issue": ""
+        },
+        {
+          "make": "JAC",
+          "model": "EJS1",
+          "value": 230,
+          "issue": ""
+        },
+        {
+          "make": "TOYOTA",
+          "model": "YARIS HATCH",
+          "value": 214,
+          "issue": ""
+        },
+        {
+          "make": "HONDA",
+          "model": "WR-V",
+          "value": 161,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "320I",
+          "value": 124,
+          "issue": ""
+        },
+        {
+          "make": "GAC",
+          "model": "AION",
+          "value": 120,
+          "issue": ""
+        },
+        {
+          "make": "TOYOTA",
+          "model": "YARIS SEDAN",
+          "value": 109,
+          "issue": ""
+        },
+        {
+          "make": "CHERY",
+          "model": "ARRIZO",
+          "value": 107,
+          "issue": ""
+        },
+        {
+          "make": "RENAULT",
+          "model": "E-KWID INTENS",
+          "value": 92,
+          "issue": ""
+        },
+        {
+          "make": "HONDA",
+          "model": "ZR-V",
+          "value": 75,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "C200",
+          "value": 47,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "C300",
+          "value": 41,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "CLA",
+          "value": 41,
+          "issue": ""
+        },
+        {
+          "make": "MINI",
+          "model": "COOPER",
+          "value": 41,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "GLB",
+          "value": 40,
+          "issue": ""
+        },
+        {
+          "make": "PORSCHE",
+          "model": "911",
+          "value": 45,
+          "issue": ""
+        },
+        {
+          "make": "FORD",
+          "model": "MUSTANG",
+          "value": 38,
+          "issue": ""
+        },
+        {
+          "make": "VW",
+          "model": "JETTA",
+          "value": 38,
+          "issue": ""
+        },
+        {
+          "make": "CITROEN",
+          "model": "C3 AIRCROSS",
+          "value": 36,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "GLA",
+          "value": 29,
+          "issue": ""
+        },
+        {
+          "make": "PORSCHE",
+          "model": "BOXTER",
+          "value": 29,
+          "issue": ""
+        },
+        {
+          "make": "LEXUS",
+          "model": "ES 300",
+          "value": 24,
+          "issue": ""
+        },
+        {
+          "make": "HYUNDAI",
+          "model": "KONA",
+          "value": 23,
+          "issue": ""
+        },
+        {
+          "make": "PORSCHE",
+          "model": "PANAMERA",
+          "value": 22,
+          "issue": ""
+        },
+        {
+          "make": "ZEEKR",
+          "model": "001 FLAGSHIP",
+          "value": 22,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "330E",
+          "value": 20,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "A5",
+          "value": 19,
+          "issue": ""
+        },
+        {
+          "make": "HONDA",
+          "model": "CIVIC",
+          "value": 17,
+          "issue": ""
+        },
+        {
+          "make": "HONDA",
+          "model": "ACCORD",
+          "value": 16,
+          "issue": ""
+        },
+        {
+          "make": "NETA",
+          "model": "X 500",
+          "value": 16,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "AMG",
+          "value": 15,
+          "issue": ""
+        },
+        {
+          "make": "GAC",
+          "model": "HYPTEC",
+          "value": 13,
+          "issue": ""
+        },
+        {
+          "make": "JAC",
+          "model": "EJS1 EXTREME",
+          "value": 12,
+          "issue": ""
+        },
+        {
+          "make": "MINI",
+          "model": "JCW",
+          "value": 12,
+          "issue": ""
+        },
+        {
+          "make": "NETA",
+          "model": "AYA",
+          "value": 12,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "530E",
+          "value": 10,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "E300",
+          "value": 9,
+          "issue": ""
+        },
+        {
+          "make": "MINI",
+          "model": "COUNTRYMAN",
+          "value": 9,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "420I",
+          "value": 8,
+          "issue": ""
+        },
+        {
+          "make": "MINI",
+          "model": "ACEMAN",
+          "value": 8,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "A3 SEDAN",
+          "value": 7,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "I5 M60",
+          "value": 7,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "M3",
+          "value": 7,
+          "issue": ""
+        },
+        {
+          "make": "KIA",
+          "model": "STONIC",
+          "value": 7,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "220 MSP",
+          "value": 6,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "M2 COUPE",
+          "value": 6,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "EQA 250",
+          "value": 6,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "E TRON",
+          "value": 5,
+          "issue": ""
+        },
+        {
+          "make": "PEIXOTO",
+          "model": "FYBER 2000W",
+          "value": 5,
+          "issue": ""
+        },
+        {
+          "make": "PORSCHE",
+          "model": "CAYMAN",
+          "value": 5,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "I4",
+          "value": 4,
+          "issue": ""
+        },
+        {
+          "make": "ZEEKR",
+          "model": "001 PREMIUM",
+          "value": 4,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "RS6",
+          "value": 3,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "A3 SPORTBACK",
+          "value": 3,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "I7XDRIVE",
+          "value": 3,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "M235",
+          "value": 3,
+          "issue": ""
+        },
+        {
+          "make": "TOYOTA",
+          "model": "CAMRY HV",
+          "value": 3,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "A3",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "425I",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "A200",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "EQB 250",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "EQB 350",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "M. BENZ",
+          "model": "SL63S EP",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "MG - MORRIS GARAGES",
+          "model": "MG4 64 KWH",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "PORSCHE",
+          "model": "TAYCAN",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "RENAULT",
+          "model": "SANDERO",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "A4",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "A6",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "AUDI",
+          "model": "A8",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "BENTLEY",
+          "model": "CONT GT MULLIN",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "118I",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "525I LIMOUSINE",
+          "value": 2,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "840I XDRIVE",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "BMW",
+          "model": "M4CS",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "BYD",
+          "model": "HAN",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "FERRARI",
+          "model": "296 GTS",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "FERRARI",
+          "model": "PUROSANGUE",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "MG",
+          "model": "CYBERSTER",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "MG",
+          "model": "S5 EV",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "RENAULT",
+          "model": "CAPTUR",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "VOLVO",
+          "model": "S60",
+          "value": 1,
+          "issue": ""
+        },
+        {
+          "make": "WAKE",
+          "model": "WAY",
+          "value": 1,
+          "issue": ""
+        }
+      ]
+    }
+  ]
+}

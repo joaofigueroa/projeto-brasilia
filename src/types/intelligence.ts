@@ -112,7 +112,7 @@ export type CarModelRow = {
   territoryLabel: string;
   sourceName: string;
   unit: string;
-  values: { year: number; value: number | null; ambiguous: boolean }[];
+  values: { year: number; value: number | null; ambiguous: boolean; issue?: string }[];
   total: number | null;
   average: number | null;
   complete: boolean;
@@ -125,4 +125,11 @@ export type CarModelReport = {
   officialAvailable: boolean;
   officialYears: number[];
   measure: "sales" | "registrations";
+  coverage: CarModelCoverage;
+};
+export type CarModelCoverage = {
+  availableYears: number[];
+  missingYears: number[];
+  notes: string[];
+  sources: { name: string; url: string }[];
 };

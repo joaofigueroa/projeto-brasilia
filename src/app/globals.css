@@ -4975,3 +4975,29 @@ textarea {
     transition: none;
   }
 }
+
+.bi-model-coverage {
+  margin: 0 0 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  font-size: 0.8rem;
+}
+.bi-model-coverage-trigger {
+  width: 100%;
+  text-align: left;
+  padding: 0.85rem 1rem;
+  cursor: pointer;
+  color: var(--ink);
+}
+.bi-model-coverage-body {
+  padding: 0 1rem 1rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.bi-model-coverage p {
+  margin: 0.6rem 0;
+}
+.bi-model-coverage .bi-model-sources {
+  margin-bottom: 0;
+}

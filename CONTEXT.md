@@ -39,3 +39,5 @@
 **Possível cliente**: Organização mapeada para prospecção, com segmento, fonte e situação de abordagem. Não significa cliente ativo ou demanda confirmada.
 
 **Edital**: Publicação de contratação pública; a menção a um termo no objeto não confirma compatibilidade comercial ou elegibilidade para participar.
+
+**Publicação setorial de emplacamentos**: Fonte primária de uma entidade do setor, como Fenabrave ou Sincodiv, distinta de uma publicação governamental. Conserva sua abrangência e classificação anual. Divergências entre meses e total anual ficam sinalizadas e não entram na consolidação até revisão.

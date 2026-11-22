@@ -1,5 +1,5 @@
 import "server-only";
-import source from "@/data/official/car-models.json";
+import { getPublishedCarModels } from "@/server/integrations/published-car-models";
 import type {
   CarModelReport,
   CarModelRow,
@@ -7,11 +7,6 @@ import type {
   Territory,
 } from "@/types/intelligence";
 
-type NationalModels = Record<
-  string,
-  { sourceName: string; sourceUrl: string; rows: { make: string; model: string; value: number }[] }
->;
-const national = source as NationalModels;
 const normalize = (s: string) =>
   s
     .normalize("NFD")
@@ -39,7 +34,11 @@ export function getCarModelReport(
     (record) =>
       isCarModelRecord(record) && record.metric === measure && years.includes(record.year),
   );
-  const grouped = new Map<string, { row: CarModelRow; observations: Map<number, number[]> }>();
+  const published = getPublishedCarModels(territory, years, measure);
+  const grouped = new Map<
+    string,
+    { row: CarModelRow; observations: Map<number, { value: number | null; issue?: string }[]> }
+  >();
   function add(input: {
     make: string;
     model: string;
@@ -49,7 +48,8 @@ export function getCarModelReport(
     city: string | null;
     territoryLabel: string;
     year: number;
-    value: number;
+    value: number | null;
+    issue?: string;
     unit: string;
     sourceName: string;
     sourceUrl: string;
@@ -86,7 +86,7 @@ export function getCarModelReport(
       grouped.set(key, item);
     }
     const values = item.observations.get(input.year) ?? [];
-    values.push(input.value);
+    values.push({ value: input.value, issue: input.issue });
     item.observations.set(input.year, values);
     if (input.sourceUrl && !item.row.sources.some((s) => s.url === input.sourceUrl))
       item.row.sources.push({
@@ -111,32 +111,30 @@ export function getCarModelReport(
       sourceName: record.sourceName,
       sourceUrl: record.sourceUrl,
     });
-  if (territory.level === "country" && measure === "registrations")
-    for (const year of years) {
-      const data = national[String(year)];
-      if (!data) continue;
-      for (const row of data.rows)
-        add({
-          ...row,
-          category: "Automóveis",
-          region: null,
-          uf: null,
-          city: null,
-          territoryLabel: "Brasil",
-          year,
-          unit: "automóveis",
-          sourceName: data.sourceName,
-          sourceUrl: data.sourceUrl,
-        });
-    }
+  for (const data of published.publications) {
+    for (const row of data.rows)
+      add({
+        ...row,
+        category: "Automóveis",
+        region: data.uf ? territory.region : null,
+        uf: data.uf,
+        city: null,
+        territoryLabel: data.uf === "DF" ? "Distrito Federal · área integral" : "Brasil",
+        year: data.year,
+        unit: "automóveis",
+        sourceName: data.sourceName,
+        sourceUrl: data.sourceUrl,
+      });
+  }
   const rows = [...grouped.values()]
     .map(({ row, observations }) => {
       row.values = years.map((year) => {
         const values = observations.get(year) ?? [];
         return {
           year,
-          value: values.length === 1 ? values[0] : null,
+          value: values.length === 1 ? values[0].value : null,
           ambiguous: values.length > 1,
+          issue: values.find((value) => value.issue)?.issue,
         };
       });
       const values = row.values.flatMap((r) => (r.value === null ? [] : [r.value]));
@@ -151,8 +149,9 @@ export function getCarModelReport(
     rows,
     recordIds: eligible.map((record) => record.id),
     excluded: records.filter((r) => !isCarModelRecord(r) || r.metric !== measure).length,
-    officialAvailable: territory.level === "country" && measure === "registrations",
-    officialYears: years.filter((y) => national[String(y)]),
+    officialAvailable: published.coverage.availableYears.length > 0,
+    officialYears: published.publications.map((item) => item.year),
     measure,
+    coverage: published.coverage,
   };
 }

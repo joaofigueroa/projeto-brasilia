@@ -127,7 +127,7 @@ describe("geographic and temporal intelligence", () => {
     expect(row?.total).toBe(147490);
     expect(report.rows.some((r) => r.model === "STRADA")).toBe(false);
     expect(
-      getCarModelReport([], resolveTerritory({ uf: "DF" }), [2022], "registrations").rows,
+      getCarModelReport([], resolveTerritory({ uf: "GO" }), [2022], "registrations").rows,
     ).toEqual([]);
     expect(getCarModelReport([], resolveTerritory({ region: "BR" }), [2022], "sales").rows).toEqual(
       [],
@@ -140,5 +140,64 @@ describe("geographic and temporal intelligence", () => {
         "registrations",
       ).rows.find((r) => r.model === "NIVUS")?.total,
     ).toBe(95387);
+  });
+  it("loads local DF models at UF and Brasília cadastral scope without borrowing national values", () => {
+    const state = getCarModelReport(
+      [],
+      resolveTerritory({ uf: "DF" }),
+      [2022, 2023, 2024],
+      "registrations",
+    );
+    const city = getCarModelReport(
+      [],
+      resolveTerritory({ uf: "DF", city: "5300108" }),
+      [2022, 2023, 2024],
+      "registrations",
+    );
+    const nivus = state.rows.find((row) => row.model === "NIVUS");
+    expect(nivus?.values.map((row) => row.value)).toEqual([1375, 1449, 1419]);
+    expect(nivus?.total).toBe(4243);
+    expect(nivus?.average).toBeCloseTo(1414.3333);
+    expect(nivus?.sourceName).toContain("Sincodiv-DF");
+    expect(city.rows).toEqual(state.rows);
+    expect(state.coverage.availableYears).toEqual([2022, 2023, 2024, 2025]);
+    expect(state.rows.some((row) => row.model === "STRADA")).toBe(false);
+    expect(state.rows.every((row) => row.territoryLabel.includes("Distrito Federal"))).toBe(true);
+  });
+  it("preserves nonconsecutive DF years and flags unverified source values and missing coverage", () => {
+    const report = getCarModelReport(
+      [],
+      resolveTerritory({ uf: "DF" }),
+      [2022, 2024, 2026],
+      "registrations",
+    );
+    expect(report.rows.find((row) => row.model === "NIVUS")).toMatchObject({
+      total: 2794,
+      complete: false,
+    });
+    expect(report.coverage.missingYears).toEqual([2026]);
+    const civic = getCarModelReport(
+      [],
+      resolveTerritory({ uf: "DF" }),
+      [2023],
+      "registrations",
+    ).rows.find((row) => row.make === "HONDA" && row.model === "CIVIC");
+    expect(civic?.values[0]).toMatchObject({
+      value: null,
+      issue: expect.stringContaining("soma mensal"),
+    });
+    expect(civic?.total).toBeNull();
+    expect(getCarModelReport([], resolveTerritory({ uf: "DF" }), [2023], "sales").rows).toEqual([]);
+    expect(
+      getCarModelReport(
+        [],
+        resolveTerritory({ uf: "GO", city: "5208707" }),
+        [2023],
+        "registrations",
+      ).rows,
+    ).toEqual([]);
+    expect(
+      getCarModelReport([], resolveTerritory({ region: "5" }), [2023], "registrations").rows,
+    ).toEqual([]);
   });
 });

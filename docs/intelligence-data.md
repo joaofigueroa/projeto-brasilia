@@ -17,6 +17,7 @@ A lista de uma UF inclui seus municípios; a de uma região inclui suas UFs. Reg
 - IBGE: malhas simplificadas das 27 UFs e dos municípios de cada UF; catálogo de municípios e regiões; população residente do Censo 2022, tabela SIDRA 4714, variável 93.
 - Senatran: frota por município e tipo, posição de dezembro de 2022, 2023 e 2024. Os totais nacionais conferidos são 115.116.532, 119.227.657 e 123.974.520 veículos.
 - Fenabrave: página 7 dos boletins de dezembro de 2022, 2023 e 2024, tabela acumulada anual de AUTOMÓVEIS, 50 modelos por ano. A tabela vizinha de comerciais leves é excluída. Abrangência nacional; os boletins não fornecem esses mesmos dados por município ou UF.
+- Sincodiv-DF: seção AUTOMÓVEIS dos rankings anuais de 2022–2025. Fonte primária setorial, com quantidades mensais e total anual do DF. A classificação da entidade é preservada; comerciais leves e demais tipos são excluídos. Não é uma publicação governamental de vendas.
 - PNCP: consulta pública por UF, município e período. São consultadas a primeira página de pregão eletrônico e a primeira página de dispensa (até 50 publicações cada), com limite de oito segundos por chamada e cache de uma hora. Os termos são aplicados ao objeto da compra. O painel informa a amostra, o total informado pela fonte, o período e falhas parciais; não faz busca nos anexos.
 
 Dados do CNPJ e CNES são referências oficiais para prospecção. A base integral de empresas não foi carregada. Não há números artificiais de mercado, listas fictícias de clientes ou vendas inferidas de frota.
@@ -33,11 +34,28 @@ A camada Automóveis usa apenas a classificação AUTOMOVEL da Senatran, não o 
 
 A visão de veículos contém apenas modelos classificados como automóveis, com marca, modelo e indicador `sales` ou `registrations`. Motocicletas, comerciais leves, caminhões, observações sem classificação e registros de estoque ficam fora dessa visualização. Os dados continuam armazenados para preservar o histórico. A busca por modelo e o filtro de marca operam sobre as linhas disponíveis.
 
-Os rankings Fenabrave são mostrados exclusivamente no recorte Brasil e no indicador Emplacamentos. O botão de referência nacional troca explicitamente o território, sem atribuir números nacionais ao município. A soma e a média usam os anos selecionados com valores disponíveis. Ausência no top 50 não é zero: a linha fica identificada como parcial, com a quantidade de anos disponíveis. Anos sem boletim carregado não são inferidos. Vendas informadas e modelos por UF ou município usam somente cadastros ou CSV com fonte.
+Os rankings Fenabrave são mostrados exclusivamente no recorte Brasil e no indicador Emplacamentos. O botão de referência nacional troca explicitamente o território, sem atribuir números nacionais ao município. A soma e a média usam os anos selecionados com valores disponíveis. Ausência no top 50 não é zero: a linha fica identificada como parcial, com a quantidade de anos disponíveis. Anos sem boletim carregado não são inferidos. Vendas informadas usam somente cadastros ou CSV com fonte. Emplacamentos no DF e no recorte cadastral Brasília (IBGE 5300108) usam os rankings locais do Sincodiv-DF; outros estados e municípios continuam sem série aberta carregada por modelo. O recorte Brasília cobre todo o DF e não representa o Plano Piloto ou uma região administrativa. Totais do DF não são atribuídos a municípios de outras UFs nem usados como total da região Centro-Oeste.
 
 Uma linha consolidada exige a mesma marca, modelo, categoria, unidade, fonte e território exato. Totais estaduais e seus municípios ficam em linhas diferentes; fontes distintas também. Observações repetidas para a mesma combinação e ano são marcadas para revisão e excluídas daquela célula, impedindo dupla contagem. Não há total geral que misture níveis geográficos.
 
 O PNCP consulta separadamente a janela dos últimos 31 dias de cada ano selecionado. O painel lista as janelas reais, soma a cobertura consultada e remove resultados duplicados. Isso não representa a cobertura integral dos anos.
+
+## Pesquisa de cobertura local — 21/11/2026
+
+A pesquisa identificou uma limitação de acesso, sem converter estoque em vendas:
+
+| Fonte primária | Conteúdo verificado | Uso na aplicação |
+| --- | --- | --- |
+| [Senatran / RENAVAM](https://dados.transportes.gov.br/dataset/registro-nacional-de-veiculos-automotores-renavam) | Inventário de frota por UF, município e marca/modelo | Estoque, sem inferência de vendas a partir de fabricação ou diferença entre estoques. |
+| [Serviço oficial Serpro](https://www.gov.br/pt-br/servicos/contratar-arquivos-estatisticos-denatran) | Arquivos de emplacamentos e distribuição regional; acesso depende de autorização, contrato e homologação | Nenhum contrato ou acesso foi aberto. O usuário informou não possuir acesso contratado. O leiaute e a cobertura histórica ainda precisam ser obtidos para uma integração. |
+| [Fenabrave DMP](https://www.fenabrave.org.br/Dados/index2.html) | Dados de modelos e municípios para assinantes | Não acessado sem credenciais ou contratação. |
+| [Sincodiv-DF](https://sincodivdf.com.br/emplacamentos/) | Rankings anuais abertos com marca, modelo, meses e total do DF | 2022–2025 carregados, somente seção AUTOMÓVEIS. |
+| [Sincodiv-MG](https://www.sincodiv-mg.com.br/servicos/emplacamentos/) | Informativos regionais publicados | Não foi obtida série anual por modelo e município para importação. |
+| Fenabrave-SC | URLs antigas indexadas dos boletins anuais de 2022/2023 retornaram HTML na coleta, sem o PDF original | Não importados de cache de busca ou notícias secundárias. |
+
+A cobertura municipal de todo o Brasil permanece **incompleta**. A aplicação mostra os anos disponíveis e ausentes, identifica a abrangência integral do DF e permite voltar explicitamente à referência nacional. Nenhum resultado nacional é distribuído entre estados ou municípios por estimativa.
+
+O extrator do DF confere a soma de todos os totais anuais dos modelos com o total da seção: 32.580 (2022), 36.853 (2023), 44.307 (2024), 50.029 (2025). Também confere os meses de cada linha. O Honda Civic de 2023 tem total publicado 18 e soma mensal 34: o valor fica nulo com aviso, sem decidir arbitrariamente qual número é correto. Linhas de mesmo rótulo na publicação são agrupadas; o alias de marca VOLKSWAGEN → VW permite comparar o Nivus entre anos sem alterar seu nome de modelo. O total de uma seção não é usado como quantidade de vendas de outra classificação.
 
 ## Reprodução dos dados estáticos
 
@@ -57,6 +75,14 @@ python scripts/prepare-car-models.py /caminho/para/municipalities-and-models
 ```
 
 O segundo comando usa `pdfplumber` e valida a sequência dos 50 modelos de cada tabela anual antes de salvar. As geometrias são compactadas offline; somente a UF aberta é enviada para o mapa no navegador. Nenhum download de PDF ou malha ocorre no build.
+
+A coleção `regional-models` registra os quatro PDFs do DF no manifesto. Para reproduzir a extração com `pdfplumber`:
+
+```sh
+python scripts/prepare-regional-car-models.py /caminho/para/regional-models
+```
+
+O extrator exige o ano e território no cabeçalho, interrompe a leitura no primeiro total da seção AUTOMÓVEIS e conserva SHA-256, páginas e intervalo anual. As diferenças entre classificações de fontes e anos aparecem na cobertura; ausência de um modelo não vira zero.
 
 ## CSV
 

@@ -198,6 +198,32 @@
           "sha256": "3598be43151157b002d7b74dc3f7d2d8e6c243ba06261f869236bb43ac20d8e0"
         }
       ]
+    },
+    {
+      "retrievedAt": "2026-11-21T23:54:43.695936+00:00",
+      "directory": "regional-models",
+      "resources": [
+        {
+          "file": "DF-2022.pdf",
+          "url": "https://sincodivdf.com.br/wp-content/uploads/2026/06/2022-ranking-dos-modelos.pdf",
+          "sha256": "017eb40a1845be8c760d9273f63927069b76c6ecb2145faa2994e8add0c21a9c"
+        },
+        {
+          "file": "DF-2023.pdf",
+          "url": "https://sincodivdf.com.br/wp-content/uploads/2026/06/2023-ranking-dos-modelos.pdf",
+          "sha256": "137db582fe473ecea31b44e1ce9bad126aebf4074b42b14fae0996277c3648cb"
+        },
+        {
+          "file": "DF-2024.pdf",
+          "url": "https://sincodivdf.com.br/wp-content/uploads/2026/06/RANKING-POR-MODELO-DEZEMBRO-2024.pdf",
+          "sha256": "f2886b6b504bd2aeafa8f1d0d87ae6a7007a1b42fb003ca8d40489a5d85690e2"
+        },
+        {
+          "file": "DF-2025.pdf",
+          "url": "https://sincodivdf.com.br/wp-content/uploads/2026/06/RANKING-POR-MODELO-DEZEMBRO-2025.pdf",
+          "sha256": "047a6482d74ab0c92d23bd98615e9bd061dc38ffce0f113619862239505480a8"
+        }
+      ]
     }
   ]
 }

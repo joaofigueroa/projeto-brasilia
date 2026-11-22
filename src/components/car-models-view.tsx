@@ -1,6 +1,7 @@
 "use client";
 import { CarFront, ExternalLink, Info, Search } from "lucide-react";
-import { useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { useId, useState } from "react";
 import type { IntelligenceController } from "@/hooks/use-intelligence";
 import { periodLabel } from "@/libs/analysis-period";
 import { formatNumber } from "@/libs/intelligence-presentation";
@@ -17,6 +18,8 @@ export function CarModelsView({
   const [query, setQuery] = useState("");
   const [make, setMake] = useState("");
   const [aggregate, setAggregate] = useState<"sum" | "average">("sum");
+  const [coverageOpen, setCoverageOpen] = useState(false);
+  const coverageId = useId();
   const report = data.models;
   const period = periodLabel(data.years);
   const makes = [...new Set(report.rows.map((row) => row.make))].sort();
@@ -66,25 +69,95 @@ export function CarModelsView({
         </span>
         <strong>{period}</strong>
       </div>
-      {report.officialAvailable ? (
-        <p className="bi-data-note">
-          <Info size={15} />
-          <span>
-            Fenabrave: ranking dos 50 automóveis mais emplacados em cada ano, no Brasil. Publicações
-            carregadas: 2022–2024. A soma inclui apenas os anos selecionados. “—” indica ausência no
-            ranking disponível, com consolidação parcial.
-          </span>
-        </p>
-      ) : (
-        <p className="bi-data-note">
-          <Info size={15} />
-          <span>
-            {report.measure === "sales"
-              ? "Vendas informadas usam os registros cadastrados com fonte, marca, modelo e classificação Automóvel."
-              : "Os boletins carregados da Fenabrave têm abrangência nacional. Para este recorte, os modelos usam registros locais cadastrados ou importados com fonte."}
-          </span>
-        </p>
-      )}
+      <p className="bi-data-note">
+        <Info size={15} />
+        <span>{report.coverage.notes[0]}</span>
+      </p>
+      <div className="bi-model-coverage">
+        <button
+          className="bi-model-coverage-trigger"
+          type="button"
+          aria-expanded={coverageOpen}
+          aria-controls={coverageOpen ? coverageId : undefined}
+          onClick={() => setCoverageOpen(!coverageOpen)}
+        >
+          Fontes e cobertura por território e ano
+        </button>
+        <AnimatePresence initial={false}>
+          {coverageOpen && (
+            <motion.div
+              id={coverageId}
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              style={{ overflow: "hidden" }}
+            >
+              <div className="bi-model-coverage-body">
+                <p>
+                  Anos com publicação neste recorte e indicador:{" "}
+                  <strong>
+                    {report.coverage.availableYears.length
+                      ? periodLabel(report.coverage.availableYears)
+                      : "nenhum"}
+                  </strong>
+                  .
+                </p>
+                {report.coverage.missingYears.length > 0 && (
+                  <p>
+                    Anos selecionados sem publicação carregada:{" "}
+                    {periodLabel(report.coverage.missingYears)}. Sem dado não significa zero.
+                  </p>
+                )}
+                {report.coverage.notes.slice(1).map((note) => (
+                  <p key={note}>{note}</p>
+                ))}
+                <p>
+                  A soma usa apenas os anos selecionados. A média considera os anos com valor;
+                  lacunas ficam identificadas como parciais.
+                </p>
+                <p>
+                  Cobertura pública carregada: Brasil, 2022–2024 (Fenabrave nacional); Distrito
+                  Federal, 2022–2025 (Sincodiv-DF). Outros estados e municípios usam somente
+                  registros locais com fonte.
+                </p>
+                <div className="bi-model-sources">
+                  {report.coverage.sources.map((source) => (
+                    <a
+                      className="bi-source-link"
+                      key={source.url}
+                      href={source.url}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {source.name}
+                      <ExternalLink size={12} />
+                    </a>
+                  ))}
+                  <a
+                    className="bi-source-link"
+                    href="https://dados.transportes.gov.br/dataset/registro-nacional-de-veiculos-automotores-renavam"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Senatran · base aberta de frota
+                    <ExternalLink size={12} />
+                  </a>
+                  <a
+                    className="bi-source-link"
+                    href="https://www.gov.br/pt-br/servicos/contratar-arquivos-estatisticos-denatran"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Serpro · acesso aos arquivos estatísticos
+                    <ExternalLink size={12} />
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
       {data.records.length === 500 && (
         <p className="bi-data-note">
           O recorte atingiu o limite de 500 registros locais. Restrinja os anos ou o território para
@@ -152,16 +225,17 @@ export function CarModelsView({
                       <td
                         key={value.year}
                         title={
-                          value.ambiguous
+                          value.issue ||
+                          (value.ambiguous
                             ? "Há mais de um registro para a mesma fonte, modelo, território e ano. Confira os registros antes de consolidar."
                             : value.value === null
                               ? "Sem valor no ranking ou na fonte disponível."
-                              : undefined
+                              : undefined)
                         }
                       >
                         {value.value === null
-                          ? value.ambiguous
-                            ? "Revisar"
+                          ? value.issue || value.ambiguous
+                            ? "Revisar fonte"
                             : "—"
                           : formatNumber(value.value)}
                       </td>
@@ -199,7 +273,9 @@ export function CarModelsView({
           <div className="bi-model-sources">
             {[
               ...new Map(
-                report.rows.flatMap((row) => row.sources).map((source) => [source.url, source]),
+                [...report.rows.flatMap((row) => row.sources), ...report.coverage.sources].map(
+                  (source) => [source.url, source],
+                ),
               ).values(),
             ].map((source) => (
               <a
@@ -220,8 +296,8 @@ export function CarModelsView({
           <CarFront size={26} />
           <h3>Sem dados de modelos neste recorte</h3>
           <p>
-            Cadastre ou importe quantidades por marca, modelo e ano, com fonte e classificação
-            Automóvel.
+            Não há quantidades verificadas para os anos e o território selecionados. A frota não foi
+            convertida em vendas. Cadastros e importações locais precisam informar a fonte.
           </p>
           {data.territory.level !== "country" && (
             <button
@@ -238,6 +314,17 @@ export function CarModelsView({
               }
             >
               Ver referência nacional por modelo
+            </button>
+          )}
+          {!report.coverage.availableYears.length && report.measure === "registrations" && (
+            <button
+              type="button"
+              className="button secondary"
+              onClick={() =>
+                controller.navigate({ uf: "DF", city: null, region: null, map: "states" })
+              }
+            >
+              Ver publicação do Distrito Federal
             </button>
           )}
         </div>
