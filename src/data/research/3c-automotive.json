@@ -1,0 +1,1105 @@
+{
+  "version": "2026.11.22.1",
+  "checkedAt": "2026-11-22",
+  "projectId": "019ab04a-1000-7000-8000-000000000003",
+  "catalogUrl": "https://buscanarede.com.br/3cautomotive",
+  "catalogCount": 2954,
+  "catalogFamilies": [
+    "Buchas",
+    "Coxins",
+    "Homocinética",
+    "Kit amortecedor",
+    "Mangueiras",
+    "Tubos"
+  ],
+  "products": [
+    {
+      "id": "3C457000",
+      "name": "Coxim traseiro esquerdo do motor",
+      "family": "Coxins",
+      "brands": [
+        "Peugeot",
+        "Citroën"
+      ],
+      "application": "208, C3 e Basalt 1.0 Firefly; anos conforme aplicação do catálogo.",
+      "url": "https://buscanarede.com.br/3cautomotive/produto/142706/coxim-traseiro-esquerdo-do-motor"
+    },
+    {
+      "id": "3C50747",
+      "name": "Coxim traseiro esquerdo do motor",
+      "family": "Coxins",
+      "brands": [
+        "Peugeot",
+        "Citroën",
+        "DS"
+      ],
+      "application": "2008, C3, C4, Aircross e DS3; resumo cita motor THP e câmbio automático. Conferir a aplicação completa na ficha.",
+      "url": "https://buscanarede.com.br/3cautomotive/produto/141944/coxim-traseiro-esquerdo-do-motor"
+    },
+    {
+      "id": "3C605097",
+      "name": "Mangueira superior do radiador",
+      "family": "Mangueiras",
+      "brands": [
+        "Renault"
+      ],
+      "application": "Fluence e Megane 2.0 16V, 2012–2017.",
+      "url": "https://buscanarede.com.br/3cautomotive/produto/143622/mangueira-superior-do-radiador"
+    },
+    {
+      "id": "3C5259",
+      "name": "Kit amortecedor dianteiro parcial",
+      "family": "Kit amortecedor",
+      "brands": [
+        "Toyota"
+      ],
+      "application": "Corolla Cross 2022 em diante, Corolla Sedan 2020 em diante e Prius 2016 em diante.",
+      "url": "https://buscanarede.com.br/3cautomotive/produto/143762/kit-amortecedor-dianteiro-parcial"
+    },
+    {
+      "id": "3C51083",
+      "name": "Bucha da suspensão traseira",
+      "family": "Buchas",
+      "brands": [
+        "Honda"
+      ],
+      "application": "Civic, 2006–2011.",
+      "url": "https://buscanarede.com.br/3cautomotive/produto/143626/bucha-facao-da-suspensao-traseira-"
+    },
+    {
+      "id": "3C50788",
+      "name": "Coxim dianteiro direito do motor",
+      "family": "Coxins",
+      "brands": [
+        "Honda"
+      ],
+      "application": "CR-V 2.4, 2012–2014.",
+      "url": "https://buscanarede.com.br/3cautomotive/produto/143627/coxim-dianteiro-direito-do-motor"
+    }
+  ],
+  "prospects": [
+    {
+      "id": "auto-france-df",
+      "name": "Auto France",
+      "cityCode": "5300108",
+      "cityName": "Brasília",
+      "state": "DF",
+      "segment": "workshop",
+      "specialization": "specialist",
+      "brands": [
+        "Peugeot",
+        "Citroën",
+        "Renault"
+      ],
+      "website": "https://autofrance.com.br/",
+      "phone": "(61) 3201-0202",
+      "summary": "Oficina independente de linha francesa no SOF Sul, Guará.",
+      "priority": "validate",
+      "rationale": "A especialização coincide com coxins PSA e mangueiras Renault; a identidade fiscal precisa ser resolvida antes da qualificação.",
+      "nextStep": "Confirmar o CNPJ de faturamento e levantar três aplicações recorrentes.",
+      "productIds": [
+        "3C50747",
+        "3C457000",
+        "3C605097"
+      ],
+      "questions": [
+        "Qual CNPJ deve receber uma proposta?",
+        "Quais modelos e motorizações entram com maior frequência?",
+        "A oficina compra de distribuidores ou diretamente de fabricantes?"
+      ],
+      "gaps": [
+        "Duas pessoas jurídicas usam o nome Auto France no mesmo recorte; não atribuir capital ou abertura de uma delas à marca sem confirmação.",
+        "Há divergência de situação cadastral entre a BrasilAPI e um diretório comercial para o CNPJ 06.091.945/0001-42."
+      ],
+      "foundation": {
+        "year": 2003,
+        "note": "Início da marca em outubro de 2003, segundo o site; distinto da abertura dos CNPJs.",
+        "sourceId": "business"
+      },
+      "registry": null,
+      "registryCandidates": [
+        {
+          "cnpj": "06091945000142",
+          "legalName": "AUTO FRANCE PECAS E SERVICOS LTDA",
+          "openedAt": "2004-01-08",
+          "capital": 72400,
+          "status": "ATIVA",
+          "cnae": "4520001",
+          "activity": "Serviços de manutenção e reparação mecânica de veículos automotores",
+          "address": "SOF/SUL QD 01 CONJUNTO A LOTE, 5/6 · GUARA",
+          "cityCode": "5300108",
+          "state": "DF",
+          "branch": false,
+          "source": {
+            "id": "registry",
+            "label": "Cadastro CNPJ via BrasilAPI",
+            "url": "https://brasilapi.com.br/api/cnpj/v1/06091945000142",
+            "kind": "registry",
+            "checkedAt": "2026-11-22"
+          }
+        },
+        {
+          "cnpj": "19314992000150",
+          "legalName": "LVJ COMERCIO DE PECAS LTDA",
+          "openedAt": "2013-11-22",
+          "capital": 67800,
+          "status": "ATIVA",
+          "cnae": "4520001",
+          "activity": "Serviços de manutenção e reparação mecânica de veículos automotores",
+          "address": "SOF/SUL QUADRA 01, S/N · GUARA",
+          "cityCode": "5300108",
+          "state": "DF",
+          "branch": false,
+          "source": {
+            "id": "registry",
+            "label": "Cadastro CNPJ via BrasilAPI",
+            "url": "https://brasilapi.com.br/api/cnpj/v1/19314992000150",
+            "kind": "registry",
+            "checkedAt": "2026-11-22"
+          }
+        }
+      ],
+      "sources": [
+        {
+          "id": "business",
+          "label": "Site da empresa",
+          "url": "https://autofrance.com.br/",
+          "kind": "company",
+          "checkedAt": "2026-11-22"
+        },
+        {
+          "id": "conflict",
+          "label": "Diretório cadastral: situação divergente",
+          "url": "https://www.econodata.com.br/consulta-empresa/06091945000142-auto-france-pecas-e-servicos-ltda",
+          "kind": "directory",
+          "checkedAt": "2026-11-22"
+        }
+      ],
+      "evidence": [
+        {
+          "text": "O site declara especialização em Peugeot, Citroën e Renault e atendimento no SOF Sul, lote 5.",
+          "sourceId": "business"
+        }
+      ]
+    },
+    {
+      "id": "minas-escapamentos",
+      "name": "Minas Escapamentos",
+      "cityCode": "5300108",
+      "cityName": "Brasília",
+      "state": "DF",
+      "segment": "workshop",
+      "specialization": "multibrand",
+      "brands": [],
+      "website": "https://www.minasescapamentos.com.br/",
+      "phone": "(61) 3274-7461",
+      "summary": "Oficina multimarcas na Asa Norte, com serviços de mecânica e suspensão.",
+      "priority": "first",
+      "rationale": "Há correspondência direta entre os serviços de suspensão anunciados e buchas, coxins e kits da 3C.",
+      "nextStep": "Apresentar uma cesta curta por aplicação e validar giro de suspensão antes de cotar.",
+      "productIds": [
+        "3C5259",
+        "3C51083",
+        "3C50788"
+      ],
+      "questions": [
+        "Quais carros geram mais ordens de serviço de suspensão?",
+        "Como são escolhidas marcas de reposição?",
+        "Qual prazo de entrega evita perda de serviço?"
+      ],
+      "gaps": [
+        "Fundação da marca não confirmada em fonte datada; abertura do CNPJ em 1997 não comprova início da marca."
+      ],
+      "foundation": null,
+      "registry": {
+        "cnpj": "02035204000193",
+        "legalName": "MINAS COMERCIO DE AUTO PECAS E REPRESENTACOES LTDA",
+        "openedAt": "1997-08-14",
+        "capital": 100000,
+        "status": "ATIVA",
+        "cnae": "4530703",
+        "activity": "Comércio a varejo de peças e acessórios novos para veículos automotores",
+        "address": "SHCGN CLR QUADRA 703 BLOCO C LOJA 02, SN · ASA NORTE",
+        "cityCode": "5300108",
+        "state": "DF",
+        "branch": false,
+        "source": {
+          "id": "registry",
+          "label": "Cadastro CNPJ via BrasilAPI",
+          "url": "https://brasilapi.com.br/api/cnpj/v1/02035204000193",
+          "kind": "registry",
+          "checkedAt": "2026-11-22"
+        }
+      },
+      "registryCandidates": [],
+      "sources": [
+        {
+          "id": "business",
+          "label": "Site da empresa",
+          "url": "https://www.minasescapamentos.com.br/",
+          "kind": "company",
+          "checkedAt": "2026-11-22"
+        }
+      ],
+      "evidence": [
+        {
+          "text": "O site anuncia atendimento multimarcas e serviços de suspensão na Asa Norte.",
+          "sourceId": "business"
+        }
+      ]
+    },
+    {
+      "id": "autocar-service",
+      "name": "AutoCar Service",
+      "cityCode": "5300108",
+      "cityName": "Brasília",
+      "state": "DF",
+      "segment": "workshop",
+      "specialization": "multibrand",
+      "brands": [],
+      "website": "https://www.autocarservicenb.com.br/",
+      "phone": "",
+      "summary": "Oficina de manutenção e suspensão no Núcleo Bandeirante.",
+      "priority": "first",
+      "rationale": "Suspensão e manutenção corretiva declaradas permitem testar uma oferta de buchas, coxins e kits sem depender de exclusividade de montadora.",
+      "nextStep": "Validar o mix de carros atendidos e a política de compra de componentes de suspensão.",
+      "productIds": [
+        "3C51083",
+        "3C5259",
+        "3C50747"
+      ],
+      "questions": [
+        "Quais aplicações de suspensão faltam no fornecedor atual?",
+        "Quem aprova uma nova marca?",
+        "Há interesse em teste técnico com rastreabilidade e garantia?"
+      ],
+      "gaps": [
+        "O site indica loja 1 e o cadastro, loja 2 no mesmo lote: confirmar ponto de atendimento."
+      ],
+      "foundation": null,
+      "registry": {
+        "cnpj": "10876559000133",
+        "legalName": "AW SERVICO AUTOMOTIVO LTDA",
+        "openedAt": "2009-06-02",
+        "capital": 50000,
+        "status": "ATIVA",
+        "cnae": "4520001",
+        "activity": "Serviços de manutenção e reparação mecânica de veículos automotores",
+        "address": "SOPI CONJUNTO D LOTE 02 LOJA, 02 · NUCLEO BANDEIRANTE",
+        "cityCode": "5300108",
+        "state": "DF",
+        "branch": false,
+        "source": {
+          "id": "registry",
+          "label": "Cadastro CNPJ via BrasilAPI",
+          "url": "https://brasilapi.com.br/api/cnpj/v1/10876559000133",
+          "kind": "registry",
+          "checkedAt": "2026-11-22"
+        }
+      },
+      "registryCandidates": [],
+      "sources": [
+        {
+          "id": "business",
+          "label": "Site da empresa",
+          "url": "https://www.autocarservicenb.com.br/",
+          "kind": "company",
+          "checkedAt": "2026-11-22"
+        }
+      ],
+      "evidence": [
+        {
+          "text": "O site identifica o CNPJ 10.876.559/0001-33 e descreve atuação multimarcas, freios e suspensão.",
+          "sourceId": "business"
+        }
+      ]
+    },
+    {
+      "id": "pellegrino-df",
+      "name": "Pellegrino · Brasília",
+      "cityCode": "5300108",
+      "cityName": "Brasília",
+      "state": "DF",
+      "segment": "distributor",
+      "specialization": "multibrand",
+      "brands": [],
+      "website": "https://www.pellegrino.com.br/",
+      "phone": "(61) 3799-9990",
+      "summary": "Filial de distribuição de autopeças no STRC, Guará.",
+      "priority": "develop",
+      "rationale": "Canal de revenda com presença local; a inclusão de uma marca tende a depender de cadastro e decisão de compras da rede.",
+      "nextStep": "Identificar o comprador da linha leve e o processo de homologação; não tratar a filial como compra autônoma.",
+      "productIds": [
+        "3C457000",
+        "3C5259",
+        "3C51083"
+      ],
+      "questions": [
+        "A homologação é centralizada?",
+        "Quais famílias têm lacunas de cobertura?",
+        "Existem exclusividades ou marcas concorrentes já contratadas?"
+      ],
+      "gaps": [
+        "Capital informado pertence à pessoa jurídica; não mede a filial nem seu volume de compras.",
+        "Vínculo atual entre marca e razão social deve ser reconfirmado no cadastro comercial."
+      ],
+      "foundation": {
+        "year": 1941,
+        "note": "Origem da marca em São Paulo, segundo o histórico institucional. A filial DF abriu em 2021.",
+        "sourceId": "history"
+      },
+      "registry": {
+        "cnpj": "42580092004759",
+        "legalName": "COMPANHIA BRASILEIRA DE DISTRIBUICAO AUTOMOTIVA S.A",
+        "openedAt": "2021-07-19",
+        "capital": 549826800,
+        "status": "ATIVA",
+        "cnae": "4530701",
+        "activity": "Comércio por atacado de peças e acessórios novos para veículos automotores",
+        "address": "STRC TRECHO 2 CONJUNTO D, S/N · ZONA INDUSTRIAL (GUARA)",
+        "cityCode": "5300108",
+        "state": "DF",
+        "branch": true,
+        "source": {
+          "id": "registry",
+          "label": "Cadastro CNPJ via BrasilAPI",
+          "url": "https://brasilapi.com.br/api/cnpj/v1/42580092004759",
+          "kind": "registry",
+          "checkedAt": "2026-11-22"
+        }
+      },
+      "registryCandidates": [],
+      "sources": [
+        {
+          "id": "business",
+          "label": "Site da empresa",
+          "url": "https://www.pellegrino.com.br/nossas-filiais/",
+          "kind": "company",
+          "checkedAt": "2026-11-22"
+        },
+        {
+          "id": "history",
+          "label": "História da Pellegrino",
+          "url": "https://www.pellegrino.com.br/historia/",
+          "kind": "company",
+          "checkedAt": "2026-11-22"
+        }
+      ],
+      "evidence": [
+        {
+          "text": "O localizador oficial identifica a filial Brasília no STRC Trecho 2, conjunto D, lote 7.",
+          "sourceId": "business"
+        }
+      ]
+    },
+    {
+      "id": "vp-distribuidora",
+      "name": "VP Distribuidora de Peças",
+      "cityCode": "5300108",
+      "cityName": "Brasília",
+      "state": "DF",
+      "segment": "distributor",
+      "specialization": "unconfirmed",
+      "brands": [],
+      "website": "",
+      "phone": "",
+      "summary": "Atacadista cadastrado no STRC, Zona Industrial do Guará.",
+      "priority": "validate",
+      "rationale": "O CNAE indica atacado de peças novas, mas catálogo, linha leve e canal comercial ainda não foram confirmados.",
+      "nextStep": "Validar atividade operacional, marcas e atendimento a oficinas antes de apresentar uma cesta.",
+      "productIds": [
+        "3C50747",
+        "3C5259"
+      ],
+      "questions": [
+        "A empresa trabalha com linha leve e componentes de borracha?",
+        "Qual é o canal comercial oficial?",
+        "Quem responde por compras?"
+      ],
+      "gaps": [
+        "Perfil comercial e multimarcas não confirmados por site institucional.",
+        "Endereço atual difere do endereço em publicações antigas; usar o cadastro consultado como ponto de partida."
+      ],
+      "foundation": null,
+      "registry": {
+        "cnpj": "28279009000100",
+        "legalName": "VP DISTRIBUIDORA DE PECAS LTDA",
+        "openedAt": "2017-07-18",
+        "capital": 103500,
+        "status": "ATIVA",
+        "cnae": "4530701",
+        "activity": "Comércio por atacado de peças e acessórios novos para veículos automotores",
+        "address": "STRC TRECHO 4 CONJUNTO B, 18 · ZONA INDUSTRIAL (GUARA)",
+        "cityCode": "5300108",
+        "state": "DF",
+        "branch": false,
+        "source": {
+          "id": "registry",
+          "label": "Cadastro CNPJ via BrasilAPI",
+          "url": "https://brasilapi.com.br/api/cnpj/v1/28279009000100",
+          "kind": "registry",
+          "checkedAt": "2026-11-22"
+        }
+      },
+      "registryCandidates": [],
+      "sources": [
+        {
+          "id": "government",
+          "label": "DODF: identificação da empresa",
+          "url": "https://www.sinj.df.gov.br/sinj/BaixarArquivoDiario.aspx?id_file=f3b67ce4-8d08-3113-a928-a17b776e0e1c",
+          "kind": "government",
+          "checkedAt": "2026-11-22"
+        }
+      ],
+      "evidence": [
+        {
+          "text": "CNPJ consultado registra comércio atacadista de peças novas em Brasília.",
+          "sourceId": "registry"
+        }
+      ]
+    },
+    {
+      "id": "polipecas-df",
+      "name": "Polipeças · Brasília",
+      "cityCode": "5300108",
+      "cityName": "Brasília",
+      "state": "DF",
+      "segment": "distributor",
+      "specialization": "multibrand",
+      "brands": [],
+      "website": "https://www.polipecas.com.br/",
+      "phone": "",
+      "summary": "Filial de distribuição no SIA; mesma pessoa jurídica da matriz de Goiânia.",
+      "priority": "develop",
+      "rationale": "Pode ampliar acesso a revendas, mas deve ser trabalhada como uma conta de grupo com duas unidades, evitando propostas conflitantes.",
+      "nextStep": "Mapear decisão local versus matriz e consolidar a conversa de Brasília e Goiânia numa única conta.",
+      "productIds": [
+        "3C457000",
+        "3C5259",
+        "3C51083"
+      ],
+      "questions": [
+        "As compras são feitas pela matriz?",
+        "Qual família da linha leve admite novo fornecedor?",
+        "Qual cobertura de entrega existe no DF?"
+      ],
+      "gaps": [
+        "Capital é da pessoa jurídica e se repete na matriz; não somar entre unidades."
+      ],
+      "foundation": {
+        "year": 1976,
+        "note": "Fundação da marca em 18/10/1976 segundo o institucional; a filial DF abriu em 1980.",
+        "sourceId": "business"
+      },
+      "registry": {
+        "cnpj": "02222289000380",
+        "legalName": "POLIPECAS DISTRIBUIDORA AUTOMOTIVA LTDA",
+        "openedAt": "1980-03-18",
+        "capital": 80000000,
+        "status": "ATIVA",
+        "cnae": "4530701",
+        "activity": "Comércio por atacado de peças e acessórios novos para veículos automotores",
+        "address": "SIA/ SULTRECHO 02, S/N · SETOR DE INDUSTRIA",
+        "cityCode": "5300108",
+        "state": "DF",
+        "branch": true,
+        "source": {
+          "id": "registry",
+          "label": "Cadastro CNPJ via BrasilAPI",
+          "url": "https://brasilapi.com.br/api/cnpj/v1/02222289000380",
+          "kind": "registry",
+          "checkedAt": "2026-11-22"
+        }
+      },
+      "registryCandidates": [],
+      "sources": [
+        {
+          "id": "business",
+          "label": "Site da empresa",
+          "url": "https://www.polipecas.com.br/institucional",
+          "kind": "company",
+          "checkedAt": "2026-11-22"
+        }
+      ],
+      "evidence": [
+        {
+          "text": "O institucional inclui Brasília entre as filiais; o cadastro identifica o estabelecimento no SIA.",
+          "sourceId": "business"
+        }
+      ]
+    },
+    {
+      "id": "le-france",
+      "name": "Le France Oficina Premium",
+      "cityCode": "5208707",
+      "cityName": "Goiânia",
+      "state": "GO",
+      "segment": "workshop",
+      "specialization": "specialist",
+      "brands": [
+        "Peugeot",
+        "Citroën"
+      ],
+      "website": "https://www.lefranceoficina.com.br/",
+      "phone": "",
+      "summary": "Oficina especializada em veículos franceses no Jardim Presidente.",
+      "priority": "first",
+      "rationale": "Especialização declarada e endereço coincidente com o CNPJ tornam coxins PSA uma hipótese de entrada verificável.",
+      "nextStep": "Validar política de peças originais e apresentar equivalências por motor e câmbio, sem prometer compatibilidade por marca apenas.",
+      "productIds": [
+        "3C50747",
+        "3C457000"
+      ],
+      "questions": [
+        "A exigência de peça original permite reposição independente homologada?",
+        "Quais motores e câmbios Peugeot/Citroën são mais atendidos?",
+        "Quem aprova um teste de coxim?"
+      ],
+      "gaps": [
+        "O anúncio de peças originais pode limitar abertura a uma nova marca; validar antes de cotar."
+      ],
+      "foundation": null,
+      "registry": {
+        "cnpj": "36715557000156",
+        "legalName": "LE FRANCE OFICINA PREMIUM LTDA",
+        "openedAt": "2020-03-18",
+        "capital": 120000,
+        "status": "ATIVA",
+        "cnae": "4520001",
+        "activity": "Serviços de manutenção e reparação mecânica de veículos automotores",
+        "address": "PRESIDENTE KUBITSCHEK, 129 · JD PRESIDENTE",
+        "cityCode": "5208707",
+        "state": "GO",
+        "branch": false,
+        "source": {
+          "id": "registry",
+          "label": "Cadastro CNPJ via BrasilAPI",
+          "url": "https://brasilapi.com.br/api/cnpj/v1/36715557000156",
+          "kind": "registry",
+          "checkedAt": "2026-11-22"
+        }
+      },
+      "registryCandidates": [],
+      "sources": [
+        {
+          "id": "business",
+          "label": "Site da empresa",
+          "url": "https://www.lefranceoficina.com.br/",
+          "kind": "company",
+          "checkedAt": "2026-11-22"
+        }
+      ],
+      "evidence": [
+        {
+          "text": "O site declara foco em Peugeot e Citroën e endereço no Jardim Presidente, coincidente com o cadastro.",
+          "sourceId": "business"
+        }
+      ]
+    },
+    {
+      "id": "francecar",
+      "name": "Francecar Auto Center",
+      "cityCode": "5208707",
+      "cityName": "Goiânia",
+      "state": "GO",
+      "segment": "workshop",
+      "specialization": "unconfirmed",
+      "brands": [
+        "Peugeot",
+        "Citroën",
+        "DS"
+      ],
+      "website": "",
+      "phone": "",
+      "summary": "Oficina no Setor Bueno, associada à linha francesa em diretórios comerciais.",
+      "priority": "validate",
+      "rationale": "O cadastro e o endereço possuem comprovação, mas a especialização precisa de confirmação em canal próprio.",
+      "nextStep": "Confirmar canal oficial e especialização antes de agendar uma apresentação de coxins.",
+      "productIds": [
+        "3C50747",
+        "3C457000"
+      ],
+      "questions": [
+        "A oficina continua no endereço da T-8?",
+        "A especialização em Peugeot, Citroën e DS permanece?",
+        "Quais aplicações têm reincidência de troca?"
+      ],
+      "gaps": [
+        "Especialização encontrada em diretório de terceiros, não em site próprio verificado."
+      ],
+      "foundation": null,
+      "registry": {
+        "cnpj": "16986412000182",
+        "legalName": "FRANCECAR AUTO CENTER LTDA",
+        "openedAt": "2012-10-10",
+        "capital": 10000,
+        "status": "ATIVA",
+        "cnae": "4520001",
+        "activity": "Serviços de manutenção e reparação mecânica de veículos automotores",
+        "address": "T-8, 769 · SETOR BUENO",
+        "cityCode": "5208707",
+        "state": "GO",
+        "branch": false,
+        "source": {
+          "id": "registry",
+          "label": "Cadastro CNPJ via BrasilAPI",
+          "url": "https://brasilapi.com.br/api/cnpj/v1/16986412000182",
+          "kind": "registry",
+          "checkedAt": "2026-11-22"
+        }
+      },
+      "registryCandidates": [],
+      "sources": [
+        {
+          "id": "directory",
+          "label": "Diretório de oficinas: especialização",
+          "url": "https://consertin.com/profissional/francecar-citroenpeugeotds-oficina",
+          "kind": "directory",
+          "checkedAt": "2026-11-22"
+        },
+        {
+          "id": "government",
+          "label": "Diário Oficial de Goiânia: CNPJ e atividade",
+          "url": "https://www.goiania.go.gov.br/Download/legislacao/diariooficial/2019/do_20190301_000007007.pdf",
+          "kind": "government",
+          "checkedAt": "2026-11-22"
+        }
+      ],
+      "evidence": [
+        {
+          "text": "O Diário Oficial identifica o CNPJ e a atividade de manutenção e reparação mecânica.",
+          "sourceId": "government"
+        },
+        {
+          "text": "Um diretório de oficinas associa a unidade da T-8 à especialização em Citroën, Peugeot e DS. Confirmação em canal próprio pendente.",
+          "sourceId": "directory"
+        }
+      ]
+    },
+    {
+      "id": "franca-multipecas",
+      "name": "França Multipeças",
+      "cityCode": "5208707",
+      "cityName": "Goiânia",
+      "state": "GO",
+      "segment": "parts_store",
+      "specialization": "specialist",
+      "brands": [
+        "Renault",
+        "Peugeot",
+        "Citroën"
+      ],
+      "website": "https://francamultipecas.com.br/",
+      "phone": "(62) 3922-5419",
+      "summary": "Loja especializada em peças para linha francesa no Jardim Europa.",
+      "priority": "develop",
+      "rationale": "A especialização combina com a oferta; o CNAE principal de peças usadas exige confirmar abertura à revenda de componentes novos.",
+      "nextStep": "Confirmar o mix de peças novas versus usadas e a compra para revenda de reposição independente.",
+      "productIds": [
+        "3C50747",
+        "3C457000",
+        "3C605097"
+      ],
+      "questions": [
+        "A loja comercializa componentes novos de borracha?",
+        "Quais marcas e aplicações concentram a procura?",
+        "Há compra recorrente para estoque?"
+      ],
+      "gaps": [
+        "CNAE principal é varejo de peças usadas; não comprova, sozinho, operação em peças novas ou atacado."
+      ],
+      "foundation": null,
+      "registry": {
+        "cnpj": "34348116000138",
+        "legalName": "FRANCA PECAS E ACESSORIOS AUTOMOTIVOS LTDA",
+        "openedAt": "2019-07-29",
+        "capital": 200000,
+        "status": "ATIVA",
+        "cnae": "4530704",
+        "activity": "Comércio a varejo de peças e acessórios usados para veículos automotores",
+        "address": "ITALIA, 887 · JD EUROPA",
+        "cityCode": "5208707",
+        "state": "GO",
+        "branch": false,
+        "source": {
+          "id": "registry",
+          "label": "Cadastro CNPJ via BrasilAPI",
+          "url": "https://brasilapi.com.br/api/cnpj/v1/34348116000138",
+          "kind": "registry",
+          "checkedAt": "2026-11-22"
+        }
+      },
+      "registryCandidates": [],
+      "sources": [
+        {
+          "id": "business",
+          "label": "Site da empresa",
+          "url": "https://francamultipecas.com.br/sobre-nos",
+          "kind": "company",
+          "checkedAt": "2026-11-22"
+        }
+      ],
+      "evidence": [
+        {
+          "text": "O site identifica CNPJ, loja na Avenida Itália e foco em Renault, Peugeot e Citroën.",
+          "sourceId": "business"
+        }
+      ]
+    },
+    {
+      "id": "mcd",
+      "name": "MCD Distribuição",
+      "cityCode": "5208707",
+      "cityName": "Goiânia",
+      "state": "GO",
+      "segment": "distributor",
+      "specialization": "multibrand",
+      "brands": [],
+      "website": "https://www.mcddistribuicao.com.br/",
+      "phone": "(62) 3300-1670",
+      "summary": "Distribuidora no Parque Oeste Industrial com linhas automotiva, moto e ferragens.",
+      "priority": "first",
+      "rationale": "O site anuncia atacado e suspensão automotiva; há possibilidade de complementar catálogo, sujeita a marcas já representadas.",
+      "nextStep": "Solicitar o comprador de linha leve e confrontar lacunas de aplicação com uma cesta de coxins, buchas e kits.",
+      "productIds": [
+        "3C457000",
+        "3C5259",
+        "3C51083"
+      ],
+      "questions": [
+        "A linha leve tem compra própria?",
+        "Quais marcas de componentes já são distribuídas?",
+        "Há exclusividade, lote mínimo ou calendário de homologação?"
+      ],
+      "gaps": [
+        "As linhas de motos, agrícola e ferragens não foram incluídas no ajuste ao catálogo 3C.",
+        "Não há comprovação pública de volume de compras."
+      ],
+      "foundation": null,
+      "registry": {
+        "cnpj": "38343874000114",
+        "legalName": "MACHADO DISTRIBUICAO COMERCIO DE PECAS LTDA",
+        "openedAt": "2020-09-04",
+        "capital": 300000,
+        "status": "ATIVA",
+        "cnae": "4530701",
+        "activity": "Comércio por atacado de peças e acessórios novos para veículos automotores",
+        "address": "DAS FLORES, 138 · PRQ OESTE INDUSTRIAL",
+        "cityCode": "5208707",
+        "state": "GO",
+        "branch": false,
+        "source": {
+          "id": "registry",
+          "label": "Cadastro CNPJ via BrasilAPI",
+          "url": "https://brasilapi.com.br/api/cnpj/v1/38343874000114",
+          "kind": "registry",
+          "checkedAt": "2026-11-22"
+        }
+      },
+      "registryCandidates": [],
+      "sources": [
+        {
+          "id": "business",
+          "label": "Site da empresa",
+          "url": "https://www.mcddistribuicao.com.br/",
+          "kind": "company",
+          "checkedAt": "2026-11-22"
+        }
+      ],
+      "evidence": [
+        {
+          "text": "O site identifica CNPJ, endereço e operação atacadista com linha automotiva e suspensão.",
+          "sourceId": "business"
+        }
+      ]
+    },
+    {
+      "id": "polipecas-go",
+      "name": "Polipeças · Goiânia",
+      "cityCode": "5208707",
+      "cityName": "Goiânia",
+      "state": "GO",
+      "segment": "distributor",
+      "specialization": "multibrand",
+      "brands": [],
+      "website": "https://www.polipecas.com.br/",
+      "phone": "(62) 4006-2500",
+      "summary": "Matriz de distribuição no Setor Rodoviário, com rede de filiais.",
+      "priority": "develop",
+      "rationale": "Canal potencial para escala; homologação e concorrência de portfólio precisam ser tratadas antes de assumir demanda.",
+      "nextStep": "Identificar o comprador e unificar o planejamento com a filial de Brasília.",
+      "productIds": [
+        "3C457000",
+        "3C5259",
+        "3C51083"
+      ],
+      "questions": [
+        "O comprador da matriz atende também a filial DF?",
+        "Há espaço para novas marcas de suspensão e coxins?",
+        "Qual é o critério para cadastrar um fornecedor?"
+      ],
+      "gaps": [
+        "Não usar o capital social como receita, potencial de compra ou pontuação de prioridade.",
+        "Data institucional de fundação é 18/10/1976; abertura cadastral é 19/10/1976."
+      ],
+      "foundation": {
+        "year": 1976,
+        "note": "Ano de fundação declarado pela empresa; distinto da data cadastral.",
+        "sourceId": "business"
+      },
+      "registry": {
+        "cnpj": "02222289000119",
+        "legalName": "POLIPECAS DISTRIBUIDORA AUTOMOTIVA LTDA",
+        "openedAt": "1976-10-19",
+        "capital": 80000000,
+        "status": "ATIVA",
+        "cnae": "4530701",
+        "activity": "Comércio por atacado de peças e acessórios novos para veículos automotores",
+        "address": "CASTELO BRANCO, 4598 · RODOVIARIO",
+        "cityCode": "5208707",
+        "state": "GO",
+        "branch": false,
+        "source": {
+          "id": "registry",
+          "label": "Cadastro CNPJ via BrasilAPI",
+          "url": "https://brasilapi.com.br/api/cnpj/v1/02222289000119",
+          "kind": "registry",
+          "checkedAt": "2026-11-22"
+        }
+      },
+      "registryCandidates": [],
+      "sources": [
+        {
+          "id": "business",
+          "label": "Site da empresa",
+          "url": "https://www.polipecas.com.br/institucional",
+          "kind": "company",
+          "checkedAt": "2026-11-22"
+        }
+      ],
+      "evidence": [
+        {
+          "text": "O institucional informa origem em Goiânia e rede de filiais; o CNPJ da matriz registra atacado de peças novas.",
+          "sourceId": "business"
+        }
+      ]
+    },
+    {
+      "id": "aguilera",
+      "name": "Aguilera Distribuidora",
+      "cityCode": "5208707",
+      "cityName": "Goiânia",
+      "state": "GO",
+      "segment": "distributor",
+      "specialization": "unconfirmed",
+      "brands": [],
+      "website": "",
+      "phone": "",
+      "summary": "Atacadista cadastrado na Avenida Perimetral Norte, Fazenda Caveiras.",
+      "priority": "validate",
+      "rationale": "O enquadramento de atacado é compatível com o canal, mas não comprova linha leve ou famílias 3C.",
+      "nextStep": "Confirmar operação, endereço comercial e catálogo; o telefone cadastral tem DDD 65 e precisa ser validado.",
+      "productIds": [
+        "3C5259",
+        "3C51083"
+      ],
+      "questions": [
+        "Existe operação de atendimento em Goiânia?",
+        "Qual o canal oficial e o responsável pela linha leve?",
+        "O catálogo inclui suspensão, coxins ou mangueiras?"
+      ],
+      "gaps": [
+        "Não foi localizado canal institucional próprio confirmado nesta pesquisa.",
+        "DDD cadastral diverge da cidade; não apresentar como telefone comercial validado."
+      ],
+      "foundation": null,
+      "registry": {
+        "cnpj": "12145475000155",
+        "legalName": "AGUILERA AUTOPECAS DE GOIAS LTDA",
+        "openedAt": "2010-06-23",
+        "capital": 4000000,
+        "status": "ATIVA",
+        "cnae": "4530701",
+        "activity": "Comércio por atacado de peças e acessórios novos para veículos automotores",
+        "address": "PERIMETRAL NORTE, 2859 · FAZ CAVEIRAS",
+        "cityCode": "5208707",
+        "state": "GO",
+        "branch": false,
+        "source": {
+          "id": "registry",
+          "label": "Cadastro CNPJ via BrasilAPI",
+          "url": "https://brasilapi.com.br/api/cnpj/v1/12145475000155",
+          "kind": "registry",
+          "checkedAt": "2026-11-22"
+        }
+      },
+      "registryCandidates": [],
+      "sources": [],
+      "evidence": [
+        {
+          "text": "Cadastro consultado indica CNAE 4530-7/01 e estabelecimento em Goiânia.",
+          "sourceId": "registry"
+        }
+      ]
+    }
+  ],
+  "reports": [
+    {
+      "cityCode": "5300108",
+      "title": "Brasília: testar oficinas e desenvolver o canal do Guará",
+      "thesis": "Começar pela validação técnica em oficinas de suspensão e multimarcas. Trabalhar distribuidores em paralelo, com uma abordagem de cadastro de fornecedor. A Auto France oferece ajuste por especialização, mas sua identidade fiscal precisa ser esclarecida primeiro.",
+      "observations": [
+        {
+          "text": "Minas Escapamentos e AutoCar anunciam manutenção e suspensão; isso aproxima o serviço oferecido das famílias de buchas, coxins e kits.",
+          "prospectIds": [
+            "minas-escapamentos",
+            "autocar-service"
+          ]
+        },
+        {
+          "text": "Pellegrino e Polipeças têm unidades no recorte de Brasília; a existência da filial não comprova autonomia para comprar.",
+          "prospectIds": [
+            "pellegrino-df",
+            "polipecas-df"
+          ]
+        },
+        {
+          "text": "Auto France anuncia linha francesa, mas há dois CNPJs candidatos no mesmo endereço e nome de operação.",
+          "prospectIds": [
+            "auto-france-df"
+          ]
+        }
+      ],
+      "plays": [
+        {
+          "title": "Validar demanda em oficinas",
+          "priority": "01",
+          "prospectIds": [
+            "minas-escapamentos",
+            "autocar-service"
+          ],
+          "productIds": [
+            "3C51083",
+            "3C5259"
+          ],
+          "reason": "Serviço de suspensão declarado, sem depender de um único fabricante de veículo.",
+          "action": "Levantar cinco aplicações recorrentes por oficina e testar cotação com aplicação, prazo, garantia e condição comercial.",
+          "success": "Avançar quando houver aplicação identificada, responsável pela compra e aceite para receber uma cotação."
+        },
+        {
+          "title": "Abrir uma frente com distribuidores",
+          "priority": "02",
+          "prospectIds": [
+            "pellegrino-df",
+            "polipecas-df"
+          ],
+          "productIds": [
+            "3C457000",
+            "3C5259"
+          ],
+          "reason": "Acesso ao canal de revenda pode ampliar cobertura, mas exige um processo distinto da venda a oficinas.",
+          "action": "Confirmar comprador local ou central, marcas já representadas, lote mínimo e requisitos de homologação.",
+          "success": "Avançar quando o processo de cadastro e uma lacuna concreta de portfólio forem conhecidos."
+        },
+        {
+          "title": "Resolver identidade antes de qualificar",
+          "priority": "03",
+          "prospectIds": [
+            "auto-france-df",
+            "vp-distribuidora"
+          ],
+          "productIds": [
+            "3C50747",
+            "3C605097"
+          ],
+          "reason": "Ajuste técnico não substitui comprovação de quem opera e compra.",
+          "action": "Confirmar CNPJ de faturamento, operação atual e política de compra de peças novas.",
+          "success": "Avançar somente depois de confirmar identidade e linha de atuação."
+        }
+      ],
+      "route": "Organizar uma rodada no eixo SIA/STRC e SOF Sul, outra no Núcleo Bandeirante e uma na Asa Norte. Os agrupamentos são por endereço; não representam uma rota calculada nem deslocamento otimizado.",
+      "limits": [
+        "O município cadastral Brasília (IBGE 5300108) abrange todo o DF, incluindo Guará, Núcleo Bandeirante e demais regiões administrativas. Não é somente o Plano Piloto.",
+        "A amostra não mede o total de oficinas ou a participação de mercado. Não há estimativa comprovada de faturamento, consumo de peças ou conversão."
+      ]
+    },
+    {
+      "cityCode": "5208707",
+      "title": "Goiânia: especialização francesa e distribuição de linha leve",
+      "thesis": "Validar primeiro uma entrada técnica com a Le France e uma conversa de portfólio com a MCD. França Multipeças e Polipeças são frentes de desenvolvimento. Francecar e Aguilera permanecem em validação até confirmar canal e operação.",
+      "observations": [
+        {
+          "text": "Le France declara especialização em Peugeot e Citroën. França Multipeças anuncia também Renault, mas o CNAE principal é de peças usadas.",
+          "prospectIds": [
+            "le-france",
+            "franca-multipecas"
+          ]
+        },
+        {
+          "text": "MCD declara atacado com suspensão automotiva; seu portfólio também inclui motos e ferragens, que não entram nesta proposta.",
+          "prospectIds": [
+            "mcd"
+          ]
+        },
+        {
+          "text": "A matriz Polipeças e sua filial Brasília pertencem à mesma pessoa jurídica; devem ser coordenadas como uma conta de grupo.",
+          "prospectIds": [
+            "polipecas-go"
+          ]
+        }
+      ],
+      "plays": [
+        {
+          "title": "Testar uma oferta para linha francesa",
+          "priority": "01",
+          "prospectIds": [
+            "le-france"
+          ],
+          "productIds": [
+            "3C50747",
+            "3C457000"
+          ],
+          "reason": "Há especialização declarada e correspondência entre endereço comercial e cadastral.",
+          "action": "Confirmar aceitação de reposição independente, coletar aplicações por motor/câmbio e apresentar até três referências adequadas.",
+          "success": "Avançar com interesse explícito em teste ou cotação e confirmação da política de peças."
+        },
+        {
+          "title": "Propor complemento ao distribuidor",
+          "priority": "02",
+          "prospectIds": [
+            "mcd",
+            "polipecas-go"
+          ],
+          "productIds": [
+            "3C5259",
+            "3C51083"
+          ],
+          "reason": "O canal permite revenda a oficinas, mas pode já ter concorrentes e regras de exclusividade.",
+          "action": "Identificar o comprador de linha leve e levantar referências ausentes, prazo e requisitos de entrada.",
+          "success": "Avançar com lacuna de catálogo demonstrada e processo de homologação conhecido."
+        },
+        {
+          "title": "Confirmar o canal antes da proposta",
+          "priority": "03",
+          "prospectIds": [
+            "franca-multipecas",
+            "francecar",
+            "aguilera"
+          ],
+          "productIds": [
+            "3C605097",
+            "3C50747"
+          ],
+          "reason": "Há pendências de peças novas versus usadas, especialização ou canal comercial próprio.",
+          "action": "Confirmar venda de peças novas na França Multipeças, canal oficial da Francecar e operação local da Aguilera.",
+          "success": "Avançar quando o ajuste com a linha leve nova e a identidade operacional estiverem confirmados."
+        }
+      ],
+      "route": "Agrupar visitas por Jardim Presidente/Jardim Europa, Parque Oeste Industrial, Setor Rodoviário e Setor Bueno. Não incluir Aparecida de Goiânia neste recorte municipal; é outro município.",
+      "limits": [
+        "Esta pesquisa cobre estabelecimentos no município de Goiânia (IBGE 5208707), não toda a região metropolitana.",
+        "Não há base aberta validada aqui que permita converter vendas nacionais por modelo em demanda municipal de peças. O ajuste de catálogo é uma hipótese técnica, não uma previsão de giro."
+      ]
+    }
+  ]
+}

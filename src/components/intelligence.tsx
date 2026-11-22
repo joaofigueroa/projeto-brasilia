@@ -4,6 +4,7 @@ import {
   Building2,
   CarFront,
   ChevronDown,
+  Compass,
   Database,
   ExternalLink,
   FileText,
@@ -28,6 +29,7 @@ import type { IntelligenceData, IntelligenceRecord } from "@/types/intelligence"
 import { AnalysisPeriodFilter } from "./analysis-period-filter";
 import { BrazilMap } from "./brazil-map";
 import { CarModelsView } from "./car-models-view";
+import { CommercialIntelligence, ResearchedProspects } from "./commercial-research";
 import { Toast } from "./feedback";
 import { IntelligenceDialogs } from "./intelligence-dialogs";
 import { StateFlag } from "./state-flag";
@@ -45,6 +47,7 @@ const icons = {
   vehicles: CarFront,
   opportunities: FileText,
   notes: Building2,
+  commercial: Compass,
 };
 function ExternalSource({ href, children }: { href: string; children: React.ReactNode }) {
   return (
@@ -703,17 +706,31 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
               </span>
               <h2>{data.territory.label}</h2>
               <p>
-                {periodLabel(data.years)} <span> / </span>{" "}
-                {data.years.length === 1
-                  ? "1 ano de referência"
-                  : `${data.years.length} anos de referência`}
+                {data.research ? "Pesquisa comercial atual" : periodLabel(data.years)}{" "}
+                <span> / </span>{" "}
+                {data.research
+                  ? "Indicadores mantêm o filtro de anos"
+                  : data.years.length === 1
+                    ? "1 ano de referência"
+                    : `${data.years.length} anos de referência`}
               </p>
             </div>
             <div className="bi-analysis-actions">
               <span className="section-caption">
-                {data.records.length}
-                {data.records.length === 500 ? "+" : ""}{" "}
-                {data.records.length === 1 ? "registro cadastrado" : "registros cadastrados"}
+                {data.research ? (
+                  <>
+                    {data.tab.kind === "prospects"
+                      ? `${data.research.prospects.length} perfis pesquisados`
+                      : `${data.research.reports.length} ${data.research.reports.length === 1 ? "análise publicada" : "análises publicadas"}`}
+                    {data.records.length > 0 ? ` · ${data.records.length} registros da equipe` : ""}
+                  </>
+                ) : (
+                  <>
+                    {data.records.length}
+                    {data.records.length === 500 ? "+" : ""}{" "}
+                    {data.records.length === 1 ? "registro cadastrado" : "registros cadastrados"}
+                  </>
+                )}
               </span>
               {canManage && (
                 <div>
@@ -726,21 +743,23 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
                   >
                     <Settings2 size={16} />
                   </button>
-                  <button
-                    className="button secondary"
-                    type="button"
-                    onClick={controller.openImport}
-                  >
-                    <FileUp size={15} />
-                    Importar
-                  </button>
+                  {data.tab.kind !== "commercial" && (
+                    <button
+                      className="button secondary"
+                      type="button"
+                      onClick={controller.openImport}
+                    >
+                      <FileUp size={15} />
+                      Importar
+                    </button>
+                  )}
                   <button
                     className="button primary"
                     type="button"
                     onClick={() => controller.openRecord("new")}
                   >
                     <Plus size={15} />
-                    Registro
+                    {data.tab.kind === "commercial" ? "Nota" : "Registro"}
                   </button>
                 </div>
               )}
@@ -756,7 +775,41 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
             initial={{ opacity: 0, y: 5 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            {data.tab.kind === "market" ? (
+            {data.tab.kind === "commercial" ? (
+              <>
+                {data.research ? (
+                  <CommercialIntelligence research={data.research} controller={controller} />
+                ) : (
+                  <div className="bi-panel-intro">
+                    <h3>Inteligência comercial</h3>
+                    <p>
+                      A pesquisa publicada está disponível no projeto 3C Automotive, em Brasília e
+                      Goiânia. Cadastre notas para organizar a análise deste projeto.
+                    </p>
+                  </div>
+                )}
+                {data.records.length > 0 && (
+                  <>
+                    <div className="bi-section-title">
+                      <h4>Notas da equipe · {periodLabel(data.years)}</h4>
+                    </div>
+                    <RecordList data={data} controller={controller} />
+                  </>
+                )}
+              </>
+            ) : data.tab.kind === "prospects" && data.research ? (
+              <>
+                <ResearchedProspects research={data.research} controller={controller} />
+                {data.records.length > 0 && (
+                  <>
+                    <div className="bi-section-title">
+                      <h4>Registros da equipe · {periodLabel(data.years)}</h4>
+                    </div>
+                    <RecordList data={data} controller={controller} />
+                  </>
+                )}
+              </>
+            ) : data.tab.kind === "market" ? (
               <MarketView data={data} controller={controller} />
             ) : data.tab.kind === "vehicles" ? (
               <VehiclesView data={data} controller={controller} />

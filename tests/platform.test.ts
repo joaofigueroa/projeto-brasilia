@@ -504,6 +504,47 @@ describe("project intelligence", () => {
       saveIntelligenceRecord({ scope: { ...scope(), tab: id }, fields: fields() }),
     ).rejects.toThrow("Somente administradores");
   });
+  it("serves published commercial research to authenticated viewers with exact city and period boundaries", async () => {
+    const { getIntelligence, saveAnalysisTab } = await services();
+    const project = projects.find((item) => item.id === "019ab04a-1000-7000-8000-000000000003");
+    expect(project).toBeDefined();
+    const initial = await getIntelligence({ project: project?.id, uf: "GO" });
+    const commercial = initial.tabs.find((item) => item.kind === "commercial");
+    expect(commercial).toBeDefined();
+    session.viewer = collaborator;
+    const data = await getIntelligence({
+      project: project?.id,
+      tab: commercial?.id,
+      uf: "GO",
+      city: "5208707",
+      years: "2022,2023,2024",
+    });
+    expect(data.years).toEqual([2022, 2023, 2024]);
+    expect(data.research?.prospects).toHaveLength(6);
+    expect(data.research?.reports.map((report) => report.cityCode)).toEqual(["5208707"]);
+    const outside = await getIntelligence({
+      project: project?.id,
+      tab: commercial?.id,
+      uf: "GO",
+      city: "5201405",
+    });
+    expect(outside.research?.prospects).toEqual([]);
+    await expect(
+      saveAnalysisTab({
+        projectId: project?.id,
+        name: "Outra análise",
+        kind: "commercial",
+        segments: [],
+        keywords: [],
+      }),
+    ).rejects.toThrow("Somente administradores");
+    const other = await getIntelligence({ project: projects[0].id, uf: "DF" });
+    expect(other.research).toBeNull();
+    session.viewer = null;
+    await expect(getIntelligence({ project: project?.id, tab: commercial?.id })).rejects.toThrow(
+      "Authentication required",
+    );
+  });
   it("detects concurrent edits of records and tabs", async () => {
     const { saveIntelligenceRecord, getIntelligence, saveAnalysisTab } = await services();
     const selected = await tab();

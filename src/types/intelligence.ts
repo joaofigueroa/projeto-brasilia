@@ -1,6 +1,13 @@
+import type { CommercialResearchView } from "./commercial-research";
 import type { Project, PublicUser } from "./domain";
 
-export type AnalysisKind = "market" | "prospects" | "vehicles" | "opportunities" | "notes";
+export type AnalysisKind =
+  | "market"
+  | "prospects"
+  | "vehicles"
+  | "opportunities"
+  | "notes"
+  | "commercial";
 export type MetricKind = "context" | "market_size" | "fleet" | "sales" | "registrations";
 export type AnalysisTab = {
   id: string;
@@ -87,6 +94,7 @@ export type IntelligenceData = {
   models: CarModelReport;
   metric: MetricKind;
   records: IntelligenceRecord[];
+  research: CommercialResearchView | null;
   official: OfficialContext;
   notices: NoticeResult | null;
   states: {

@@ -30,6 +30,7 @@ import {
   tabInputSchema,
 } from "@/validators/intelligence";
 import { getCarModelReport } from "./car-models";
+import { getCommercialResearch } from "./commercial-research";
 
 function fail(message: string): never {
   throw businessError(message);
@@ -94,6 +95,10 @@ export async function getIntelligence(raw: unknown): Promise<IntelligenceData> {
           : "registrations"
         : input.metric,
     records,
+    research:
+      tab.kind === "prospects" || tab.kind === "commercial"
+        ? getCommercialResearch(project.id, scope)
+        : null,
     official,
     notices,
     states: getMapStatistics(input.years),

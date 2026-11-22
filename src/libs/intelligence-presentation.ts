@@ -5,6 +5,7 @@ export const analysisLabels: Record<AnalysisKind, string> = {
   vehicles: "Veículos",
   opportunities: "Editais e oportunidades",
   notes: "Análise e abordagem",
+  commercial: "Inteligência comercial",
 };
 export const metricLabels: Record<MetricKind, string> = {
   context: "Registro qualitativo",

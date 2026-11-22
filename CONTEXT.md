@@ -42,3 +42,11 @@
 **Edital**: Publicação de contratação pública; a menção a um termo no objeto não confirma compatibilidade comercial ou elegibilidade para participar.
 
 **Publicação setorial de emplacamentos**: Fonte primária de uma entidade do setor, como Fenabrave ou Sincodiv, distinta de uma publicação governamental. Conserva sua abrangência e classificação anual. Divergências entre meses e total anual ficam sinalizadas e não entram na consolidação até revisão.
+
+**Perfil pesquisado**: Registro versionado de uma organização em uma data de consulta, com identidade cadastral, especialização, fontes e lacunas. É independente dos anos usados nos indicadores históricos e não comprova relacionamento comercial.
+
+**Fundação da marca**: Início da operação declarado pela empresa em uma fonte identificada. É distinto da abertura do estabelecimento no CNPJ, especialmente em filiais ou mudanças de pessoa jurídica.
+
+**Prioridade de abordagem**: Hipótese comercial baseada no ajuste entre oferta, atividade declarada e evidência disponível. Não equivale a cliente qualificado, probabilidade de conversão ou capacidade financeira.
+
+**Análise comercial por IA**: Relatório versionado que separa evidências públicas de sugestões de abordagem, com recorte territorial, data e limites. Sua publicação não implica geração automática ou monitoramento contínuo.

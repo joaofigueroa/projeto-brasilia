@@ -1,5 +1,12 @@
 import { z } from "zod";
-export const analysisKinds = ["market", "prospects", "vehicles", "opportunities", "notes"] as const;
+export const analysisKinds = [
+  "market",
+  "prospects",
+  "vehicles",
+  "opportunities",
+  "notes",
+  "commercial",
+] as const;
 export const metricKinds = ["context", "market_size", "fleet", "sales", "registrations"] as const;
 const sourceUrl = z.union([
   z.literal(""),
