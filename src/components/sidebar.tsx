@@ -13,7 +13,7 @@ import {
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useId, useState } from "react";
+import { Fragment, useId, useState } from "react";
 import { useNavigation } from "@/hooks/use-navigation";
 import { authClient } from "@/libs/auth-client";
 import type { Project, PublicUser } from "@/types/domain";
@@ -98,7 +98,7 @@ export function Sidebar({ viewer, projects }: { viewer: PublicUser; projects: Pr
           onSelect={() => setExpanded(false)}
         />
         <div className="sidebar-navigation-heading">
-          <span className="nav-label">NAVEGAÇÃO</span>
+          <span className="nav-label">TRABALHO</span>
           <button
             className="icon-button sidebar-toggle"
             type="button"
@@ -113,23 +113,26 @@ export function Sidebar({ viewer, projects }: { viewer: PublicUser; projects: Pr
         </div>
         <nav id={navigationId} aria-label="Navegação principal">
           <div className="nav-links">
-            {links.map(({ href, label, Icon }) => (
-              <Link
-                key={href}
-                className={`nav-link ${pathname.startsWith(href) ? "active" : ""}`}
-                href={`${href}${selectedProject ? `?project=${selectedProject}` : ""}`}
-                aria-label={label}
-                title={label}
-                aria-current={pathname.startsWith(href) ? "page" : undefined}
-                onClick={() => setExpanded(false)}
-              >
-                {pathname.startsWith(href) && (
-                  <motion.span layoutId="active-nav" className="nav-active-bg" />
-                )}
-                <Icon size={19} />
-                <span className="nav-link-label">{label}</span>
-                {pathname.startsWith(href) && <span className="nav-active-marker" />}
-              </Link>
+            {links.map(({ href, label, Icon }, index) => (
+              <Fragment key={href}>
+                {index === 2 && <span className="nav-label nav-space-label">ESPAÇO</span>}
+                <Link
+                  key={href}
+                  className={`nav-link ${pathname.startsWith(href) ? "active" : ""}`}
+                  href={`${href}${selectedProject ? `?project=${selectedProject}` : ""}`}
+                  aria-label={label}
+                  title={label}
+                  aria-current={pathname.startsWith(href) ? "page" : undefined}
+                  onClick={() => setExpanded(false)}
+                >
+                  {pathname.startsWith(href) && (
+                    <motion.span layoutId="active-nav" className="nav-active-bg" />
+                  )}
+                  <Icon size={19} />
+                  <span className="nav-link-label">{label}</span>
+                  {pathname.startsWith(href) && <span className="nav-active-marker" />}
+                </Link>
+              </Fragment>
             ))}
           </div>
         </nav>

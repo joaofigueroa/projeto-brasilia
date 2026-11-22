@@ -34,7 +34,6 @@ export function CarModelsView({
     <>
       <div className="bi-panel-intro">
         <h3>Modelos de automóveis</h3>
-        <p>Compare quantidades por modelo e ano no território selecionado.</p>
       </div>
       <div className="bi-model-controls">
         <label>
@@ -61,103 +60,42 @@ export function CarModelsView({
             </select>
           </label>
         )}
-      </div>
-      <div className="bi-model-period">
-        <span>
-          <CarFront size={16} />
-          Automóveis · {data.territory.label}
-        </span>
-        <strong>{period}</strong>
+        {report.rows.length > 0 && (
+          <>
+            <label className="model-search-field">
+              Modelo
+              <span className="search-box">
+                <Search size={15} />
+                <input
+                  aria-label="Buscar modelo de automóvel"
+                  placeholder="Buscar modelo…"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                />
+              </span>
+            </label>
+            <label>
+              Marca
+              <select
+                aria-label="Filtrar marca de automóvel"
+                value={make}
+                onChange={(e) => setMake(e.target.value)}
+              >
+                <option value="">Todas as marcas</option>
+                {makes.map((value) => (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </>
+        )}
       </div>
       <p className="bi-data-note">
         <Info size={15} />
         <span>{report.coverage.notes[0]}</span>
       </p>
-      <div className="bi-model-coverage">
-        <button
-          className="bi-model-coverage-trigger"
-          type="button"
-          aria-expanded={coverageOpen}
-          aria-controls={coverageOpen ? coverageId : undefined}
-          onClick={() => setCoverageOpen(!coverageOpen)}
-        >
-          Fontes e cobertura por território e ano
-        </button>
-        <AnimatePresence initial={false}>
-          {coverageOpen && (
-            <motion.div
-              id={coverageId}
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              style={{ overflow: "hidden" }}
-            >
-              <div className="bi-model-coverage-body">
-                <p>
-                  Anos com publicação neste recorte e indicador:{" "}
-                  <strong>
-                    {report.coverage.availableYears.length
-                      ? periodLabel(report.coverage.availableYears)
-                      : "nenhum"}
-                  </strong>
-                  .
-                </p>
-                {report.coverage.missingYears.length > 0 && (
-                  <p>
-                    Anos selecionados sem publicação carregada:{" "}
-                    {periodLabel(report.coverage.missingYears)}. Sem dado não significa zero.
-                  </p>
-                )}
-                {report.coverage.notes.slice(1).map((note) => (
-                  <p key={note}>{note}</p>
-                ))}
-                <p>
-                  A soma usa apenas os anos selecionados. A média considera os anos com valor;
-                  lacunas ficam identificadas como parciais.
-                </p>
-                <p>
-                  Cobertura pública carregada: Brasil, 2022–2024 (Fenabrave nacional); Distrito
-                  Federal, 2022–2025 (Sincodiv-DF). Outros estados e municípios usam somente
-                  registros locais com fonte.
-                </p>
-                <div className="bi-model-sources">
-                  {report.coverage.sources.map((source) => (
-                    <a
-                      className="bi-source-link"
-                      key={source.url}
-                      href={source.url}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {source.name}
-                      <ExternalLink size={12} />
-                    </a>
-                  ))}
-                  <a
-                    className="bi-source-link"
-                    href="https://dados.transportes.gov.br/dataset/registro-nacional-de-veiculos-automotores-renavam"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Senatran · base aberta de frota
-                    <ExternalLink size={12} />
-                  </a>
-                  <a
-                    className="bi-source-link"
-                    href="https://www.gov.br/pt-br/servicos/contratar-arquivos-estatisticos-denatran"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Serpro · acesso aos arquivos estatísticos
-                    <ExternalLink size={12} />
-                  </a>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
       {data.records.length === 500 && (
         <p className="bi-data-note">
           O recorte atingiu o limite de 500 registros locais. Restrinja os anos ou o território para
@@ -166,29 +104,6 @@ export function CarModelsView({
       )}
       {report.rows.length > 0 ? (
         <>
-          <div className="bi-record-filters">
-            <label className="search-box">
-              <Search size={16} />
-              <input
-                aria-label="Buscar modelo de automóvel"
-                placeholder="Buscar modelo, ex.: Nivus"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-              />
-            </label>
-            <select
-              aria-label="Filtrar marca de automóvel"
-              value={make}
-              onChange={(e) => setMake(e.target.value)}
-            >
-              <option value="">Todas as marcas</option>
-              {makes.map((value) => (
-                <option key={value} value={value}>
-                  {value}
-                </option>
-              ))}
-            </select>
-          </div>
           <p className="bi-record-count">{filtered.length} linhas por modelo, fonte e território</p>
           <div className="bi-model-table-scroll">
             <table className="bi-model-table">
@@ -335,6 +250,91 @@ export function CarModelsView({
           indicador foram ocultados desta visualização.
         </p>
       )}
+      <div className="bi-model-coverage">
+        <button
+          className="bi-model-coverage-trigger"
+          type="button"
+          aria-expanded={coverageOpen}
+          aria-controls={coverageOpen ? coverageId : undefined}
+          onClick={() => setCoverageOpen(!coverageOpen)}
+        >
+          Fontes e cobertura por território e ano
+        </button>
+        <AnimatePresence initial={false}>
+          {coverageOpen && (
+            <motion.div
+              id={coverageId}
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              style={{ overflow: "hidden" }}
+            >
+              <div className="bi-model-coverage-body">
+                <p>
+                  Anos com publicação neste recorte e indicador:{" "}
+                  <strong>
+                    {report.coverage.availableYears.length
+                      ? periodLabel(report.coverage.availableYears)
+                      : "nenhum"}
+                  </strong>
+                  .
+                </p>
+                {report.coverage.missingYears.length > 0 && (
+                  <p>
+                    Anos selecionados sem publicação carregada:{" "}
+                    {periodLabel(report.coverage.missingYears)}. Sem dado não significa zero.
+                  </p>
+                )}
+                {report.coverage.notes.slice(1).map((note) => (
+                  <p key={note}>{note}</p>
+                ))}
+                <p>
+                  A soma usa apenas os anos selecionados. A média considera os anos com valor;
+                  lacunas ficam identificadas como parciais.
+                </p>
+                <p>
+                  Cobertura pública carregada: Brasil, 2022–2024 (Fenabrave nacional); Distrito
+                  Federal, 2022–2025 (Sincodiv-DF). Outros estados e municípios usam somente
+                  registros locais com fonte.
+                </p>
+                <div className="bi-model-sources">
+                  {report.coverage.sources.map((source) => (
+                    <a
+                      className="bi-source-link"
+                      key={source.url}
+                      href={source.url}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {source.name}
+                      <ExternalLink size={12} />
+                    </a>
+                  ))}
+                  <a
+                    className="bi-source-link"
+                    href="https://dados.transportes.gov.br/dataset/registro-nacional-de-veiculos-automotores-renavam"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Senatran · base aberta de frota
+                    <ExternalLink size={12} />
+                  </a>
+                  <a
+                    className="bi-source-link"
+                    href="https://www.gov.br/pt-br/servicos/contratar-arquivos-estatisticos-denatran"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Serpro · acesso aos arquivos estatísticos
+                    <ExternalLink size={12} />
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
       <details className="bi-local-model-records">
         <summary>Registros locais de automóveis ({report.recordIds.length})</summary>
         {records}

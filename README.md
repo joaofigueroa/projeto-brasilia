@@ -26,7 +26,11 @@ Consulte [fontes, cobertura, permissões e formato de importação](docs/intelli
 
 ## Interface
 
-O sistema visual compartilhado está em `src/app/design-system.css`. Aplica tipografia do sistema, navegação escura, ações em azul, superfícies com profundidade e feedback imediato de toque e clique. Segue a skill `apple-design` de emilkowalski/skills, com molas sem overshoot como padrão e alternativas para movimento reduzido, transparência reduzida e maior contraste. O mapa conserva as geometrias, as cores geográficas e os gestos aprovados.
+O sistema visual compartilhado está em `src/app/design-system.css`. A identidade usa uma marca vetorial própria, curvas atravessadas por um eixo, e o nome **Brasília**. A composição usa superfícies planas, divisórias e hierarquia tipográfica, com as skills `apple-design` e `emil-design-eng` como referências de interação.
+
+O Kanban combina planejamento semanal, filtro local por dia do prazo, progresso compacto e vistas de quadro ou lista. A lista conserva abertura de detalhes, histórico e alteração de status com as mesmas permissões do quadro. Trocar de semana encerra o filtro de dia. Os filtros de projeto, pessoa e texto continuam na URL.
+
+No BI, o período fica no cabeçalho, as abas organizam a análise e a busca territorial fica junto ao mapa. **Expandir análise** amplia o relatório e preserva o mapa montado, incluindo zoom e posição. No celular, as abas usam um seletor nativo. O relatório de automóveis reúne busca, marca, indicador e consolidação nos mesmos controles, sem alterar fontes ou regras de agregação. O mapa mantém geometrias, cores geográficas e gestos. Movimentos respeitam a preferência por movimento reduzido.
 
 ## Desenvolvimento
 

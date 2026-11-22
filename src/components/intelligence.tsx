@@ -11,6 +11,8 @@ import {
   Globe2,
   Info,
   MapPin,
+  PanelLeftClose,
+  PanelLeftOpen,
   Plus,
   Search,
   Settings2,
@@ -21,12 +23,7 @@ import { useId, useState } from "react";
 import type { IntelligenceController } from "@/hooks/use-intelligence";
 import { useIntelligence } from "@/hooks/use-intelligence";
 import { periodLabel } from "@/libs/analysis-period";
-import {
-  analysisLabels,
-  formatNumber,
-  metricLabels,
-  prospectLabels,
-} from "@/libs/intelligence-presentation";
+import { formatNumber, metricLabels, prospectLabels } from "@/libs/intelligence-presentation";
 import type { IntelligenceData, IntelligenceRecord } from "@/types/intelligence";
 import { AnalysisPeriodFilter } from "./analysis-period-filter";
 import { BrazilMap } from "./brazil-map";
@@ -463,6 +460,7 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
   const controller = useIntelligence(data);
   const tabGroup = useId();
   const canManage = data.viewer.role === "admin";
+  const [mapHidden, setMapHidden] = useState(false);
   function navigateTab(index: number) {
     const tab = data.tabs[(index + data.tabs.length) % data.tabs.length];
     controller.navigate({ tab: tab.id });
@@ -470,90 +468,173 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
   }
   return (
     <div className="page-content bi-page">
-      <motion.div
-        className="page-heading"
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
+      <div className="workspace-page-heading bi-page-heading">
         <div>
-          <span className="page-eyebrow">
-            <span className="eyebrow-line" />
-            ANÁLISE TERRITORIAL
-          </span>
+          <span className="section-index">02 / INTELIGÊNCIA</span>
           <h1>Inteligência de mercado</h1>
-          <p>Analise territórios, indicadores e oportunidades de cada projeto.</p>
+          <p className="bi-project-context">
+            <span className={`project-dot project-dot-${data.project.color}`} />
+            {data.project.name}
+          </p>
         </div>
-        <span className={`bi-project-badge project-${data.project.color}`}>
-          <Building2 size={16} />
-          {data.project.name}
-        </span>
-      </motion.div>
-      <div className="bi-scope-toolbar" role="group" aria-label="Recorte da análise">
-        <label>
-          <span>Região</span>
-          <select
-            value={data.territory.region ?? "BR"}
-            aria-label="Região da análise"
-            disabled={controller.navigating}
-            onChange={(e) => controller.navigate({ region: e.target.value, uf: null, city: null })}
-          >
-            <option value="BR">Brasil · todas as regiões</option>
-            {regions.map((r) => (
-              <option value={r.code} key={r.code}>
-                {r.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          <span>Unidade da federação</span>
-          <select
-            value={data.territory.uf ?? ""}
-            disabled={controller.navigating}
-            aria-label="UF da análise"
-            onChange={(e) =>
-              controller.navigate({
-                uf: e.target.value || null,
-                city: null,
-                region: e.target.value ? null : (data.territory.region ?? "BR"),
-              })
-            }
-          >
-            <option value="">Todas as UFs da região</option>
-            {data.states
-              .filter((s) => !data.territory.region || s.region === data.territory.region)
-              .map((s) => (
-                <option key={s.code} value={s.code}>
-                  {s.name} ({s.code})
-                </option>
-              ))}
-          </select>
-        </label>
-        <label className="bi-city-filter">
-          <span>Município / recorte local</span>
-          <select
-            value={data.territory.city ?? ""}
-            aria-label="Município da análise"
-            disabled={!data.territory.uf || controller.navigating}
-            onChange={(e) =>
-              controller.navigate({ city: e.target.value || null, map: "municipalities" })
-            }
-          >
-            <option value="">{data.territory.uf ? "Toda a UF" : "Selecione uma UF"}</option>
-            {data.cities.map((city) => (
-              <option key={city.code} value={city.code}>
-                {city.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <div className="bi-year-filter">
-          <span>Anos de referência</span>
-          <AnalysisPeriodFilter key={data.project.id} years={data.years} controller={controller} />
+        <div className="analysis-period-heading">
+          <span className="section-caption">Período da análise</span>
+          <div>
+            <strong>{periodLabel(data.years)}</strong>
+            <AnalysisPeriodFilter
+              key={data.project.id}
+              years={data.years}
+              controller={controller}
+            />
+          </div>
         </div>
       </div>
-      <div className="bi-workspace" aria-busy={controller.navigating}>
+      <div className="analysis-navigation">
+        <label className="analysis-mobile-picker">
+          <span>Análise</span>
+          <select
+            aria-label="Selecionar análise"
+            value={data.tab.id}
+            disabled={controller.navigating}
+            onChange={(event) => controller.navigate({ tab: event.target.value })}
+          >
+            {data.tabs.map((tab) => (
+              <option key={tab.id} value={tab.id}>
+                {tab.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <div role="tablist" aria-label="Abas de análise" className="bi-tabs">
+          {data.tabs.map((tab, index) => {
+            const Icon = icons[tab.kind];
+            return (
+              <button
+                type="button"
+                role="tab"
+                key={tab.id}
+                id={`${tabGroup}-${tab.id}`}
+                aria-selected={tab.id === data.tab.id}
+                aria-controls={`${tabGroup}-panel`}
+                tabIndex={tab.id === data.tab.id ? 0 : -1}
+                onClick={() => controller.navigate({ tab: tab.id })}
+                onKeyDown={(event) => {
+                  if (["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) {
+                    event.preventDefault();
+                    navigateTab(
+                      event.key === "Home"
+                        ? 0
+                        : event.key === "End"
+                          ? data.tabs.length - 1
+                          : index + (event.key === "ArrowRight" ? 1 : -1),
+                    );
+                  }
+                }}
+              >
+                <Icon size={15} />
+                {tab.name}
+                {tab.id === data.tab.id && (
+                  <motion.span layoutId={`${tabGroup}-indicator`} className="bi-tab-indicator" />
+                )}
+              </button>
+            );
+          })}
+        </div>
+        <button
+          type="button"
+          className="analysis-focus-toggle"
+          aria-pressed={mapHidden}
+          onClick={() => setMapHidden(!mapHidden)}
+        >
+          {mapHidden ? <PanelLeftOpen size={15} /> : <PanelLeftClose size={15} />}
+          {mapHidden ? "Mostrar mapa" : "Expandir análise"}
+        </button>
+        {canManage && (
+          <button
+            type="button"
+            className="icon-button analysis-add-tab"
+            aria-label="Adicionar aba de análise"
+            title="Adicionar aba de análise"
+            onClick={() => controller.openTab("new")}
+          >
+            <Plus size={18} />
+          </button>
+        )}
+      </div>
+      <div
+        className={`bi-workspace ${mapHidden ? "analysis-expanded" : ""}`}
+        aria-busy={controller.navigating}
+      >
         <div className="bi-map-column">
+          <details className="territory-search">
+            <summary>
+              <Search size={15} />
+              <span>Localizar território</span>
+              <ChevronDown size={15} />
+            </summary>
+            <div className="bi-scope-toolbar" role="group" aria-label="Recorte da análise">
+              <label>
+                <span>Região</span>
+                <select
+                  value={data.territory.region ?? "BR"}
+                  aria-label="Região da análise"
+                  disabled={controller.navigating}
+                  onChange={(e) =>
+                    controller.navigate({ region: e.target.value, uf: null, city: null })
+                  }
+                >
+                  <option value="BR">Brasil · todas as regiões</option>
+                  {regions.map((r) => (
+                    <option value={r.code} key={r.code}>
+                      {r.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                <span>Unidade da federação</span>
+                <select
+                  value={data.territory.uf ?? ""}
+                  disabled={controller.navigating}
+                  aria-label="UF da análise"
+                  onChange={(e) =>
+                    controller.navigate({
+                      uf: e.target.value || null,
+                      city: null,
+                      region: e.target.value ? null : (data.territory.region ?? "BR"),
+                    })
+                  }
+                >
+                  <option value="">Todas as UFs da região</option>
+                  {data.states
+                    .filter((s) => !data.territory.region || s.region === data.territory.region)
+                    .map((s) => (
+                      <option key={s.code} value={s.code}>
+                        {s.name} ({s.code})
+                      </option>
+                    ))}
+                </select>
+              </label>
+              <label className="bi-city-filter">
+                <span>Município / recorte local</span>
+                <select
+                  value={data.territory.city ?? ""}
+                  aria-label="Município da análise"
+                  disabled={!data.territory.uf || controller.navigating}
+                  onChange={(e) =>
+                    controller.navigate({ city: e.target.value || null, map: "municipalities" })
+                  }
+                >
+                  <option value="">{data.territory.uf ? "Toda a UF" : "Selecione uma UF"}</option>
+                  {data.cities.map((city) => (
+                    <option key={city.code} value={city.code}>
+                      {city.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+          </details>
           <BrazilMap
             key={`${data.project.id}-${data.territory.uf ?? "BR"}-${data.mapView}`}
             data={data}
@@ -579,7 +660,7 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
               className="text-button"
               onClick={() => controller.navigate({ uf: null, city: null, region: "BR" })}
             >
-              Ver Brasil
+              Limpar recorte
             </button>
           </div>
         </div>
@@ -587,86 +668,62 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
           className="bi-detail-column"
           aria-label={`Análises de ${data.project.name} em ${data.territory.label}`}
         >
-          <div className="bi-detail-header">
-            <div>
-              <MapPin size={16} />
+          <div className="report-heading">
+            <div className="analysis-territory-heading">
+              <span className="section-caption">
+                <MapPin size={13} />
+                {data.territory.city
+                  ? `Município · IBGE ${data.territory.city}`
+                  : data.territory.level === "country"
+                    ? "Visão nacional"
+                    : data.territory.level === "region"
+                      ? "Grande região"
+                      : `Unidade da federação · ${data.territory.uf}`}
+              </span>
               <h2>{data.territory.label}</h2>
-              <span>{periodLabel(data.years)}</span>
+              <p>
+                {periodLabel(data.years)} <span> / </span>{" "}
+                {data.years.length === 1
+                  ? "1 ano de referência"
+                  : `${data.years.length} anos de referência`}
+              </p>
             </div>
-            {canManage && (
-              <button
-                type="button"
-                className="icon-button"
-                title="Adicionar aba de análise"
-                aria-label="Adicionar aba de análise"
-                onClick={() => controller.openTab("new")}
-              >
-                <Plus size={19} />
-              </button>
-            )}
-          </div>
-          <div role="tablist" aria-label="Abas de análise" className="bi-tabs">
-            {data.tabs.map((tab, index) => {
-              const Icon = icons[tab.kind];
-              return (
-                <button
-                  type="button"
-                  role="tab"
-                  key={tab.id}
-                  id={`${tabGroup}-${tab.id}`}
-                  aria-selected={tab.id === data.tab.id}
-                  aria-controls={`${tabGroup}-panel`}
-                  tabIndex={tab.id === data.tab.id ? 0 : -1}
-                  onClick={() => controller.navigate({ tab: tab.id })}
-                  onKeyDown={(event) => {
-                    if (["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) {
-                      event.preventDefault();
-                      navigateTab(
-                        event.key === "Home"
-                          ? 0
-                          : event.key === "End"
-                            ? data.tabs.length - 1
-                            : index + (event.key === "ArrowRight" ? 1 : -1),
-                      );
-                    }
-                  }}
-                >
-                  <Icon size={15} />
-                  {tab.name}
-                  {tab.id === data.tab.id && (
-                    <motion.span layoutId={`${tabGroup}-indicator`} className="bi-tab-indicator" />
-                  )}
-                </button>
-              );
-            })}
-          </div>
-          <div className="bi-analysis-actions">
-            <span>{analysisLabels[data.tab.kind]}</span>
-            {canManage && (
-              <div>
-                <button
-                  className="icon-button"
-                  type="button"
-                  aria-label="Configurar aba atual"
-                  title="Configurar aba atual"
-                  onClick={() => controller.openTab(data.tab)}
-                >
-                  <Settings2 size={16} />
-                </button>
-                <button className="button secondary" type="button" onClick={controller.openImport}>
-                  <FileUp size={15} />
-                  Importar
-                </button>
-                <button
-                  className="button primary"
-                  type="button"
-                  onClick={() => controller.openRecord("new")}
-                >
-                  <Plus size={15} />
-                  Registro
-                </button>
-              </div>
-            )}
+            <div className="bi-analysis-actions">
+              <span className="section-caption">
+                {data.records.length}
+                {data.records.length === 500 ? "+" : ""}{" "}
+                {data.records.length === 1 ? "registro cadastrado" : "registros cadastrados"}
+              </span>
+              {canManage && (
+                <div>
+                  <button
+                    className="icon-button"
+                    type="button"
+                    aria-label="Configurar aba atual"
+                    title="Configurar aba atual"
+                    onClick={() => controller.openTab(data.tab)}
+                  >
+                    <Settings2 size={16} />
+                  </button>
+                  <button
+                    className="button secondary"
+                    type="button"
+                    onClick={controller.openImport}
+                  >
+                    <FileUp size={15} />
+                    Importar
+                  </button>
+                  <button
+                    className="button primary"
+                    type="button"
+                    onClick={() => controller.openRecord("new")}
+                  >
+                    <Plus size={15} />
+                    Registro
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
           <motion.div
             key={`${data.project.id}-${data.tab.id}-${data.territory.label}-${data.years.join(",")}-${data.metric}`}

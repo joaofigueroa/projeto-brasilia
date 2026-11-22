@@ -100,4 +100,6 @@ Novas integrações devem conservar fonte, periodicidade, definição do indicad
 
 ## Sistema visual
 
-A interface usa o sistema compartilhado `src/app/design-system.css`, carregado após os estilos estruturais. Navegação escura, superfícies neutras, tipografia do sistema e azul para ações e foco. As cores geográficas do mapa e seus alvos de interação são preservados. Movimentos usam molas sem overshoot por padrão e respeitam movimento reduzido; superfícies translúcidas têm alternativas sólidas para redução de transparência e maior contraste. O mesmo sistema cobre login, tarefas, pessoas, perfil, BI, seletores e diálogos.
+A interface usa o sistema compartilhado `src/app/design-system.css`, carregado após os estilos estruturais. Navegação clara, marca vetorial própria, superfícies planas e divisórias organizam o espaço. O período fica no cabeçalho; a busca por região, UF e município pode ser aberta junto ao mapa. As abas ficam acima do espaço de análise; no celular, usam um seletor. **Expandir análise** esconde visualmente o mapa sem desmontá-lo e preserva seu zoom e arraste. Os filtros de modelos aparecem juntos; a cobertura completa fica acessível abaixo da tabela, com a nota principal da fonte antes dos resultados.
+
+As geometrias, cores geográficas, hover, cliques, teclado e gestos do mapa são preservados. Movimentos usam molas sem overshoot por padrão e respeitam movimento reduzido. O mesmo sistema visual cobre login, tarefas, pessoas, perfil, BI, seletores e diálogos.

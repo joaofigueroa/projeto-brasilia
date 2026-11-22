@@ -16,32 +16,31 @@ import {
   ArrowUp,
   CalendarDays,
   ChevronDown,
-  ChevronLeft,
-  ChevronRight,
   Circle,
   CircleCheck,
   CircleDashed,
+  Columns3,
   Ellipsis,
-  FolderKanban,
   GripVertical,
   Layers3,
-  LayoutDashboard,
+  List,
   ListFilter,
   Plus,
   Search,
-  TrendingUp,
   Users,
   X,
 } from "lucide-react";
 import { AnimatePresence, LayoutGroup, motion } from "motion/react";
-import { useId } from "react";
+import { useId, useState } from "react";
 import { useBoard } from "@/hooks/use-board";
-import { addDays, formatDay, mondayOf, todayInSaoPaulo, weekLabel } from "@/libs/calendar";
+import { formatDay, todayInSaoPaulo } from "@/libs/calendar";
 import { priorityLabels, statuses, statusLabels } from "@/libs/presentation";
 import type { BoardData, Project, PublicUser, Task, TaskStatus } from "@/types/domain";
 import { Avatar } from "./avatar";
 import { Toast } from "./feedback";
 import { TaskDialog } from "./task-dialog";
+import { TaskList } from "./task-list";
+import { WeeklyPlanner } from "./weekly-planner";
 
 const statusIcons = { open: CircleDashed, in_progress: Circle, done: CircleCheck };
 
@@ -59,7 +58,7 @@ function CardContent({
     <>
       <div className="task-project-row">
         <span className={`project-tag project-${project?.color ?? "lilac"}`}>
-          <Layers3 size={12} />
+          <span className="project-dot" />
           {project?.name}
         </span>
         <span
@@ -87,17 +86,25 @@ function CardContent({
               {formatDay(task.dueDate, { day: "2-digit", month: "short" }).replace(" de ", " ")}
             </>
           ) : (
-            <span>Sem prazo definido</span>
+            <span>Sem prazo</span>
           )}
         </span>
-        <span className="avatar-stack">
-          {task.assigneeIds.slice(0, 3).map((id) => {
-            const user = users.find((person) => person.id === id);
-            return user ? <Avatar key={user.id} user={user} size="sm" /> : null;
-          })}
-          {task.assigneeIds.length > 3 && (
-            <span className="avatar avatar-sm avatar-more">+{task.assigneeIds.length - 3}</span>
-          )}
+        <span className="task-owners">
+          <span className="avatar-stack">
+            {task.assigneeIds.slice(0, 3).map((id) => {
+              const user = users.find((person) => person.id === id);
+              return user ? <Avatar key={user.id} user={user} size="sm" /> : null;
+            })}
+            {task.assigneeIds.length > 3 && (
+              <span className="avatar avatar-sm avatar-more">+{task.assigneeIds.length - 3}</span>
+            )}
+          </span>
+          <span className="task-owner-name">
+            {task.assigneeIds.length === 0
+              ? "Sem responsável"
+              : users.find((person) => person.id === task.assigneeIds[0])?.name.split(" ")[0]}
+            {task.assigneeIds.length > 1 ? ` +${task.assigneeIds.length - 1}` : ""}
+          </span>
         </span>
       </div>
     </>
@@ -155,7 +162,8 @@ function TaskCard({
               <GripVertical size={15} />
             </button>
             <div className="card-status-control">
-              <ChevronDown size={14} />
+              <span>{statusLabels[task.status]}</span>
+              <ChevronDown size={12} />
               <select
                 aria-label={`Alterar status de ${task.title}`}
                 title="Alterar status"
@@ -206,7 +214,10 @@ function Column({
     >
       <div className="column-header">
         <div>
-          <Icon size={18} />
+          <span className="lane-number">
+            {String(statuses.indexOf(status) + 1).padStart(2, "0")}
+          </span>
+          <Icon size={16} />
           <h2>{statusLabels[status]}</h2>
           <span className="column-count">{count}</span>
         </div>
@@ -223,10 +234,19 @@ function Column({
         {children}
         {!count && (
           <div className="column-empty">
-            <span>
-              <Icon size={24} />
-            </span>
-            <p>Nenhuma tarefa neste status.</p>
+            <Icon size={18} />
+            <p>
+              {status === "open"
+                ? "Nenhuma tarefa em aberto"
+                : status === "in_progress"
+                  ? "Nenhuma tarefa em andamento"
+                  : "Nenhuma tarefa finalizada"}
+            </p>
+            <small>
+              {status === "open"
+                ? "Crie uma tarefa para esta semana."
+                : "Mova uma tarefa para esta coluna."}
+            </small>
           </div>
         )}
       </div>
@@ -245,129 +265,46 @@ export function Kanban({ data }: { data: BoardData }) {
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
     useSensor(KeyboardSensor),
   );
-  const currentWeek = mondayOf(todayInSaoPaulo());
   const project = data.projects.find((item) => item.id === data.projectId);
-  const stats = [
-    { label: "Tarefas na semana", value: data.stats.total, Icon: FolderKanban, color: "green" },
-    { label: "Em andamento", value: data.stats.inProgress, Icon: TrendingUp, color: "amber" },
-    { label: "Finalizadas", value: data.stats.done, Icon: CircleCheck, color: "green" },
-  ];
+  const [view, setView] = useState<"board" | "list">("board");
+  const [dayFilter, setDayFilter] = useState<{ week: string; day: string } | null>(null);
+  const activeDay = dayFilter?.week === data.weekStart ? dayFilter.day : null;
+  const visibleTasks = activeDay
+    ? board.tasks.filter((task) => task.dueDate === activeDay)
+    : board.tasks;
   return (
-    <div className="page-content">
-      <motion.div
-        className="page-heading"
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
+    <div className="page-content tasks-page">
+      <div className="workspace-page-heading">
         <div>
-          <span className="page-eyebrow">
-            <span className="eyebrow-line" />
-            GESTÃO DE TAREFAS
-          </span>
+          <span className="section-index">01 / OPERAÇÕES</span>
           <h1>Tarefas</h1>
-          <p>Organize as tarefas da semana por projeto, responsável e status.</p>
         </div>
         <button
           className="button primary new-task"
           type="button"
           onClick={() => board.setCreating("open")}
         >
-          <Plus size={18} />
+          <Plus size={17} />
           Nova tarefa
         </button>
-      </motion.div>
-      <motion.section
-        className="week-summary"
-        aria-label="Resumo da semana"
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.05 }}
-      >
-        {stats.map(({ label, value, Icon, color }) => (
-          <div className="summary-item" key={label}>
-            <span className={`summary-icon summary-${color}`}>
-              <Icon size={19} />
-            </span>
-            <div>
-              <span className="summary-label">{label}</span>
-              <strong>{value.toString().padStart(2, "0")}</strong>
-            </div>
-          </div>
-        ))}
-        <div className="summary-item summary-progress">
-          <div className="summary-progress-label">
-            <span className="summary-label">Progresso da semana</span>
-            <strong>
-              {data.stats.completion}
-              <small>%</small>
-            </strong>
-          </div>
-          <div className="progress-track">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${data.stats.completion}%` }}
-              transition={{ type: "spring", stiffness: 90, damping: 22, delay: 0.1 }}
-            />
-          </div>
-          <span className="progress-caption">
-            {data.stats.done} de {data.stats.total} tarefas concluídas
-          </span>
-        </div>
-      </motion.section>
-      <div className="board-section-heading">
-        <div>
-          <LayoutDashboard size={17} />
-          <h2>Quadro da semana</h2>
-          {project && (
-            <span className={`project-tag project-${project.color}`}>{project.name}</span>
-          )}
-        </div>
-        <span className="board-week-meta">
-          {formatDay(data.weekStart, { month: "long", year: "numeric" })}
-        </span>
       </div>
+      <WeeklyPlanner
+        data={data}
+        tasks={board.tasks}
+        activeDay={activeDay}
+        navigating={board.navigating}
+        onDay={(day) => setDayFilter(day ? { week: data.weekStart, day } : null)}
+        onWeek={(week) => board.navigate({ week, task: null })}
+      />
       <div className="board-toolbar" role="group" aria-label="Filtros de tarefas">
-        <div className="week-controls">
-          <button
-            className="icon-button"
-            type="button"
-            aria-label="Semana anterior"
-            disabled={board.navigating}
-            onClick={() => board.navigate({ week: addDays(data.weekStart, -7), task: null })}
-          >
-            <ChevronLeft size={18} />
+        <div className="board-view-switch" role="group" aria-label="Visualização de tarefas">
+          <button type="button" aria-pressed={view === "board"} onClick={() => setView("board")}>
+            <Columns3 size={15} />
+            Quadro
           </button>
-          <label className="week-picker">
-            <CalendarDays size={16} />
-            <strong>{weekLabel(data.weekStart)}</strong>
-            <input
-              type="date"
-              min="1970-01-05"
-              step={7}
-              aria-label="Selecionar semana"
-              value={data.weekStart}
-              onChange={(event) => {
-                if (event.target.value)
-                  board.navigate({ week: mondayOf(event.target.value), task: null });
-              }}
-            />
-            <ChevronDown size={14} />
-          </label>
-          <button
-            className="icon-button"
-            type="button"
-            aria-label="Próxima semana"
-            disabled={board.navigating}
-            onClick={() => board.navigate({ week: addDays(data.weekStart, 7), task: null })}
-          >
-            <ChevronRight size={18} />
-          </button>
-          <button
-            className={`today-button ${data.weekStart === currentWeek ? "current" : ""}`}
-            type="button"
-            onClick={() => board.navigate({ week: currentWeek, task: null })}
-          >
-            Hoje
+          <button type="button" aria-pressed={view === "list"} onClick={() => setView("list")}>
+            <List size={16} />
+            Lista
           </button>
         </div>
         <div className="board-filters">
@@ -437,17 +374,23 @@ export function Kanban({ data }: { data: BoardData }) {
           </label>
         </div>
       </div>
-      {(data.query || data.assigneeId || data.projectId) && (
+      {(data.query || data.assigneeId || data.projectId || activeDay) && (
         <div className="active-filters">
           <ListFilter size={14} />
           <span>
-            Exibindo {data.tasks.length} {data.tasks.length === 1 ? "tarefa" : "tarefas"}
+            Exibindo {visibleTasks.length} {visibleTasks.length === 1 ? "tarefa" : "tarefas"}
             {data.query ? ` para “${data.query}”` : ""}
             {project ? ` em ${project.name}` : ""}
+            {activeDay
+              ? ` · prazo em ${formatDay(activeDay, { day: "numeric", month: "short" })}`
+              : ""}
           </span>
           <button
             type="button"
-            onClick={() => board.navigate({ q: null, assignee: null, project: null, task: null })}
+            onClick={() => {
+              setDayFilter(null);
+              board.navigate({ q: null, assignee: null, project: null, task: null });
+            }}
           >
             <X size={13} />
             Limpar filtros
@@ -458,75 +401,90 @@ export function Kanban({ data }: { data: BoardData }) {
         className={`board-container ${board.navigating ? "board-loading" : ""}`}
         aria-busy={board.navigating || board.moving}
       >
-        <DndContext
-          id={dndId}
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragStart={board.dragStart}
-          onDragEnd={board.dragEnd}
-          onDragCancel={board.cancelDrag}
-          accessibility={{
-            screenReaderInstructions: {
-              draggable:
-                "Pressione espaço para arrastar. Use as setas para mover e espaço para soltar. Use o seletor de status como alternativa.",
-            },
-            announcements: {
-              onDragStart: () => "Tarefa selecionada. Use as setas para escolher uma coluna.",
-              onDragOver: ({ over }) =>
-                over
-                  ? `Coluna ${statusLabels[String(over.id) as TaskStatus] ?? "selecionada"}.`
-                  : "",
-              onDragEnd: ({ over }) => (over ? "Tarefa movimentada." : "Movimentação cancelada."),
-              onDragCancel: () => "Movimentação cancelada.",
-            },
-          }}
-        >
-          <LayoutGroup id={dndId}>
-            <div className="kanban-board">
-              {statuses.map((status) => {
-                const tasks = board.tasks.filter((task) => task.status === status);
-                return (
-                  <Column
-                    key={status}
-                    status={status}
-                    count={tasks.length}
-                    onAdd={() => board.setCreating(status)}
-                  >
-                    <AnimatePresence initial={false}>
-                      {tasks.map((task) => (
-                        <TaskCard
-                          key={task.id}
-                          task={task}
-                          project={data.projects.find((item) => item.id === task.projectId)}
-                          users={data.users}
-                          onOpen={() => board.navigate({ task: task.id })}
-                          onMove={(target) => board.move(task, target)}
-                          disabled={board.moving}
-                        />
-                      ))}
-                    </AnimatePresence>
-                  </Column>
-                );
-              })}
-            </div>
-          </LayoutGroup>
-          <DragOverlay dropAnimation={{ duration: 240, easing: "cubic-bezier(0.22, 1, 0.36, 1)" }}>
-            {board.active && (
-              <div className="task-card drag-overlay">
-                <CardContent
-                  task={board.active}
-                  project={data.projects.find((item) => item.id === board.active?.projectId)}
-                  users={data.users}
-                />
+        {view === "list" ? (
+          <TaskList
+            data={data}
+            tasks={visibleTasks}
+            moving={board.moving}
+            onOpen={(task) => board.navigate({ task })}
+            onMove={board.move}
+            onAdd={() => board.setCreating("open")}
+          />
+        ) : (
+          <DndContext
+            id={dndId}
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragStart={board.dragStart}
+            onDragEnd={board.dragEnd}
+            onDragCancel={board.cancelDrag}
+            accessibility={{
+              screenReaderInstructions: {
+                draggable:
+                  "Pressione espaço para arrastar. Use as setas para mover e espaço para soltar. Use o seletor de status como alternativa.",
+              },
+              announcements: {
+                onDragStart: () => "Tarefa selecionada. Use as setas para escolher uma coluna.",
+                onDragOver: ({ over }) =>
+                  over
+                    ? `Coluna ${statusLabels[String(over.id) as TaskStatus] ?? "selecionada"}.`
+                    : "",
+                onDragEnd: ({ over }) => (over ? "Tarefa movimentada." : "Movimentação cancelada."),
+                onDragCancel: () => "Movimentação cancelada.",
+              },
+            }}
+          >
+            <LayoutGroup id={dndId}>
+              <div className="kanban-board">
+                {statuses.map((status) => {
+                  const tasks = visibleTasks.filter((task) => task.status === status);
+                  return (
+                    <Column
+                      key={status}
+                      status={status}
+                      count={tasks.length}
+                      onAdd={() => board.setCreating(status)}
+                    >
+                      <AnimatePresence initial={false}>
+                        {tasks.map((task) => (
+                          <TaskCard
+                            key={task.id}
+                            task={task}
+                            project={data.projects.find((item) => item.id === task.projectId)}
+                            users={data.users}
+                            onOpen={() => board.navigate({ task: task.id })}
+                            onMove={(target) => board.move(task, target)}
+                            disabled={board.moving}
+                          />
+                        ))}
+                      </AnimatePresence>
+                    </Column>
+                  );
+                })}
               </div>
-            )}
-          </DragOverlay>
-        </DndContext>
+            </LayoutGroup>
+            <DragOverlay
+              dropAnimation={{ duration: 240, easing: "cubic-bezier(0.22, 1, 0.36, 1)" }}
+            >
+              {board.active && (
+                <div className="task-card drag-overlay">
+                  <CardContent
+                    task={board.active}
+                    project={data.projects.find((item) => item.id === board.active?.projectId)}
+                    users={data.users}
+                  />
+                </div>
+              )}
+            </DragOverlay>
+          </DndContext>
+        )}
       </div>
       <footer className="board-footer">
         <span>
           <GripVertical size={14} />
-          Arraste os cards para alterar o status. Clique para ver os detalhes.
+          {view === "board"
+            ? "Arraste pela alça para mover. Abra uma tarefa para editar ou consultar o histórico."
+            : "Selecione o status para mover. Abra o título para consultar a tarefa."}
         </span>
       </footer>
       <AnimatePresence>
