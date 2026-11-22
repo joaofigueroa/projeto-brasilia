@@ -1,0 +1,1 @@
+ALTER TABLE "research_prospects" ADD COLUMN "version" integer DEFAULT 1 NOT NULL;

@@ -49,4 +49,11 @@
 
 **Prioridade de abordagem**: Hipótese comercial baseada no ajuste entre oferta, atividade declarada e evidência disponível. Não equivale a cliente qualificado, probabilidade de conversão ou capacidade financeira.
 
-**Análise comercial por IA**: Relatório versionado que separa evidências públicas de sugestões de abordagem, com recorte territorial, data e limites. Sua publicação não implica geração automática ou monitoramento contínuo.
+**Análise comercial por IA**: Relatório versionado que separa evidências públicas de sugestões de abordagem, com recorte territorial, data e limites. Administradores podem solicitar novas versões pela plataforma; cada versão conserva modelo, data, totais do cadastro e tamanho da amostra pública enviada à IA. Não implica monitoramento contínuo.
+
+
+**Levantamento cadastral**: CNPJs ativos no município exato, com CNAEs principal ou secundários selecionados. Não comprova operação atual, especialização, demanda nem adequação à linha leve. A origem é a Receita Federal por espelho público identificado, com competência mensal.
+
+**Perfil cadastral / comercial**: O primeiro conserva fatos da base CNPJ e lacunas explícitas. O segundo agrega evidências comerciais com fonte e data, editáveis por administradores com controle de versão. Abertura do CNPJ e fundação da marca permanecem separadas.
+
+**Consulta manual ao Google**: Nota, contagem e até cinco trechos registrados por administrador, com autoria, link e data da consulta. Não é sincronização pela API nem garantia de atualidade.

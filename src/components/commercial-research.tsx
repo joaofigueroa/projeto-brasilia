@@ -4,7 +4,6 @@ import { AnimatePresence } from "motion/react";
 import { useId, useState } from "react";
 import type { IntelligenceController } from "@/hooks/use-intelligence";
 import {
-  filterResearchProspects,
   researchCurrency,
   researchDate,
   researchPriorityLabels,
@@ -12,6 +11,8 @@ import {
   researchSpecializationLabels,
 } from "@/libs/commercial-research";
 import type { CommercialResearchView, ResearchProspect } from "@/types/commercial-research";
+import { Pagination } from "./pagination";
+import { ProspectGoogleSummary } from "./prospect-google";
 import { CatalogReferences, ResearchLink, ResearchProfile } from "./research-profile";
 import { StateFlag } from "./state-flag";
 
@@ -30,7 +31,7 @@ function ResearchCities({ research, controller }: ResearchProps) {
           <StateFlag code={city.state} name={city.state === "DF" ? "Distrito Federal" : "Goiás"} />
           <span>
             {city.cityName}
-            <small>{city.count} perfis pesquisados</small>
+            <small>{city.count.toLocaleString("pt-BR")} empresas mapeadas</small>
           </span>
           <ArrowUpRight size={16} />
         </button>
@@ -44,29 +45,61 @@ function ResearchCoverage({ research, controller }: ResearchProps) {
       <FileSearch size={24} />
       <h3>Pesquisa disponível em Brasília e Goiânia</h3>
       <p>
-        Selecione uma das cidades para consultar empresas e análise comercial. As listas são uma
-        amostra pesquisada, sem cobertura de todos os estabelecimentos.
+        Selecione uma das cidades para consultar empresas e análise comercial. O levantamento
+        cadastral cobre os CNPJs ativos nos CNAEs definidos, dentro dessas cidades. Perfis
+        comerciais pesquisados são identificados separadamente.
       </p>
       <ResearchCities research={research} controller={controller} />
     </div>
   );
 }
 function ResearchEdition({ research }: { research: CommercialResearchView }) {
+  const census = research.live?.runs.find(
+    (run) => run.kind === "census" && run.status === "completed",
+  );
   return (
     <div className="research-edition">
-      <span>Pesquisa pública · {researchDate(research.checkedAt)}</span>
-      <span>v{research.version}</span>
+      <span>
+        {census
+          ? `Cadastro · competência ${census.sourceMonth}`
+          : `Pesquisa pública · ${researchDate(research.checkedAt)}`}
+      </span>
+      <span>{census ? "Atualização por cidade" : `v${research.version}`}</span>
     </div>
   );
 }
-export function ResearchedProspects({ research, controller }: ResearchProps) {
-  const [query, setQuery] = useState("");
-  const [segment, setSegment] = useState("");
-  const [priority, setPriority] = useState("");
+export function ResearchedProspects({
+  research,
+  controller,
+  projectId,
+  canManage = false,
+}: ResearchProps & { projectId: string; canManage?: boolean }) {
+  const filters = research.live?.filters ?? {
+    query: "",
+    segment: "",
+    priority: "",
+    enrichment: "",
+    primaryOnly: false,
+    page: 1,
+    pageSize: 20,
+  };
+  const [draft, setDraft] = useState({ base: filters.query, value: filters.query });
+  const query = draft.base === filters.query ? draft.value : filters.query;
   const [selected, setSelected] = useState<ResearchProspect | null>(null);
   const id = useId();
-  const filtered = filterResearchProspects(research.prospects, { query, segment, priority });
-  if (!research.prospects.length)
+  const pagination = research.live?.pagination ?? {
+    total: research.prospects.length,
+    page: 1,
+    pageSize: 20,
+    pages: 1,
+    offset: 0,
+    start: research.prospects.length ? 1 : 0,
+    end: research.prospects.length,
+  };
+  const total = research.live?.stats.total ?? research.prospects.length;
+  const apply = (changes: Record<string, string | null>) =>
+    controller.navigate({ researchPage: null, researchQuery: query || null, ...changes });
+  if (!research.reports.length)
     return <ResearchCoverage research={research} controller={controller} />;
   return (
     <div className="commercial-research">
@@ -74,40 +107,71 @@ export function ResearchedProspects({ research, controller }: ResearchProps) {
       <div className="research-intro">
         <div>
           <span className="section-caption">Prospecção · setor automotivo</span>
-          <h3>Empresas para avaliar</h3>
+          <h3 id={`${id}-results`} tabIndex={-1}>
+            Empresas para avaliar
+          </h3>
         </div>
         <span className="research-count">
-          {research.prospects.length}
+          {total.toLocaleString("pt-BR")}
           <small>perfis no recorte</small>
         </span>
       </div>
       <p className="research-description">
-        Seleção inicial de oficinas, distribuidores e autopeças relacionados à oferta da 3C. Abra o
-        perfil para consultar cadastro, fontes, referências de produtos e uma sugestão de abordagem.
+        Estabelecimentos encontrados no cadastro e perfis com pesquisa comercial. Abra cada perfil
+        para consultar abertura do CNPJ, capital social, fontes, especialização confirmada ou
+        pendências.
       </p>
+      {research.live && (
+        <div className="research-census-summary">
+          <span>
+            <strong>{research.live.stats.primary.toLocaleString("pt-BR")}</strong> com atividade
+            principal no recorte
+          </span>
+          <span>
+            <strong>{research.live.stats.researched.toLocaleString("pt-BR")}</strong> com pesquisa
+            comercial
+          </span>
+          <span>
+            <strong>{(total - research.live.stats.researched).toLocaleString("pt-BR")}</strong>{" "}
+            aguardando enriquecimento
+          </span>
+        </div>
+      )}
       <p className="research-period-note">
-        Perfis atuais da pesquisa, independentes do filtro de anos. Os indicadores históricos do BI
-        mantêm o período selecionado.
-        {research.prospects.some((prospect) => prospect.state === "DF")
-          ? " Brasília corresponde ao município cadastral que abrange todo o DF."
-          : ""}
+        Os perfis cadastrais não comprovam atuação em linha leve, especialização ou demanda. O
+        período de veículos permanece independente da competência do cadastro. Brasília corresponde
+        ao município cadastral que abrange todo o DF.
       </p>
-      <div className="research-toolbar">
+      <form
+        className="research-toolbar"
+        onSubmit={(event) => {
+          event.preventDefault();
+          apply({});
+        }}
+      >
         <label className="search-field">
           <Search size={15} aria-hidden="true" />
           <input
             aria-label="Buscar empresas pesquisadas"
             placeholder="Empresa, marca, CNPJ ou bairro"
             value={query}
-            onChange={(event) => setQuery(event.target.value)}
+            onChange={(event) => setDraft({ base: filters.query, value: event.target.value })}
           />
+          <button
+            type="submit"
+            aria-label="Buscar na lista de empresas"
+            disabled={controller.navigating}
+          >
+            <ArrowRight size={15} />
+          </button>
         </label>
         <label htmlFor={`${id}-segment`}>
           <span>Segmento</span>
           <select
             id={`${id}-segment`}
-            value={segment}
-            onChange={(event) => setSegment(event.target.value)}
+            value={filters.segment}
+            disabled={controller.navigating}
+            onChange={(event) => apply({ researchSegment: event.target.value || null })}
           >
             <option value="">Todos</option>
             {Object.entries(researchSegmentLabels).map(([key, label]) => (
@@ -121,8 +185,9 @@ export function ResearchedProspects({ research, controller }: ResearchProps) {
           <span>Abordagem sugerida</span>
           <select
             id={`${id}-priority`}
-            value={priority}
-            onChange={(event) => setPriority(event.target.value)}
+            value={filters.priority}
+            disabled={controller.navigating}
+            onChange={(event) => apply({ researchPriority: event.target.value || null })}
           >
             <option value="">Todas</option>
             {Object.entries(researchPriorityLabels).map(([key, label]) => (
@@ -132,96 +197,147 @@ export function ResearchedProspects({ research, controller }: ResearchProps) {
             ))}
           </select>
         </label>
+      </form>
+      <div className="research-extra-filters">
+        <label>
+          Perfil
+          <select
+            aria-label="Filtrar nível de pesquisa"
+            value={filters.enrichment}
+            disabled={controller.navigating}
+            onChange={(event) => apply({ researchEnrichment: event.target.value || null })}
+          >
+            <option value="">Cadastro e pesquisa comercial</option>
+            <option value="researched">Com pesquisa comercial</option>
+            <option value="registry">Somente cadastro</option>
+          </select>
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={filters.primaryOnly}
+            disabled={controller.navigating}
+            onChange={(event) => apply({ researchPrimary: event.target.checked ? "1" : null })}
+          />
+          Somente atividade principal
+        </label>
+        <button
+          className="text-button"
+          type="button"
+          disabled={controller.navigating}
+          onClick={() =>
+            apply({
+              researchQuery: null,
+              researchSegment: null,
+              researchPriority: null,
+              researchEnrichment: null,
+              researchPrimary: null,
+            })
+          }
+        >
+          Limpar filtros
+        </button>
       </div>
       <div className="research-list-meta" aria-live="polite">
         <span>
-          {filtered.length} {filtered.length === 1 ? "empresa" : "empresas"}
+          {pagination.total.toLocaleString("pt-BR")} resultados
+          {controller.navigating ? " · Atualizando…" : ""}
         </span>
-        <span>Prioridade é uma hipótese de IA, não uma qualificação de compra.</span>
+        <span>Prioridade é uma hipótese comercial, não uma qualificação de compra.</span>
       </div>
-      <div className="research-prospects">
-        {filtered.map((prospect) => (
-          <button
-            key={prospect.id}
-            type="button"
-            className={`research-prospect ${prospect.priority}`}
-            onClick={() => setSelected(prospect)}
-            aria-label={`Ver perfil de ${prospect.name}`}
-          >
-            <div className="research-prospect-top">
-              <span className="section-caption">
-                {researchSegmentLabels[prospect.segment]} · {prospect.cityName}
+      <div className="research-prospects" aria-busy={controller.navigating}>
+        {research.prospects.map((prospect) => (
+          <article key={prospect.id} className={`research-prospect ${prospect.priority}`}>
+            <button
+              className="research-open-profile"
+              type="button"
+              onClick={() => setSelected(prospect)}
+              aria-label={`Ver perfil de ${prospect.name}`}
+            >
+              <div className="research-prospect-top">
+                <span className="section-caption">
+                  {researchSegmentLabels[prospect.segment]} · {prospect.cityName}
+                </span>
+                <ArrowUpRight size={17} aria-hidden="true" />
+              </div>
+              <strong>{prospect.name}</strong>
+              <span className="research-prospect-specialization">
+                {researchSpecializationLabels[prospect.specialization]}
+                {prospect.brands.length ? ` · ${prospect.brands.join(" / ")}` : ""}
               </span>
-              <ArrowUpRight size={17} aria-hidden="true" />
-            </div>
-            <strong>{prospect.name}</strong>
-            <span className="research-prospect-specialization">
-              {researchSpecializationLabels[prospect.specialization]}
-              {prospect.brands.length ? ` · ${prospect.brands.join(" / ")}` : ""}
-            </span>
-            <div className="research-prospect-facts">
-              <span>
-                CNPJ desde <b>{prospect.registry?.openedAt.slice(0, 4) ?? "A confirmar"}</b>
+              <span className="research-profile-level">
+                {prospect.enrichmentLevel === "researched"
+                  ? "Com pesquisa comercial"
+                  : "Perfil cadastral"}
+                {prospect.activityMatch === "secondary" ? " · atividade secundária" : ""}
               </span>
-              <span>
-                Capital social{" "}
-                <b>
-                  {prospect.registry?.capital == null
-                    ? "A confirmar"
-                    : researchCurrency(prospect.registry.capital)}
-                </b>
-                {prospect.registry?.branch && <small>Da pessoa jurídica, não da filial</small>}
-              </span>
-            </div>
-            <div className="research-prospect-bottom">
-              <span className={`research-priority ${prospect.priority}`}>
-                {researchPriorityLabels[prospect.priority]}
-              </span>
-              <span>
-                Ver perfil <ArrowRight size={13} />
-              </span>
-            </div>
-          </button>
+              <div className="research-prospect-facts">
+                <span>
+                  CNPJ desde <b>{prospect.registry?.openedAt?.slice(0, 4) ?? "A confirmar"}</b>
+                </span>
+                <span>
+                  Capital social{" "}
+                  <b>
+                    {prospect.registry?.capital == null
+                      ? "A confirmar"
+                      : researchCurrency(prospect.registry.capital)}
+                  </b>
+                  {prospect.registry?.branch && <small>Da pessoa jurídica, não da filial</small>}
+                </span>
+              </div>
+              <div className="research-prospect-bottom">
+                <span className={`research-priority ${prospect.priority}`}>
+                  {researchPriorityLabels[prospect.priority]}
+                </span>
+                <span>
+                  Ver perfil
+                  <ArrowRight size={13} />
+                </span>
+              </div>
+            </button>
+            <ProspectGoogleSummary prospect={prospect} />
+          </article>
         ))}
       </div>
-      {!filtered.length && (
+      <Pagination
+        label="possíveis clientes"
+        targetId={`${id}-results`}
+        {...pagination}
+        pending={controller.navigating}
+        onPageChange={(page) => controller.navigate({ researchPage: String(page) })}
+        onPageSizeChange={(size) =>
+          controller.navigate({ researchSize: String(size), researchPage: null })
+        }
+      />
+      {!research.prospects.length && (
         <div className="research-no-results">
           <p>Nenhuma empresa corresponde aos filtros.</p>
-          <button
-            className="text-button"
-            type="button"
-            onClick={() => {
-              setQuery("");
-              setSegment("");
-              setPriority("");
-            }}
-          >
-            Limpar filtros da lista
-          </button>
         </div>
       )}
       <details className="research-method">
         <summary>Critérios da pesquisa e cobertura</summary>
         <p>
-          Seleção por presença local, atividade declarada e relação com as famílias do catálogo. Não
-          é um censo nem uma lista de clientes ativos. “Priorizar contato” indica evidência
-          comercial mais direta; “Desenvolver conta” requer entendimento do canal; “Validar perfil”
-          indica pendências de identidade, especialização ou operação.
+          Cadastro de CNPJs ativos no município, com CNAEs principais ou secundários 4520-0/01
+          (mecânica), 4520-0/03 (elétrica), 4520-0/04 (alinhamento), 4530-7/01 (atacado de peças
+          novas) ou 4530-7/03 (varejo de peças novas). A atividade secundária pode não ser exercida
+          atualmente. CNAE não comprova foco em automóveis de linha leve; perfis sem fonte comercial
+          permanecem em validação.
         </p>
         <p>
-          A abertura do estabelecimento é distinta da fundação da marca. Capital social pertence à
-          pessoa jurídica e não representa receita ou poder de compra. Dados cadastrais foram
-          obtidos via BrasilAPI, com origem em bases públicas, e podem ter defasagem. Nenhuma
-          empresa foi contatada nesta pesquisa.
+          O levantamento cadastral usa um espelho público dos arquivos da Receita Federal, com
+          competência e progresso identificados. A cobertura não inclui empresas informais,
+          cadastros sem esses CNAEs ou alterações posteriores à competência. Pesquisa comercial e
+          cadastro são níveis distintos; a especialização só é confirmada com fonte. Nenhuma empresa
+          foi contatada.
+        </p>
+        <p>
+          Abertura do CNPJ é distinta da fundação da marca. Capital pertence à pessoa jurídica,
+          inclusive em filiais, e não mede receita ou orçamento de compras. “Priorizar contato” e
+          “Desenvolver conta” são hipóteses de abordagem.
         </p>
         <ResearchLink href={research.catalogUrl}>
-          Catálogo 3C Automotive · {research.catalogCount.toLocaleString("pt-BR")} produtos na
-          consulta
+          Catálogo 3C Automotive · referências e aplicações
         </ResearchLink>
-        <p>
-          Famílias consultadas: {research.catalogFamilies.join(", ")}. As referências em cada perfil
-          são exemplos de ajuste técnico a validar, não uma previsão de demanda.
-        </p>
         <ResearchCities research={research} controller={controller} />
       </details>
       <AnimatePresence>
@@ -229,6 +345,8 @@ export function ResearchedProspects({ research, controller }: ResearchProps) {
           <ResearchProfile
             prospect={selected}
             research={research}
+            projectId={projectId}
+            canManage={canManage}
             onClose={() => setSelected(null)}
           />
         )}
@@ -236,14 +354,21 @@ export function ResearchedProspects({ research, controller }: ResearchProps) {
     </div>
   );
 }
-export function CommercialIntelligence({ research, controller }: ResearchProps) {
+export function CommercialIntelligence({
+  research,
+  controller,
+  projectId,
+  canManage = false,
+}: ResearchProps & { projectId: string; canManage?: boolean }) {
   const [selected, setSelected] = useState<ResearchProspect | null>(null);
   if (!research.reports.length)
     return <ResearchCoverage research={research} controller={controller} />;
   const profiles = (ids: string[]) => (
     <div className="research-profile-links">
       {ids.map((id) => {
-        const prospect = research.prospects.find((item) => item.id === id);
+        const prospect = (research.live?.reportReferences ?? research.prospects).find(
+          (item) => item.id === id,
+        );
         return prospect ? (
           <button type="button" key={id} onClick={() => setSelected(prospect)}>
             {prospect.name}
@@ -266,6 +391,29 @@ export function CommercialIntelligence({ research, controller }: ResearchProps) 
       </p>
       {research.reports.map((report) => (
         <article key={report.cityCode} className="commercial-report">
+          {research.live?.reports.find((item) => item.cityCode === report.cityCode) && (
+            <p className="research-report-version">
+              Gerada em{" "}
+              {new Date(
+                research.live.reports.find((item) => item.cityCode === report.cityCode)
+                  ?.createdAt ?? "",
+              ).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}{" "}
+              ·{" "}
+              {research.live.reports
+                .find((item) => item.cityCode === report.cityCode)
+                ?.count.toLocaleString("pt-BR")}{" "}
+              cadastros no recorte · amostra de{" "}
+              {research.live.reports.find((item) => item.cityCode === report.cityCode)?.sampleSize}{" "}
+              perfis enviada à IA
+            </p>
+          )}
+
+          {!research.live?.reports.some((item) => item.cityCode === report.cityCode) && (
+            <p className="bi-data-note">
+              Versão inicial: análise dos perfis pesquisados na primeira entrega. Não incorpora o
+              levantamento cadastral completo. Gere uma nova análise para usar os totais atuais.
+            </p>
+          )}
           <header>
             <span className="section-caption">
               {report.cityCode === "5300108" ? "Brasília · DF" : "Goiânia · GO"} / Priorização
@@ -334,15 +482,14 @@ export function CommercialIntelligence({ research, controller }: ResearchProps) 
       <details className="research-method">
         <summary>Base utilizada pela IA</summary>
         <p>
-          Pesquisa inicial v{research.version}, publicada em {researchDate(research.checkedAt)}. Os
-          perfis vinculam declarações empresariais, cadastros públicos via BrasilAPI e publicações
-          governamentais quando disponíveis. Diretórios de terceiros e divergências permanecem
-          identificados no perfil.
+          A análise usa os totais cadastrais da cidade e uma amostra de perfis com fontes. A versão
+          informa quantos cadastros e perfis foram considerados. Declarações empresariais, dados
+          públicos, fontes governamentais e diretórios permanecem identificados nos perfis.
         </p>
         <ResearchLink href={research.catalogUrl}>Catálogo consultado da 3C Automotive</ResearchLink>
         <p>
-          A análise está armazenada com a aplicação e é atualizada por uma nova versão da pesquisa.
-          Não há geração automática ou monitoramento contínuo nesta etapa.
+          Use “Gerar nova análise” para produzir e salvar outra versão com os dados atuais da
+          cidade. A geração é solicitada por um administrador; não há monitoramento automático.
         </p>
         <ResearchCities research={research} controller={controller} />
       </details>
@@ -350,6 +497,8 @@ export function CommercialIntelligence({ research, controller }: ResearchProps) 
         {selected && (
           <ResearchProfile
             prospect={selected}
+            projectId={projectId}
+            canManage={canManage}
             research={research}
             onClose={() => setSelected(null)}
           />

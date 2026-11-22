@@ -1,5 +1,6 @@
 "use client";
 import { ArrowUpRight, Building2, Check, CircleAlert, ExternalLink } from "lucide-react";
+import { useState } from "react";
 import {
   formatCnpj,
   researchCurrency,
@@ -15,6 +16,8 @@ import type {
   ResearchRegistry,
 } from "@/types/commercial-research";
 import { Dialog } from "./dialog";
+import { ProspectGoogle } from "./prospect-google";
+import { ProspectProfileEditor } from "./prospect-profile-editor";
 
 export function ResearchLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
@@ -80,7 +83,7 @@ function RegistryDetails({
         </div>
         <div>
           <dt>Abertura do CNPJ</dt>
-          <dd>{researchDate(registry.openedAt)}</dd>
+          <dd>{registry.openedAt ? researchDate(registry.openedAt) : "Não informada"}</dd>
         </div>
         <div>
           <dt>Capital social da pessoa jurídica</dt>
@@ -104,164 +107,190 @@ function RegistryDetails({
         </div>
       </dl>
       <ResearchLink href={registry.source.url}>
-        Cadastro via BrasilAPI · {researchDate(registry.source.checkedAt)}
+        {registry.source.label} · {researchDate(registry.source.checkedAt)}
       </ResearchLink>
     </div>
   );
 }
 export function ResearchProfile({
-  prospect,
+  prospect: initialProspect,
   research,
   onClose,
+  projectId,
+  canManage = false,
 }: {
   prospect: ResearchProspect;
   research: CommercialResearchView;
   onClose: () => void;
+  projectId: string;
+  canManage?: boolean;
 }) {
+  const [prospect, setProspect] = useState(initialProspect);
+  const [editing, setEditing] = useState(false);
   const sources = [...prospect.sources, ...(prospect.registry ? [prospect.registry.source] : [])];
   return (
     <Dialog
-      title={prospect.name}
+      title={editing ? "Editar perfil" : prospect.name}
       eyebrow={`${prospect.cityName} · ${researchSegmentLabels[prospect.segment]}`}
       onClose={onClose}
     >
-      <div className="research-profile bi-dialog-body">
-        <div className="research-profile-summary">
-          <span className={`research-priority ${prospect.priority}`}>
-            {researchPriorityLabels[prospect.priority]}
-          </span>
-          <p>{prospect.summary}</p>
-          <div className="research-tags">
-            <span>{researchSpecializationLabels[prospect.specialization]}</span>
-            {prospect.brands.map((brand) => (
-              <span key={brand}>{brand}</span>
-            ))}
-          </div>
-          <small>
-            Perfil pesquisado em {researchDate(research.checkedAt)}. Não indica contato, compra ou
-            relacionamento existente.
-          </small>
-        </div>
-        <section className="research-profile-section">
-          <h3>
-            <Building2 size={17} /> Empresa e cadastro
-          </h3>
-          <dl className="research-facts">
-            <div className="wide">
-              <dt>Fundação declarada da marca</dt>
-              <dd>
-                {prospect.foundation ? (
-                  <>
-                    {prospect.foundation.year} · {prospect.foundation.note}
-                  </>
-                ) : (
-                  "Não localizada em fonte verificável. A data de abertura do CNPJ aparece separadamente."
-                )}
-              </dd>
+      {editing ? (
+        <ProspectProfileEditor
+          prospect={prospect}
+          projectId={projectId}
+          onCancel={() => setEditing(false)}
+          onSaved={(profile) => {
+            setProspect(profile);
+            setEditing(false);
+          }}
+        />
+      ) : (
+        <div className="research-profile bi-dialog-body">
+          {canManage && prospect.databaseId && (
+            <div className="research-profile-actions">
+              <button className="text-button" type="button" onClick={() => setEditing(true)}>
+                Editar perfil comercial
+              </button>
             </div>
-            {prospect.phone && (
-              <div>
-                <dt>Telefone comercial publicado</dt>
-                <dd>{prospect.phone}</dd>
-              </div>
-            )}
-            {prospect.website && (
-              <div>
-                <dt>Canal próprio</dt>
+          )}
+          <div className="research-profile-summary">
+            <span className={`research-priority ${prospect.priority}`}>
+              {researchPriorityLabels[prospect.priority]}
+            </span>
+            <p>{prospect.summary}</p>
+            <div className="research-tags">
+              <span>{researchSpecializationLabels[prospect.specialization]}</span>
+              {prospect.brands.map((brand) => (
+                <span key={brand}>{brand}</span>
+              ))}
+            </div>
+            <small>
+              Perfil pesquisado em {researchDate(research.checkedAt)}. Não indica contato, compra ou
+              relacionamento existente.
+            </small>
+          </div>
+          <section className="research-profile-section">
+            <h3>
+              <Building2 size={17} /> Empresa e cadastro
+            </h3>
+            <dl className="research-facts">
+              <div className="wide">
+                <dt>Fundação declarada da marca</dt>
                 <dd>
-                  <ResearchLink href={prospect.website}>Site da empresa</ResearchLink>
+                  {prospect.foundation ? (
+                    <>
+                      {prospect.foundation.year} · {prospect.foundation.note}
+                    </>
+                  ) : (
+                    "Não localizada em fonte verificável. A data de abertura do CNPJ aparece separadamente."
+                  )}
                 </dd>
               </div>
+              {prospect.phone && (
+                <div>
+                  <dt>Telefone comercial publicado</dt>
+                  <dd>{prospect.phone}</dd>
+                </div>
+              )}
+              {prospect.website && (
+                <div>
+                  <dt>Canal próprio</dt>
+                  <dd>
+                    <ResearchLink href={prospect.website}>Site da empresa</ResearchLink>
+                  </dd>
+                </div>
+              )}
+            </dl>
+            {prospect.registry ? (
+              <RegistryDetails registry={prospect.registry} />
+            ) : (
+              <p className="research-caution">
+                <CircleAlert size={16} /> Não foi atribuído um CNPJ único à marca. Confirme a pessoa
+                jurídica antes de usar dados de capital ou abertura.
+              </p>
             )}
-          </dl>
-          {prospect.registry ? (
-            <RegistryDetails registry={prospect.registry} />
-          ) : (
-            <p className="research-caution">
-              <CircleAlert size={16} /> Não foi atribuído um CNPJ único à marca. Confirme a pessoa
-              jurídica antes de usar dados de capital ou abertura.
+            {prospect.registryCandidates.map((registry) => (
+              <RegistryDetails key={registry.cnpj} registry={registry} candidate />
+            ))}
+            <p className="research-footnote">
+              Dados cadastrais públicos consultados por um intermediário, sem emissão de comprovante
+              oficial. A situação pode ter defasagem. Capital social não é faturamento, limite de
+              crédito ou orçamento de compras; em filiais, refere-se à pessoa jurídica.
             </p>
-          )}
-          {prospect.registryCandidates.map((registry) => (
-            <RegistryDetails key={registry.cnpj} registry={registry} candidate />
-          ))}
-          <p className="research-footnote">
-            Dados cadastrais públicos consultados por um intermediário, sem emissão de comprovante
-            oficial. A situação pode ter defasagem. Capital social não é faturamento, limite de
-            crédito ou orçamento de compras; em filiais, refere-se à pessoa jurídica.
-          </p>
-        </section>
-        <section className="research-profile-section">
-          <h3>
-            <Check size={17} /> Evidências do perfil
-          </h3>
-          {prospect.evidence.map((evidence) => {
-            const source = sources.find((item) => item.id === evidence.sourceId);
-            return (
-              <div key={evidence.text} className="research-evidence">
-                <p>{evidence.text}</p>
-                {source && <ResearchLink href={source.url}>{source.label}</ResearchLink>}
-              </div>
-            );
-          })}
-        </section>
-        <section className="research-profile-section">
-          <span className="section-caption">Avaliação por IA · hipótese comercial</span>
-          <h3>Relação com o catálogo 3C</h3>
-          <p>{prospect.rationale}</p>
-          <CatalogReferences products={research.products} ids={prospect.productIds} />
-          <p className="research-footnote">
-            Referências para explorar na conversa. Conferir modelo, ano, motor, câmbio, posição e
-            equivalência OEM na ficha antes de cotar. Não há demanda ou compatibilidade confirmada
-            para a frota de clientes desta empresa.
-          </p>
-        </section>
-        <section className="research-profile-section">
-          <h3>Próximo passo sugerido</h3>
-          <p>{prospect.nextStep}</p>
-          <ol className="research-questions">
-            {prospect.questions.map((question) => (
-              <li key={question}>{question}</li>
-            ))}
-          </ol>
-        </section>
-        {prospect.gaps.length > 0 && (
-          <section className="research-profile-section research-open-points">
-            <h3>
-              <CircleAlert size={17} /> Pontos a confirmar
-            </h3>
-            <ul>
-              {prospect.gaps.map((gap) => (
-                <li key={gap}>{gap}</li>
-              ))}
-            </ul>
           </section>
-        )}
-        <section className="research-profile-section">
-          <h3>Fontes e data da pesquisa</h3>
-          <div className="research-sources">
-            {sources.map((source) => (
-              <div key={source.id}>
-                <ResearchLink href={source.url}>{source.label}</ResearchLink>
-                <small>
-                  {source.kind === "registry"
-                    ? "Intermediário de dados cadastrais"
-                    : source.kind === "directory"
-                      ? "Diretório de terceiros"
-                      : source.kind === "government"
-                        ? "Publicação governamental"
-                        : "Declaração da própria empresa"}{" "}
-                  · {researchDate(source.checkedAt)}
-                </small>
-              </div>
-            ))}
-          </div>
-          <p className="research-footnote">
-            Pesquisa inicial v{research.version}. Os perfis não são reconstruções históricas dos
-            anos selecionados no BI.
-          </p>
-        </section>
-      </div>
+          <ProspectGoogle prospect={prospect} projectId={projectId} canManage={canManage} />
+          <section className="research-profile-section">
+            <h3>
+              <Check size={17} /> Evidências do perfil
+            </h3>
+            {prospect.evidence.map((evidence) => {
+              const source = sources.find((item) => item.id === evidence.sourceId);
+              return (
+                <div key={evidence.text} className="research-evidence">
+                  <p>{evidence.text}</p>
+                  {source && <ResearchLink href={source.url}>{source.label}</ResearchLink>}
+                </div>
+              );
+            })}
+          </section>
+          <section className="research-profile-section">
+            <span className="section-caption">Avaliação por IA · hipótese comercial</span>
+            <h3>Relação com o catálogo 3C</h3>
+            <p>{prospect.rationale}</p>
+            <CatalogReferences products={research.products} ids={prospect.productIds} />
+            <p className="research-footnote">
+              Referências para explorar na conversa. Conferir modelo, ano, motor, câmbio, posição e
+              equivalência OEM na ficha antes de cotar. Não há demanda ou compatibilidade confirmada
+              para a frota de clientes desta empresa.
+            </p>
+          </section>
+          <section className="research-profile-section">
+            <h3>Próximo passo sugerido</h3>
+            <p>{prospect.nextStep}</p>
+            <ol className="research-questions">
+              {prospect.questions.map((question) => (
+                <li key={question}>{question}</li>
+              ))}
+            </ol>
+          </section>
+          {prospect.gaps.length > 0 && (
+            <section className="research-profile-section research-open-points">
+              <h3>
+                <CircleAlert size={17} /> Pontos a confirmar
+              </h3>
+              <ul>
+                {prospect.gaps.map((gap) => (
+                  <li key={gap}>{gap}</li>
+                ))}
+              </ul>
+            </section>
+          )}
+          <section className="research-profile-section">
+            <h3>Fontes e data da pesquisa</h3>
+            <div className="research-sources">
+              {sources.map((source) => (
+                <div key={source.id}>
+                  <ResearchLink href={source.url}>{source.label}</ResearchLink>
+                  <small>
+                    {source.kind === "registry"
+                      ? "Intermediário de dados cadastrais"
+                      : source.kind === "directory"
+                        ? "Diretório de terceiros"
+                        : source.kind === "government"
+                          ? "Publicação governamental"
+                          : "Declaração da própria empresa"}{" "}
+                    · {researchDate(source.checkedAt)}
+                  </small>
+                </div>
+              ))}
+            </div>
+            <p className="research-footnote">
+              Dados na data de consulta indicada. Os perfis não são reconstruções históricas dos
+              anos selecionados no BI.
+            </p>
+          </section>
+        </div>
+      )}
     </Dialog>
   );
 }

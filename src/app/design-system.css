@@ -2872,6 +2872,11 @@ button:active:not(:disabled),
   font-size: 13px;
 }
 .research-profile {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-gutter: stable;
   font-size: 13px;
   line-height: 1.7;
 }
@@ -3240,4 +3245,336 @@ button:active:not(:disabled),
     grid-template-columns: 1fr;
     gap: 16px;
   }
+}
+.data-pagination {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  padding: 17px 0;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 11px;
+}
+.data-pagination > span {
+  margin-right: auto;
+}
+.data-pagination label,
+.data-pagination > div {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.data-pagination select {
+  padding: 5px 7px;
+  min-height: 32px;
+  background: var(--surface);
+}
+.data-pagination .icon-button {
+  min-width: 32px;
+  min-height: 32px;
+}
+.data-pagination > div > span {
+  padding: 0 4px;
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 600px) {
+  .data-pagination > div {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .data-pagination .icon-button {
+    min-width: 40px;
+    min-height: 40px;
+  }
+}
+.research-controls {
+  border-bottom: 1px solid var(--line);
+  padding: 18px 0;
+}
+.research-controls > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.research-controls > div:first-child > div:first-child {
+  display: grid;
+  gap: 5px;
+}
+.research-controls strong {
+  font-size: 13px;
+  font-weight: 500;
+}
+.research-control-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.research-control-buttons .button {
+  font-size: 11px;
+  padding: 8px 11px;
+}
+.research-controls > p,
+.research-control-help p,
+.research-controls > small {
+  font-size: 10px;
+  line-height: 1.8;
+  color: var(--muted);
+  margin: 10px 0 0;
+}
+.research-control-help {
+  margin-top: 12px;
+}
+.research-control-help summary {
+  font-size: 10px;
+  color: var(--muted);
+  cursor: pointer;
+}
+.research-run-status {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 15px;
+  margin-top: 13px;
+  font-size: 10px;
+  color: var(--muted);
+}
+.research-run-status > span:first-child {
+  margin-right: auto;
+}
+.research-run-status progress {
+  height: 3px;
+  width: 100%;
+  accent-color: var(--green);
+}
+.research-action-notice {
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--green);
+}
+.research-census-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  padding: 12px 0;
+  font-size: 10px;
+  color: var(--muted);
+}
+.research-census-summary strong {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.research-extra-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 20px;
+  font-size: 10px;
+  color: var(--muted);
+}
+.research-extra-filters label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.research-extra-filters select {
+  background: var(--surface);
+  min-height: 32px;
+  padding: 5px 7px;
+}
+.research-extra-filters input[type="checkbox"] {
+  accent-color: var(--green);
+}
+.research-extra-filters .text-button {
+  margin-left: auto;
+  font-size: 10px;
+}
+.research-toolbar .search-field > button {
+  border: 0;
+  border-radius: 4px;
+  background: var(--background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  min-height: 28px;
+}
+.research-open-profile {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: var(--ink);
+  text-align: left;
+}
+.research-open-profile > strong {
+  font-size: 17px;
+  letter-spacing: -0.45px;
+  line-height: 1.3;
+  margin-bottom: 6px;
+}
+.research-profile-level {
+  font-size: 9px;
+  line-height: 1.5;
+  color: var(--muted);
+  margin: -9px 0 15px;
+}
+.prospect-google-summary {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 10px;
+  color: var(--muted);
+}
+.prospect-google-summary > div {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+.prospect-google-summary svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.prospect-google-summary strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+.prospect-google-summary small {
+  display: block;
+  font-size: 9px;
+  line-height: 1.7;
+  margin-top: 4px;
+}
+.prospect-google-summary a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+  color: var(--green);
+  white-space: nowrap;
+}
+.prospect-google-summary a:hover {
+  text-decoration: underline;
+}
+.research-section-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.research-section-heading h3 {
+  margin: 0;
+}
+.research-section-heading .text-button {
+  font-size: 11px;
+}
+.google-review {
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+}
+.google-review > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12px;
+}
+.google-review > small {
+  color: var(--muted);
+  font-size: 10px;
+}
+.google-note-editor {
+  display: grid;
+  gap: 16px;
+  padding: 18px 0 0;
+}
+.google-note-editor .field > span {
+  font-size: 11px;
+}
+.google-note-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+.google-review-editor {
+  display: grid;
+  gap: 12px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+.google-review-editor legend {
+  font-size: 11px;
+  font-weight: 500;
+}
+@media (max-width: 600px) {
+  .research-controls > div:first-child {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .research-control-buttons {
+    width: 100%;
+  }
+  .research-control-buttons .button {
+    min-height: 40px;
+  }
+  .research-extra-filters {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .research-extra-filters .text-button {
+    margin-left: 0;
+  }
+}
+.prospect-profile-editor,
+.research-ai-form {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+}
+.prospect-profile-editor .field {
+  margin: 16px 0;
+}
+.prospect-profile-editor .field > span {
+  font-size: 11px;
+}
+.research-ai-form .bi-dialog-body {
+  min-height: 0;
+  overflow-y: auto;
+}
+.research-ai-form p {
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--muted);
+}
+.research-ai-form .field {
+  margin-top: 20px;
+}
+.research-profile-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 18px;
+}
+.research-profile-actions .text-button {
+  font-size: 11px;
+}
+.research-report-version {
+  font-size: 10px;
+  line-height: 1.7;
+  color: var(--muted);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 12px;
 }

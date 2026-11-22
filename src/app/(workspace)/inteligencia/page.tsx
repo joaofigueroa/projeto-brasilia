@@ -4,6 +4,7 @@ import { Intelligence } from "@/components/intelligence";
 import { Topbar } from "@/components/topbar";
 import { getIntelligence } from "@/server/services/intelligence";
 export const metadata: Metadata = { title: "Inteligência de mercado" };
+export const maxDuration = 60;
 export default async function IntelligencePage({
   searchParams,
 }: {
@@ -20,6 +21,13 @@ export default async function IntelligencePage({
     years: params.years,
     map: params.map ?? (params.city ? "municipalities" : "states"),
     metric: params.metric ?? "registrations",
+    researchPage: params.researchPage,
+    researchSize: params.researchSize,
+    researchQuery: params.researchQuery,
+    researchSegment: params.researchSegment,
+    researchPriority: params.researchPriority,
+    researchEnrichment: params.researchEnrichment,
+    researchPrimary: params.researchPrimary,
   });
   if (!params.project) {
     const url = new URLSearchParams();

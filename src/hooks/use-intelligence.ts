@@ -8,7 +8,15 @@ import {
 } from "@/server/actions/intelligence";
 import type { AnalysisTab, IntelligenceData, IntelligenceRecord } from "@/types/intelligence";
 export function useIntelligence(data: IntelligenceData) {
-  const { navigate, pending: navigating, router } = useNavigation();
+  const { navigate: navigateTo, pending: navigating, router } = useNavigation();
+  function navigate(values: Record<string, string | null>) {
+    navigateTo(
+      Object.keys(values).some((key) => ["uf", "city", "region", "project"].includes(key)) &&
+        !("researchPage" in values)
+        ? { ...values, researchPage: null }
+        : values,
+    );
+  }
   const [pending, startTransition] = useTransition();
   const [editor, setEditor] = useState<IntelligenceRecord | "new" | null>(null);
   const [tabEditor, setTabEditor] = useState<AnalysisTab | "new" | null>(null);

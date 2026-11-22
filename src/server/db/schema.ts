@@ -242,3 +242,141 @@ export const intelligenceRecords = pgTable(
     uniqueIndex("intelligence_records_import_idx").on(table.tabId, table.importKey),
   ],
 );
+
+export const researchRuns = pgTable(
+  "research_runs",
+  {
+    id: uuid("id").primaryKey().$defaultFn(v7),
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projects.id),
+    cityCode: text("city_code").notNull(),
+    kind: text("kind").notNull(),
+    status: text("status").notNull().default("pending"),
+    requestedBy: uuid("requested_by")
+      .notNull()
+      .references(() => users.id),
+    source: text("source").notNull().default(""),
+    sourceMonth: text("source_month").notNull().default(""),
+    cursor: integer("cursor").notNull().default(0),
+    total: integer("total"),
+    phase: text("phase").notNull().default("establishments"),
+    pendingRows: jsonb("pending_rows").notNull().default(sql`'[]'::jsonb`),
+    leaseToken: uuid("lease_token"),
+    leaseUntil: timestamp("lease_until", { withTimezone: true }),
+    message: text("message").notNull().default(""),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (table) => [
+    index("research_runs_project_id_idx").on(table.projectId),
+    index("research_runs_requested_by_idx").on(table.requestedBy),
+    index("research_runs_city_idx").on(
+      table.projectId,
+      table.cityCode,
+      table.kind,
+      table.createdAt,
+    ),
+  ],
+);
+
+export const researchProspects = pgTable(
+  "research_prospects",
+  {
+    id: uuid("id").primaryKey().$defaultFn(v7),
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projects.id),
+    referenceKey: text("reference_key").notNull(),
+    cnpj: text("cnpj"),
+    cityCode: text("city_code").notNull(),
+    stateCode: text("state_code").notNull(),
+    name: text("name").notNull(),
+    segment: text("segment").notNull(),
+    priority: text("priority").notNull(),
+    enrichmentLevel: text("enrichment_level").notNull().default("registry"),
+    version: integer("version").notNull().default(1),
+    profile: jsonb("profile").notNull(),
+    active: boolean("active").notNull().default(true),
+    sourceRunId: uuid("source_run_id").references(() => researchRuns.id),
+    updatedBy: uuid("updated_by").references(() => users.id),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (table) => [
+    index("research_prospects_project_id_idx").on(table.projectId),
+    index("research_prospects_source_run_id_idx").on(table.sourceRunId),
+    index("research_prospects_updated_by_idx").on(table.updatedBy),
+    uniqueIndex("research_prospects_reference_idx").on(table.projectId, table.referenceKey),
+    uniqueIndex("research_prospects_cnpj_idx").on(table.projectId, table.cnpj),
+    index("research_prospects_city_idx").on(table.projectId, table.cityCode, table.active),
+  ],
+);
+
+export const commercialReports = pgTable(
+  "commercial_reports",
+  {
+    id: uuid("id").primaryKey().$defaultFn(v7),
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projects.id),
+    cityCode: text("city_code").notNull(),
+    runId: uuid("run_id")
+      .notNull()
+      .references(() => researchRuns.id),
+    createdBy: uuid("created_by")
+      .notNull()
+      .references(() => users.id),
+    report: jsonb("report").notNull(),
+    inputs: jsonb("inputs").notNull(),
+    model: text("model").notNull(),
+    createdAt: createdAt(),
+  },
+  (table) => [
+    index("commercial_reports_project_id_idx").on(table.projectId),
+    index("commercial_reports_run_id_idx").on(table.runId),
+    index("commercial_reports_created_by_idx").on(table.createdBy),
+    index("commercial_reports_city_idx").on(table.projectId, table.cityCode, table.createdAt),
+  ],
+);
+
+export const prospectGoogleNotes = pgTable(
+  "prospect_google_notes",
+  {
+    id: uuid("id").primaryKey().$defaultFn(v7),
+    prospectId: uuid("prospect_id")
+      .notNull()
+      .references(() => researchProspects.id),
+    updatedBy: uuid("updated_by")
+      .notNull()
+      .references(() => users.id),
+    data: jsonb("data").notNull(),
+    version: integer("version").notNull().default(1),
+    updatedAt: updatedAt(),
+  },
+  (table) => [
+    uniqueIndex("prospect_google_notes_prospect_idx").on(table.prospectId),
+    index("prospect_google_notes_updated_by_idx").on(table.updatedBy),
+  ],
+);
+
+export const researchAiConnections = pgTable(
+  "research_ai_connections",
+  {
+    id: uuid("id").primaryKey().$defaultFn(v7),
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projects.id),
+    encryptedKey: text("encrypted_key").notNull(),
+    model: text("model").notNull(),
+    updatedBy: uuid("updated_by")
+      .notNull()
+      .references(() => users.id),
+    version: integer("version").notNull().default(1),
+    updatedAt: updatedAt(),
+  },
+  (table) => [
+    uniqueIndex("research_ai_connections_project_idx").on(table.projectId),
+    index("research_ai_connections_updated_by_idx").on(table.updatedBy),
+  ],
+);

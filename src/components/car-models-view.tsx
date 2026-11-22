@@ -3,9 +3,11 @@ import { CarFront, ExternalLink, Info, Search } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useId, useState } from "react";
 import type { IntelligenceController } from "@/hooks/use-intelligence";
+import { usePagination } from "@/hooks/use-pagination";
 import { periodLabel } from "@/libs/analysis-period";
 import { formatNumber } from "@/libs/intelligence-presentation";
 import type { IntelligenceData } from "@/types/intelligence";
+import { Pagination } from "./pagination";
 export function CarModelsView({
   data,
   controller,
@@ -30,10 +32,13 @@ export function CarModelsView({
         .toLocaleLowerCase("pt-BR")
         .includes(query.toLocaleLowerCase("pt-BR")),
   );
+  const pagination = usePagination(filtered, `${query}-${make}`);
   return (
     <>
       <div className="bi-panel-intro">
-        <h3>Modelos de automóveis</h3>
+        <h3 id={`${coverageId}-results`} tabIndex={-1}>
+          Modelos de automóveis
+        </h3>
       </div>
       <div className="bi-model-controls">
         <label>
@@ -128,7 +133,7 @@ export function CarModelsView({
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((row) => (
+                {pagination.items.map((row) => (
                   <tr key={row.key}>
                     <th scope="row">
                       <strong>
@@ -180,6 +185,11 @@ export function CarModelsView({
               </tbody>
             </table>
           </div>
+          <Pagination
+            label="modelos de automóveis"
+            targetId={`${coverageId}-results`}
+            {...pagination}
+          />
           {!filtered.length && (
             <p className="bi-inline-note">Nenhum modelo corresponde ao filtro.</p>
           )}

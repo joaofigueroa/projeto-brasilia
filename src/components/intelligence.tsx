@@ -23,6 +23,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useId, useState } from "react";
 import type { IntelligenceController } from "@/hooks/use-intelligence";
 import { useIntelligence } from "@/hooks/use-intelligence";
+import { usePagination } from "@/hooks/use-pagination";
 import { periodLabel } from "@/libs/analysis-period";
 import { formatNumber, metricLabels, prospectLabels } from "@/libs/intelligence-presentation";
 import type { IntelligenceData, IntelligenceRecord } from "@/types/intelligence";
@@ -32,6 +33,8 @@ import { CarModelsView } from "./car-models-view";
 import { CommercialIntelligence, ResearchedProspects } from "./commercial-research";
 import { Toast } from "./feedback";
 import { IntelligenceDialogs } from "./intelligence-dialogs";
+import { Pagination } from "./pagination";
+import { ResearchControls } from "./research-controls";
 import { StateFlag } from "./state-flag";
 
 const regions = [
@@ -92,6 +95,7 @@ function RecordList({
   data: IntelligenceData;
   controller: IntelligenceController;
 }) {
+  const listId = useId();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("");
   const records = data.records.filter(
@@ -102,6 +106,7 @@ function RecordList({
         .toLocaleLowerCase("pt-BR")
         .includes(query.toLocaleLowerCase("pt-BR")),
   );
+  const pagination = usePagination(records, `${query}-${category}`);
   const categories = [
     ...new Set(
       [...data.tab.settings.segments, ...data.records.map((r) => r.category)].filter(Boolean),
@@ -133,15 +138,16 @@ function RecordList({
           ))}
         </select>
       </div>
-      <div className="bi-record-count">
+      <div className="bi-record-count" id={listId} tabIndex={-1}>
         {records.length} de {data.records.length} registros neste recorte
         {data.records.length === 500 ? " · limite de 500 resultados" : ""}
       </div>
       <div className="bi-record-list">
-        {records.map((record) => (
+        {pagination.items.map((record) => (
           <RecordCard key={record.id} record={record} data={data} controller={controller} />
         ))}
       </div>
+      <Pagination label="registros" targetId={listId} {...pagination} />
       {!records.length && <p className="bi-inline-note">Nenhum registro corresponde à busca.</p>}
     </>
   );
@@ -305,10 +311,17 @@ function VehiclesView({
 }
 function NoticesView({ data }: { data: IntelligenceData }) {
   const notices = data.notices;
+  const resultsId = useId();
+  const pagination = usePagination(
+    notices?.items ?? [],
+    `${data.territory.uf}:${data.territory.city}:${data.years.join(",")}:${data.tab.id}`,
+  );
   return (
     <>
       <div className="bi-panel-intro">
-        <h3>Editais de contratação pública</h3>
+        <h3 id={resultsId} tabIndex={-1}>
+          Editais de contratação pública
+        </h3>
         <p>Consulte objetos publicados no PNCP com os termos definidos para esta aba.</p>
       </div>
       <div className="bi-keyword-list">
@@ -356,7 +369,7 @@ function NoticesView({ data }: { data: IntelligenceData }) {
               )}
             </div>
             <div className="bi-record-list">
-              {notices.items.map((item) => (
+              {pagination.items.map((item) => (
                 <article className="bi-record-card" key={item.id}>
                   <div className="bi-record-top">
                     <span className="bi-origin-tag">PNCP</span>
@@ -381,6 +394,7 @@ function NoticesView({ data }: { data: IntelligenceData }) {
                 </article>
               ))}
             </div>
+            <Pagination {...pagination} label="publicações" targetId={resultsId} />
             {!notices.items.length && !notices.unavailable && (
               <p className="bi-inline-note">
                 Nenhuma correspondência na amostra consultada. Isso não indica ausência de editais
@@ -720,7 +734,7 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
                 {data.research ? (
                   <>
                     {data.tab.kind === "prospects"
-                      ? `${data.research.prospects.length} perfis pesquisados`
+                      ? `${(data.research.live?.stats.total ?? data.research.prospects.length).toLocaleString("pt-BR")} perfis disponíveis`
                       : `${data.research.reports.length} ${data.research.reports.length === 1 ? "análise publicada" : "análises publicadas"}`}
                     {data.records.length > 0 ? ` · ${data.records.length} registros da equipe` : ""}
                   </>
@@ -765,6 +779,12 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
               )}
             </div>
           </div>
+          {data.research && (
+            <ResearchControls
+              key={`${data.project.id}-${data.territory.city ?? data.territory.uf}`}
+              data={data}
+            />
+          )}
           <motion.div
             key={`${data.project.id}-${data.tab.id}-${data.territory.label}-${data.years.join(",")}-${data.metric}`}
             role="tabpanel"
@@ -778,7 +798,12 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
             {data.tab.kind === "commercial" ? (
               <>
                 {data.research ? (
-                  <CommercialIntelligence research={data.research} controller={controller} />
+                  <CommercialIntelligence
+                    research={data.research}
+                    controller={controller}
+                    projectId={data.project.id}
+                    canManage={canManage}
+                  />
                 ) : (
                   <div className="bi-panel-intro">
                     <h3>Inteligência comercial</h3>
@@ -799,7 +824,12 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
               </>
             ) : data.tab.kind === "prospects" && data.research ? (
               <>
-                <ResearchedProspects research={data.research} controller={controller} />
+                <ResearchedProspects
+                  research={data.research}
+                  controller={controller}
+                  projectId={data.project.id}
+                  canManage={canManage}
+                />
                 {data.records.length > 0 && (
                   <>
                     <div className="bi-section-title">

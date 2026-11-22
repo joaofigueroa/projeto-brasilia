@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { researchListFiltersSchema } from "./commercial-research";
 export const analysisKinds = [
   "market",
   "prospects",
@@ -35,6 +36,13 @@ export const intelligenceFiltersSchema = z
       .optional(),
     map: z.enum(["states", "municipalities"]).default("states"),
     metric: z.enum(metricKinds).default("registrations"),
+    researchPage: researchListFiltersSchema.shape.page,
+    researchSize: researchListFiltersSchema.shape.pageSize,
+    researchQuery: researchListFiltersSchema.shape.query,
+    researchSegment: researchListFiltersSchema.shape.segment,
+    researchPriority: researchListFiltersSchema.shape.priority,
+    researchEnrichment: researchListFiltersSchema.shape.enrichment,
+    researchPrimary: z.enum(["0", "1"]).default("0"),
   })
   .transform((input) => {
     const years = [...new Set(input.years ?? [input.year])].sort((a, b) => a - b);
