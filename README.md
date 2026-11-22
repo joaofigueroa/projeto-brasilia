@@ -13,6 +13,8 @@ Plataforma de gestão de pessoas, projetos e tarefas semanais. Aplicação indep
 - Arraste com mouse ou toque, navegação por teclado e seletor de status como alternativa.
 - Histórico com autor, horário e valores anteriores/novos, preservado no banco.
 - Controle de versão para impedir que uma edição sobrescreva outra silenciosamente.
+- Imagem do projeto nos cards e na lista de tarefas, com identificação por nome e ícone quando não há imagem.
+- Exclusão de tarefas mediante confirmação, disponível para administradores do espaço ou do card, preservando os eventos de auditoria.
 - Visão transversal dos projetos e filtros por projeto, semana, responsável e texto, persistidos na URL.
 - Seletor de projeto no menu lateral retrátil e filtros acima do Kanban e layout responsivo com animações discretas e respeito a movimento reduzido.
 
@@ -22,7 +24,7 @@ Os projetos iniciais são **Clínica estética**, **Vinhos** e **Peças automoti
 
 A tela **Business Intelligence** combina mapas interativos de UFs e municípios, recortes por Brasil/região/UF/município e seleção de um ou mais anos. Administradores podem configurar abas, registrar análises e possíveis clientes e importar CSV. O mapa usa população do Censo 2022 ou estoque de automóveis de dezembro de 2022–2024, com média anual para múltiplos anos. A aba de veículos mostra apenas modelos de automóveis, com colunas anuais, soma ou média e fonte identificada. Estão carregados os rankings nacionais da Fenabrave de 2022–2024 e as publicações anuais de automóveis do Sincodiv-DF de 2022–2025. O DF e o recorte cadastral Brasília usam os dados locais do DF, com cobertura e fonte identificadas. Outros territórios dependem de dados locais com fonte; não recebem números nacionais por aproximação. A aba de editais consulta o PNCP para cada ano selecionado.
 
-Consulte [fontes, cobertura, permissões e formato de importação](docs/intelligence-data.md). As migrations até `0002_special_misty_knight` devem ser aplicadas antes de publicar esta versão.
+Consulte [fontes, cobertura, permissões e formato de importação](docs/intelligence-data.md). As migrations até `0003_dazzling_tenebrous` devem ser aplicadas antes de publicar esta versão.
 
 ## Interface
 
@@ -88,6 +90,7 @@ O setup não sobrescreve uma configuração Neon existente. Para manter os dois 
 | Criar tarefa | Sim | Sim, administrando o próprio card | Sim, administrando o próprio card | Sim, administrando o próprio card |
 | Editar todos os campos | Sim | Sim | Não | Não |
 | Mover entre status | Sim | Sim | Sim | Não |
+| Excluir tarefa | Sim | Sim | Não | Não |
 | Gerenciar pessoas e papéis | Sim | Não | Não | Não |
 | Criar e editar projetos | Sim | Não | Não | Não |
 | Alterar o próprio perfil e senha | Sim | Sim | Sim | Sim |
@@ -116,7 +119,7 @@ tests/                    integração com PostgreSQL isolado
 
 Leituras: **Server Component → service → repository**. Escritas: **interface → Server Action → service → repository**. Services e repositories são `server-only`. As únicas rotas HTTP da aplicação são as rotas de autenticação do Better Auth.
 
-IDs seguem UUIDv7; identificadores de código e SQL usam inglês. Todas as chaves estrangeiras têm índices. O driver de produção é `drizzle-orm/neon-http`, sem transações interativas. Cada gravação de tarefa, responsáveis e evento de histórico usa uma única instrução SQL com CTEs, atômica no PostgreSQL. A atualização só acontece quando a versão esperada e a autorização ainda correspondem à tarefa. Os eventos de auditoria têm um trigger que bloqueia alterações e exclusões.
+IDs seguem UUIDv7; identificadores de código e SQL usam inglês. Todas as chaves estrangeiras têm índices. O driver de produção é `drizzle-orm/neon-http`, sem transações interativas. Cada gravação de tarefa, responsáveis e evento de histórico usa uma única instrução SQL com CTEs, atômica no PostgreSQL. A atualização só acontece quando a versão esperada e a autorização ainda correspondem à tarefa. Os eventos de auditoria têm um trigger que bloqueia alterações e exclusões. Excluir uma tarefa marca `deleted_at`, incrementa a versão e registra um evento `deleted` com autor e snapshot na mesma instrução SQL. Tarefas excluídas ficam fora de consultas do quadro e não podem ser editadas, movimentadas ou abertas pelo endereço anterior.
 
 Semanas começam na segunda-feira e são armazenadas como `date`, independentes de fuso horário. Datas de auditoria usam `timestamptz`; a apresentação usa `America/Sao_Paulo`.
 

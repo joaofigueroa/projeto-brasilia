@@ -9,6 +9,7 @@ import {
   listTasks,
   type StoredTask,
   saveTask,
+  softDeleteTask,
 } from "@/server/repositories/tasks";
 import { listUsers } from "@/server/repositories/users";
 import { businessError } from "@/server/security/business-error";
@@ -17,6 +18,7 @@ import type { BoardData, Change, Project, PublicUser } from "@/types/domain";
 import {
   boardFiltersSchema,
   createTaskSchema,
+  deleteTaskSchema,
   moveTaskSchema,
   type TaskFields,
   updateTaskSchema,
@@ -165,4 +167,19 @@ export async function moveTask(rawInput: unknown) {
   });
   if (!saved) fail("Esta tarefa foi alterada. Atualize o quadro e tente novamente.");
   return saved;
+}
+
+export async function deleteTask(rawInput: unknown) {
+  const input = deleteTaskSchema.parse(rawInput);
+  const viewer = await requireViewer();
+  const previous = await findTask(input.id);
+  if (!previous) fail("Tarefa não encontrada ou já excluída.");
+  if (!taskPermissions(viewer, previous).canEdit)
+    fail("Somente administradores da plataforma ou deste card podem excluir a tarefa.");
+  if (previous.version !== input.version)
+    fail("Esta tarefa foi alterada. Reabra o card antes de excluir.");
+  const deleted = await softDeleteTask({ ...input, actorId: viewer.id });
+  if (!deleted)
+    fail("Esta tarefa foi alterada ou seu acesso mudou. Reabra o card antes de excluir.");
+  return deleted;
 }

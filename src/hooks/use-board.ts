@@ -45,7 +45,13 @@ export function useBoard(data: BoardData) {
     navigate({ task: null, week });
     setNotice({ message: "Tarefa salva.", error: false });
   }
+  function deleted() {
+    navigate({ task: null });
+    setNotice({ message: "Tarefa excluída.", error: false });
+    document.querySelector<HTMLButtonElement>(".new-task")?.focus();
+  }
   return {
+    deleted,
     tasks,
     creating,
     setCreating,

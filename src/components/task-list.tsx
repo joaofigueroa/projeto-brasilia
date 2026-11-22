@@ -3,6 +3,7 @@ import { formatDay, weekLabel } from "@/libs/calendar";
 import { priorityLabels, statuses, statusLabels } from "@/libs/presentation";
 import type { BoardData, Task, TaskStatus } from "@/types/domain";
 import { Avatar } from "./avatar";
+import { ProjectImage } from "./project-image";
 export function TaskList({
   data,
   tasks,
@@ -38,7 +39,10 @@ export function TaskList({
                   {task.title}
                 </button>
                 <span className="list-project">
-                  {data.projects.find((item) => item.id === task.projectId)?.name}{" "}
+                  <ProjectImage
+                    project={data.projects.find((item) => item.id === task.projectId)}
+                  />
+                  <span>{data.projects.find((item) => item.id === task.projectId)?.name}</span>
                   <span>· {priorityLabels[task.priority]}</span>
                 </span>
               </th>

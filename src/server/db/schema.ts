@@ -122,6 +122,7 @@ export const tasks = pgTable(
     priority: taskPriority("priority").notNull().default("medium"),
     weekStart: date("week_start").notNull(),
     dueDate: date("due_date"),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
     version: integer("version").notNull().default(1),
     createdAt: createdAt(),
     updatedAt: updatedAt(),

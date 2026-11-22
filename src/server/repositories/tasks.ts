@@ -13,7 +13,7 @@ const taskColumns = sql`t.id, t.title, t.description, t.status, t.priority, t.we
 
 export function listTasks(input: { week: string; project?: string; assignee?: string; q: string }) {
   return query<StoredTask>(sql`SELECT ${taskColumns} FROM tasks t
-    WHERE t.week_start = ${input.week}::date
+    WHERE t.deleted_at IS NULL AND t.week_start = ${input.week}::date
       ${input.project ? sql`AND t.project_id = ${input.project}::uuid` : sql``}
       ${input.assignee ? sql`AND EXISTS (SELECT 1 FROM task_assignees a WHERE a.task_id = t.id AND a.user_id = ${input.assignee}::uuid)` : sql``}
       ${input.q ? sql`AND (position(lower(${input.q}) IN lower(t.title)) > 0 OR position(lower(${input.q}) IN lower(t.description)) > 0)` : sql``}
@@ -22,7 +22,7 @@ export function listTasks(input: { week: string; project?: string; assignee?: st
 
 export async function findTask(id: string) {
   const rows = await query<StoredTask>(
-    sql`SELECT ${taskColumns} FROM tasks t WHERE t.id = ${id}::uuid`,
+    sql`SELECT ${taskColumns} FROM tasks t WHERE t.id = ${id}::uuid AND t.deleted_at IS NULL`,
   );
   return rows[0] ?? null;
 }
@@ -75,7 +75,7 @@ export async function saveTask(
       UPDATE tasks t SET title = ${input.title}, description = ${input.description}, status = ${input.status}::task_status,
         priority = ${input.priority}::task_priority, project_id = ${input.projectId}::uuid, administrator_id = ${input.administratorId}::uuid,
         week_start = ${input.weekStart}::date, due_date = ${input.dueDate}::date, version = version + 1, updated_at = now()
-      WHERE t.id = ${input.id}::uuid AND t.version = ${input.version}
+      WHERE t.id = ${input.id}::uuid AND t.version = ${input.version} AND t.deleted_at IS NULL
         AND (t.administrator_id = ${input.actorId}::uuid OR EXISTS (SELECT 1 FROM users WHERE id = ${input.actorId}::uuid AND role = 'admin')
           OR (${input.kind === "moved"} AND EXISTS (SELECT 1 FROM task_assignees WHERE task_id = t.id AND user_id = ${input.actorId}::uuid)))
       RETURNING *
@@ -92,5 +92,23 @@ export async function saveTask(
         to_jsonb(u) || jsonb_build_object('assignee_ids', ${JSON.stringify(input.assigneeIds)}::jsonb) FROM updated u
     ) SELECT id FROM updated
   `);
+  return rows[0]?.id ?? null;
+}
+
+export async function softDeleteTask(input: { id: string; version: number; actorId: string }) {
+  const rows = await query<{ id: string }>(sql`
+  WITH deleted AS (
+    UPDATE tasks t SET deleted_at=now(),updated_at=now(),version=version+1
+    WHERE t.id=${input.id}::uuid AND t.version=${input.version} AND t.deleted_at IS NULL
+      AND (t.administrator_id=${input.actorId}::uuid OR EXISTS(SELECT 1 FROM users WHERE id=${input.actorId}::uuid AND role='admin'))
+    RETURNING *
+  ), audited AS (
+    INSERT INTO task_events (id,task_id,actor_id,kind,changes,snapshot)
+    SELECT ${v7()}::uuid,d.id,${input.actorId}::uuid,'deleted',
+      '[{"field":"availability","before":"Disponível no quadro","after":"Excluída"}]'::jsonb,
+      to_jsonb(d)||jsonb_build_object('assignee_ids',COALESCE((SELECT jsonb_agg(a.user_id ORDER BY a.user_id) FROM task_assignees a WHERE a.task_id=d.id),'[]'::jsonb))
+    FROM deleted d
+  ) SELECT id FROM deleted
+ `);
   return rows[0]?.id ?? null;
 }

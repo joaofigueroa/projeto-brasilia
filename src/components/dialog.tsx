@@ -9,12 +9,14 @@ export function Dialog({
   eyebrow,
   onClose,
   variant = "drawer",
+  initialFocus,
 }: {
   children: React.ReactNode;
   title: string;
   eyebrow?: string;
   onClose: () => void;
   variant?: "drawer" | "modal";
+  initialFocus?: string;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const labelId = useId();
@@ -23,15 +25,15 @@ export function Dialog({
     const previous = document.activeElement as HTMLElement | null;
     dialog?.showModal();
     dialog
-      ?.querySelector<HTMLInputElement>(
-        "input:not([type='checkbox']):not([type='radio']):not(:disabled)",
+      ?.querySelector<HTMLElement>(
+        initialFocus ?? "input:not([type='checkbox']):not([type='radio']):not(:disabled)",
       )
       ?.focus();
     return () => {
       dialog?.close();
       previous?.focus();
     };
-  }, []);
+  }, [initialFocus]);
   return (
     <motion.dialog
       ref={ref}

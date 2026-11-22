@@ -772,3 +772,99 @@ describe("administrator project management", () => {
     expect((await listProjects()).some((p) => p.id === id)).toBe(false);
   });
 });
+
+describe("task deletion", () => {
+  async function deletion() {
+    return import("@/server/services/tasks");
+  }
+  it("removes the task from all boards, direct selection and statistics while retaining its audit trail", async () => {
+    const id = await createTask(input({ title: "Delete this task", weekStart: "2027-01-04" }));
+    const previous = await findTask(id);
+    const { deleteTask } = await deletion();
+    expect(await deleteTask({ id, version: previous!.version })).toBe(id);
+    expect(await findTask(id)).toBeNull();
+    const board = await getBoard({ week: "2027-01-04", task: id });
+    expect(board.tasks).toEqual([]);
+    expect(board.selectedTask).toBeNull();
+    expect(board.stats.total).toBe(0);
+    const history = await listTaskHistory(id);
+    expect(history.map((event) => event.kind)).toEqual(["deleted", "created"]);
+    expect(history[0].actor.id).toBe(admin.id);
+    expect(history[0].changes).toEqual([
+      { field: "availability", before: "Disponível no quadro", after: "Excluída" },
+    ]);
+    const [stored] = await query<{ deletedAt: string; version: number; assignees: number }>(
+      sql`SELECT deleted_at::text AS "deletedAt",version,(SELECT count(*)::int FROM task_assignees WHERE task_id=${id}::uuid) AS assignees FROM tasks WHERE id=${id}::uuid`,
+    );
+    expect(stored.deletedAt).toBeTruthy();
+    expect(stored.version).toBe(previous!.version + 1);
+    expect(stored.assignees).toBe(1);
+    const [snapshot] = await query<{ snapshot: { assignee_ids: string[]; deleted_at: string } }>(
+      sql`SELECT snapshot FROM task_events WHERE task_id=${id}::uuid AND kind='deleted'`,
+    );
+    expect(snapshot.snapshot.assignee_ids).toEqual([collaborator.id]);
+    expect(snapshot.snapshot.deleted_at).toBeTruthy();
+    await expect(updateTask({ ...input(), id, version: stored.version })).rejects.toThrow(
+      "não encontrada",
+    );
+    await expect(moveTask({ id, version: stored.version, status: "done" })).rejects.toThrow(
+      "não encontrada",
+    );
+    await expect(deleteTask({ id, version: stored.version })).rejects.toThrow("já excluída");
+  });
+  it("allows a designated card administrator without a global admin role", async () => {
+    const id = await createTask(input({ administratorId: collaborator.id }));
+    const { deleteTask } = await deletion();
+    session.viewer = collaborator;
+    await deleteTask({ id, version: 1 });
+    expect((await listTaskHistory(id))[0]).toMatchObject({
+      kind: "deleted",
+      actor: { id: collaborator.id },
+    });
+  });
+  it("blocks assignees, unrelated collaborators, missing sessions and repository bypasses", async () => {
+    const id = await createTask(input());
+    const { deleteTask } = await deletion();
+    session.viewer = collaborator;
+    await expect(deleteTask({ id, version: 1 })).rejects.toThrow("administradores");
+    session.viewer = stranger;
+    await expect(deleteTask({ id, version: 1 })).rejects.toThrow("administradores");
+    session.viewer = null;
+    await expect(deleteTask({ id, version: 1 })).rejects.toThrow("Authentication required");
+    const { softDeleteTask } = await import("@/server/repositories/tasks");
+    expect(await softDeleteTask({ id, version: 1, actorId: collaborator.id })).toBeNull();
+    expect((await findTask(id))?.version).toBe(1);
+    expect(await listTaskHistory(id)).toHaveLength(1);
+  });
+  it("rejects stale deletion attempts and leaves concurrent edits intact", async () => {
+    const id = await createTask(input());
+    await updateTask({ ...input(), id, version: 1, title: "Updated before deletion" });
+    const { deleteTask } = await deletion();
+    await expect(deleteTask({ id, version: 1 })).rejects.toThrow("alterada");
+    expect((await findTask(id))?.title).toBe("Updated before deletion");
+    const results = await Promise.allSettled([
+      deleteTask({ id, version: 2 }),
+      deleteTask({ id, version: 2 }),
+    ]);
+    expect(results.filter((result) => result.status === "fulfilled")).toHaveLength(1);
+    expect((await listTaskHistory(id)).filter((event) => event.kind === "deleted")).toHaveLength(1);
+  });
+  it("rolls back deletion when the audit event cannot be written", async () => {
+    const id = await createTask(input());
+    const { deleteTask } = await deletion();
+    await query(
+      sql`CREATE FUNCTION reject_deletion_audit() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'Audit failure'; END $$`,
+    );
+    await query(
+      sql`CREATE TRIGGER reject_deletion_audit BEFORE INSERT ON task_events FOR EACH ROW WHEN (NEW.kind='deleted') EXECUTE FUNCTION reject_deletion_audit()`,
+    );
+    try {
+      await expect(deleteTask({ id, version: 1 })).rejects.toThrow();
+    } finally {
+      await query(sql`DROP TRIGGER reject_deletion_audit ON task_events`);
+      await query(sql`DROP FUNCTION reject_deletion_audit()`);
+    }
+    expect((await findTask(id))?.version).toBe(1);
+    expect(await listTaskHistory(id)).toHaveLength(1);
+  });
+});

@@ -12,9 +12,10 @@
 | Tarefa / card | task | Unidade de trabalho planejada em uma semana. |
 | Responsável | assignee | Pessoa vinculada à execução de uma tarefa; pode movimentá-la. |
 | Administrador do card | administrator | Pessoa que pode editar os dados e os responsáveis daquele card, independentemente do papel global. |
+| Exclusão de tarefa | taskDeletion | Retirada de uma tarefa do quadro por um administrador do espaço ou do card, após confirmação, conservando seu histórico. |
 | Semana | weekStart | Segunda-feira que identifica o período de planejamento; não é a data de criação. |
 | Prazo | dueDate | Data opcional de entrega; não determina automaticamente a semana. |
-| Histórico | taskEvent | Registro imutável de uma criação, edição ou movimentação, com autor e instante. |
+| Histórico | taskEvent | Registro imutável de uma criação, edição, movimentação ou exclusão, com autor e instante. |
 
 ## Inteligência de mercado
 

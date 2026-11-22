@@ -62,6 +62,7 @@ export const updateTaskSchema = taskFieldsSchema.extend({
   id: idSchema,
   version: z.number().int().positive(),
 });
+export const deleteTaskSchema = z.object({ id: idSchema, version: z.number().int().positive() });
 export const moveTaskSchema = z.object({
   id: idSchema,
   version: z.number().int().positive(),

@@ -23,7 +23,7 @@ export type Project = {
 export type Change = { field: string; before: string; after: string };
 export type TaskHistory = {
   id: string;
-  kind: "created" | "updated" | "moved";
+  kind: "created" | "updated" | "moved" | "deleted";
   actor: Pick<PublicUser, "id" | "name" | "image">;
   createdAt: string;
   changes: Change[];

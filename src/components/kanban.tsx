@@ -38,6 +38,7 @@ import { priorityLabels, statuses, statusLabels } from "@/libs/presentation";
 import type { BoardData, Project, PublicUser, Task, TaskStatus } from "@/types/domain";
 import { Avatar } from "./avatar";
 import { Toast } from "./feedback";
+import { ProjectImage } from "./project-image";
 import { TaskDialog } from "./task-dialog";
 import { TaskList } from "./task-list";
 import { WeeklyPlanner } from "./weekly-planner";
@@ -57,9 +58,12 @@ function CardContent({
   return (
     <>
       <div className="task-project-row">
-        <span className={`project-tag project-${project?.color ?? "lilac"}`}>
-          <span className="project-dot" />
-          {project?.name}
+        <span
+          className={`project-tag task-project-identity project-${project?.color ?? "lilac"}`}
+          title={project?.name}
+        >
+          <ProjectImage project={project} size="md" />
+          <span>{project?.name}</span>
         </span>
         <span
           className={`priority-mark priority-${task.priority}`}
@@ -500,6 +504,7 @@ export function Kanban({ data }: { data: BoardData }) {
             initialStatus={board.creating ?? "open"}
             onClose={board.close}
             onSaved={board.saved}
+            onDeleted={board.deleted}
             onMove={board.move}
           />
         )}

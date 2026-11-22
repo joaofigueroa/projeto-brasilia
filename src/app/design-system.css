@@ -2483,3 +2483,83 @@ button:active:not(:disabled),
   width: 34px;
   height: 24px;
 }
+.task-project-identity {
+  min-width: 0;
+  max-width: calc(100% - 24px);
+  white-space: normal;
+  gap: 9px;
+}
+.task-project-identity > span:last-child {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.4;
+}
+.task-project-identity .project-image {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+}
+.task-list .list-project {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+.task-list .list-project > .project-image {
+  width: 24px;
+  height: 24px;
+}
+.task-list .list-project > span:not(.project-image) {
+  color: inherit;
+}
+.task-delete-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #a34a37;
+  font-size: 12px;
+  padding: 9px 0;
+}
+.task-delete-trigger:hover {
+  color: #832f22;
+}
+.button.danger {
+  background: #ad402f;
+  color: #fff;
+  border-color: #ad402f;
+}
+.button.danger:hover {
+  background: #913426;
+  border-color: #913426;
+}
+.delete-task-body {
+  padding: 24px 28px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.75;
+}
+.delete-task-body strong {
+  font-weight: 600;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.delete-task-body > p + p {
+  margin-top: 12px;
+}
+.delete-task-body > .form-error {
+  margin-top: 18px;
+}
+@media (max-width: 760px) {
+  .delete-task-body {
+    padding: 24px 20px;
+  }
+  .task-delete-trigger {
+    font-size: 11px;
+  }
+}
+.task-project-identity .project-image img,
+.task-list .project-image img {
+  object-fit: contain;
+}
