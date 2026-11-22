@@ -2789,6 +2789,10 @@ button:active:not(:disabled),
 .vehicle-territories-table td {
   width: 50%;
   vertical-align: top;
+  text-align: left;
+}
+.vehicle-territories-table thead th {
+  text-align: left;
 }
 .vehicle-territory-link {
   display: inline-flex;
