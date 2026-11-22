@@ -1,10 +1,10 @@
 "use client";
 import { ExternalLink, Plus, Star, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { v7 } from "uuid";
 import { researchDate } from "@/libs/commercial-research";
-import { googleMapsProfileUrl } from "@/libs/google-business";
+import { googleMapsProfileUrl, normalizeGoogleMapsEmbedInput } from "@/libs/google-business";
 import { saveProspectGoogleNoteAction } from "@/server/actions/commercial-research";
 import type { ResearchProspect } from "@/types/commercial-research";
 import { FormError } from "./feedback";
@@ -48,6 +48,7 @@ export function ProspectGoogle({
   canManage: boolean;
 }) {
   const router = useRouter();
+  const embedHelpId = useId();
   const [note, setNote] = useState(prospect.google);
   const [editing, setEditing] = useState(false);
   const [reviews, setReviews] = useState(
@@ -67,6 +68,7 @@ export function ProspectGoogle({
       reviewCount: number("reviewCount"),
       checkedAt: String(form.get("checkedAt") ?? ""),
       mapsUrl: String(form.get("mapsUrl") ?? ""),
+      embedUrl: normalizeGoogleMapsEmbedInput(String(form.get("embedUrl") ?? "")),
       reviews: reviews.map((review, index) => ({
         id: review.draftKey,
         author: String(form.get(`author-${index}`) ?? ""),
@@ -104,7 +106,7 @@ export function ProspectGoogle({
       <div className="research-section-heading">
         <h3>
           <Star size={16} />
-          Avaliações no Google
+          Consultas registradas
         </h3>
         {canManage && prospect.databaseId && !editing && (
           <button
@@ -113,19 +115,22 @@ export function ProspectGoogle({
             onClick={() => {
               setEditing(true);
               setReviews(
-                (note?.reviews ?? []).map((review) => ({ ...review, draftKey: review.id ?? v7() })),
+                (note?.reviews ?? []).map((review) => ({
+                  ...review,
+                  draftKey: review.id ?? v7(),
+                })),
               );
               setError("");
             }}
           >
-            Registrar consulta
+            {note ? "Editar registro" : "Registrar consulta"}
           </button>
         )}
       </div>
       <ProspectGoogleSummary prospect={{ ...prospect, google: note }} />
       <p>
-        Consulte a ficha atual no Google Maps. Nesta modalidade gratuita, notas e transcrições são
-        registradas manualmente e não ficam sincronizadas.
+        Notas e trechos registrados nesta seção são manuais, com data de consulta. Não são
+        sincronizados com a ficha incorporada.
       </p>
       {!editing &&
         note?.reviews.map((review) => (
@@ -150,10 +155,7 @@ export function ProspectGoogle({
           </article>
         ))}
       {!editing && !note?.reviews.length && (
-        <p className="research-footnote">
-          Nenhum texto de avaliação foi registrado. Use o link do Google para ler as avaliações
-          disponíveis.
-        </p>
+        <p className="research-footnote">Nenhum trecho de avaliação foi registrado.</p>
       )}
       {editing && (
         <form className="google-note-editor" onSubmit={save}>
@@ -199,6 +201,22 @@ export function ProspectGoogle({
               defaultValue={note?.mapsUrl ?? ""}
               placeholder="https://www.google.com/maps/…"
             />
+          </label>
+          <label className="field">
+            <span>Ficha exata (opcional)</span>
+            <textarea
+              name="embedUrl"
+              aria-label="Ficha exata (opcional)"
+              aria-describedby={embedHelpId}
+              rows={3}
+              maxLength={8000}
+              defaultValue={note?.embedUrl ?? ""}
+              placeholder="Cole o código copiado do Google Maps"
+            />
+            <small id={embedHelpId}>
+              No Google Maps, use Compartilhar → Incorporar um mapa → Copiar HTML. Cole aqui para
+              fixar a ficha correta. Sem esse vínculo, a consulta usa nome e endereço.
+            </small>
           </label>
           {reviews.map((review, index) => (
             <fieldset className="google-review-editor" key={review.draftKey}>

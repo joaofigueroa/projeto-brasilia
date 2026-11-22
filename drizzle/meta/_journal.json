@@ -57,6 +57,13 @@
       "when": 1795359785732,
       "tag": "0007_research_profile_edits",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1795363983514,
+      "tag": "0008_prospect_favorites",
+      "breakpoints": true
     }
   ]
 }

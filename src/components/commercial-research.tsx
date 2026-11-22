@@ -1,18 +1,19 @@
 "use client";
 import { ArrowRight, ArrowUpRight, FileSearch, Search, Sparkles } from "lucide-react";
-import { AnimatePresence } from "motion/react";
+import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useId, useState } from "react";
 import type { IntelligenceController } from "@/hooks/use-intelligence";
 import {
   researchDate,
   researchPriorityLabels,
   researchSegmentLabels,
-  researchSpecializationLabels,
 } from "@/libs/commercial-research";
-import type { CommercialResearchView, ResearchProspect } from "@/types/commercial-research";
+import { prospectPageHref } from "@/libs/prospect-navigation";
+import type { CommercialResearchView } from "@/types/commercial-research";
 import { Pagination } from "./pagination";
-import { ProspectGoogleSummary } from "./prospect-google";
-import { CatalogReferences, ResearchLink, ResearchProfile } from "./research-profile";
+import { ProspectCard } from "./prospect-card";
+import { CatalogReferences, ResearchLink } from "./research-profile";
 import { StateFlag } from "./state-flag";
 
 type ResearchProps = { research: CommercialResearchView; controller: IntelligenceController };
@@ -71,7 +72,6 @@ export function ResearchedProspects({
   research,
   controller,
   projectId,
-  canManage = false,
 }: ResearchProps & { projectId: string; canManage?: boolean }) {
   const filters = research.live?.filters ?? {
     query: "",
@@ -84,7 +84,7 @@ export function ResearchedProspects({
   };
   const [draft, setDraft] = useState({ base: filters.query, value: filters.query });
   const query = draft.base === filters.query ? draft.value : filters.query;
-  const [selected, setSelected] = useState<ResearchProspect | null>(null);
+  const from = `${usePathname()}?${useSearchParams().toString()}`;
   const id = useId();
   const pagination = research.live?.pagination ?? {
     total: research.prospects.length,
@@ -96,6 +96,7 @@ export function ResearchedProspects({
     end: research.prospects.length,
   };
   const total = research.live?.stats.total ?? research.prospects.length;
+  const favoritesOnly = research.live?.favoritesOnly ?? false;
   const apply = (changes: Record<string, string | null>) =>
     controller.navigate({ researchPage: null, researchQuery: query || null, ...changes });
   if (!research.reports.length)
@@ -107,20 +108,20 @@ export function ResearchedProspects({
         <div>
           <span className="section-caption">Prospecção · setor automotivo</span>
           <h3 id={`${id}-results`} tabIndex={-1}>
-            Empresas para avaliar
+            {favoritesOnly ? "Clientes favoritados" : "Empresas para avaliar"}
           </h3>
         </div>
         <span className="research-count">
           {total.toLocaleString("pt-BR")}
-          <small>perfis no recorte</small>
+          <small>{total === 1 ? "perfil no recorte" : "perfis no recorte"}</small>
         </span>
       </div>
       <p className="research-description">
-        Estabelecimentos encontrados no cadastro e perfis com pesquisa comercial. Abra cada perfil
-        para consultar abertura do CNPJ, capital social, fontes, especialização confirmada ou
-        pendências.
+        {favoritesOnly
+          ? "Sua seleção de empresas neste território. Use a estrela para remover um cliente dos favoritos."
+          : "Estabelecimentos encontrados no cadastro e perfis com pesquisa comercial. Abra cada perfil para consultar os dados da empresa, fontes e oportunidades comerciais."}
       </p>
-      {research.live && (
+      {research.live && !favoritesOnly && (
         <div className="research-census-summary">
           <span>
             <strong>{research.live.stats.primary.toLocaleString("pt-BR")}</strong> com atividade
@@ -136,11 +137,13 @@ export function ResearchedProspects({
           </span>
         </div>
       )}
-      <p className="research-period-note">
-        Os perfis cadastrais não comprovam atuação em linha leve, especialização ou demanda. O
-        período de veículos permanece independente da competência do cadastro. Brasília corresponde
-        ao município cadastral que abrange todo o DF.
-      </p>
+      {!favoritesOnly && (
+        <p className="research-period-note">
+          Os perfis cadastrais não comprovam atuação em linha leve, especialização ou demanda. O
+          período de veículos permanece independente da competência do cadastro. Brasília
+          corresponde ao município cadastral que abrange todo o DF.
+        </p>
+      )}
       <form
         className="research-toolbar"
         onSubmit={(event) => {
@@ -239,54 +242,24 @@ export function ResearchedProspects({
       </div>
       <div className="research-list-meta" aria-live="polite">
         <span>
-          {pagination.total.toLocaleString("pt-BR")} resultados
+          {pagination.total.toLocaleString("pt-BR")}{" "}
+          {pagination.total === 1 ? "resultado" : "resultados"}
           {controller.navigating ? " · Atualizando…" : ""}
         </span>
         <span>Prioridade é uma hipótese comercial, não uma qualificação de compra.</span>
       </div>
+      {favoritesOnly && total === 0 && (
+        <div className="bi-empty">
+          <h3>Nenhum favorito neste recorte</h3>
+          <p>
+            Favorite empresas na aba Possíveis clientes. Sua seleção fica disponível apenas para
+            você.
+          </p>
+        </div>
+      )}
       <div className="research-prospects" aria-busy={controller.navigating}>
         {research.prospects.map((prospect) => (
-          <article key={prospect.id} className={`research-prospect ${prospect.priority}`}>
-            <button
-              className="research-open-profile"
-              type="button"
-              onClick={() => setSelected(prospect)}
-              aria-label={`Ver perfil de ${prospect.name}`}
-            >
-              <div className="research-prospect-top">
-                <span className="section-caption">
-                  {researchSegmentLabels[prospect.segment]} · {prospect.cityName}
-                </span>
-                <ArrowUpRight size={17} aria-hidden="true" />
-              </div>
-              <strong>{prospect.name}</strong>
-              <span className="research-prospect-specialization">
-                {researchSpecializationLabels[prospect.specialization]}
-                {prospect.brands.length ? ` · ${prospect.brands.join(" / ")}` : ""}
-              </span>
-              <span className="research-profile-level">
-                {prospect.enrichmentLevel === "researched"
-                  ? "Com pesquisa comercial"
-                  : "Perfil cadastral"}
-                {prospect.activityMatch === "secondary" ? " · atividade secundária" : ""}
-              </span>
-              <div className="research-prospect-facts">
-                <span>
-                  CNPJ desde <b>{prospect.registry?.openedAt?.slice(0, 4) ?? "A confirmar"}</b>
-                </span>
-              </div>
-              <div className="research-prospect-bottom">
-                <span className={`research-priority ${prospect.priority}`}>
-                  {researchPriorityLabels[prospect.priority]}
-                </span>
-                <span>
-                  Ver perfil
-                  <ArrowRight size={13} />
-                </span>
-              </div>
-            </button>
-            <ProspectGoogleSummary prospect={prospect} />
-          </article>
+          <ProspectCard key={prospect.id} prospect={prospect} projectId={projectId} from={from} />
         ))}
       </div>
       <Pagination
@@ -299,7 +272,7 @@ export function ResearchedProspects({
           controller.navigate({ researchSize: String(size), researchPage: null })
         }
       />
-      {!research.prospects.length && (
+      {!research.prospects.length && !(favoritesOnly && total === 0) && (
         <div className="research-no-results">
           <p>Nenhuma empresa corresponde aos filtros.</p>
         </div>
@@ -330,17 +303,6 @@ export function ResearchedProspects({
         </ResearchLink>
         <ResearchCities research={research} controller={controller} />
       </details>
-      <AnimatePresence>
-        {selected && (
-          <ResearchProfile
-            prospect={selected}
-            research={research}
-            projectId={projectId}
-            canManage={canManage}
-            onClose={() => setSelected(null)}
-          />
-        )}
-      </AnimatePresence>
     </div>
   );
 }
@@ -348,9 +310,8 @@ export function CommercialIntelligence({
   research,
   controller,
   projectId,
-  canManage = false,
 }: ResearchProps & { projectId: string; canManage?: boolean }) {
-  const [selected, setSelected] = useState<ResearchProspect | null>(null);
+  const from = `${usePathname()}?${useSearchParams().toString()}`;
   if (!research.reports.length)
     return <ResearchCoverage research={research} controller={controller} />;
   const profiles = (ids: string[]) => (
@@ -360,10 +321,14 @@ export function CommercialIntelligence({
           (item) => item.id === id,
         );
         return prospect ? (
-          <button type="button" key={id} onClick={() => setSelected(prospect)}>
+          <Link
+            prefetch={false}
+            key={id}
+            href={prospectPageHref(projectId, prospect.databaseId ?? prospect.id, from)}
+          >
             {prospect.name}
             <ArrowUpRight size={12} aria-hidden="true" />
-          </button>
+          </Link>
         ) : null;
       })}
     </div>
@@ -483,17 +448,6 @@ export function CommercialIntelligence({
         </p>
         <ResearchCities research={research} controller={controller} />
       </details>
-      <AnimatePresence>
-        {selected && (
-          <ResearchProfile
-            prospect={selected}
-            projectId={projectId}
-            canManage={canManage}
-            research={research}
-            onClose={() => setSelected(null)}
-          />
-        )}
-      </AnimatePresence>
     </div>
   );
 }

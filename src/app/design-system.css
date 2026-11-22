@@ -3108,7 +3108,7 @@ button:active:not(:disabled),
   gap: 7px 14px;
   margin-top: 9px;
 }
-.research-profile-links button {
+.research-profile-links a {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -3120,7 +3120,7 @@ button:active:not(:disabled),
   line-height: 1.7;
   color: var(--green);
 }
-.research-profile-links button:hover {
+.research-profile-links a:hover {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -3397,6 +3397,7 @@ button:active:not(:disabled),
 }
 .research-open-profile {
   display: flex;
+  text-decoration: none;
   flex: 1;
   flex-direction: column;
   width: 100%;
@@ -3571,4 +3572,319 @@ button:active:not(:disabled),
   color: var(--muted);
   border-bottom: 1px solid var(--line);
   padding-bottom: 12px;
+}
+
+.prospect-map-frame {
+  position: relative;
+  height: 320px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+.prospect-map-frame iframe {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.prospect-map-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.prospect-map-tools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 18px;
+}
+.prospect-map-tools .text-button,
+.prospect-map-tools a {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--muted);
+  text-decoration: none;
+}
+.prospect-map-tools a:hover {
+  text-decoration: underline;
+}
+.prospect-map-search {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 10px;
+  padding: 0 0 18px;
+}
+.prospect-map-search small {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.5;
+}
+@media (max-width: 600px) {
+  .prospect-map-frame {
+    height: 320px;
+  }
+}
+
+/* Company profiles share the workspace type and dividers, with a permanent map. */
+.prospect-page {
+  max-width: 1480px;
+  margin: 0 auto;
+}
+.prospect-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  text-decoration: none;
+  margin-bottom: 27px;
+}
+.prospect-back:hover {
+  color: var(--ink);
+}
+.prospect-page-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 28px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid var(--ink);
+}
+.prospect-page-heading h1 {
+  font-size: clamp(26px, 2.4vw, 38px);
+  font-weight: 550;
+  line-height: 1.15;
+  letter-spacing: -1.3px;
+  margin: 10px 0 15px;
+  overflow-wrap: anywhere;
+}
+.prospect-page-location {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 9px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.prospect-page-actions {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.prospect-favorite {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+.prospect-favorite[aria-pressed="true"] {
+  color: var(--green);
+}
+.prospect-favorite.compact {
+  width: 34px;
+  height: 34px;
+  margin: -8px -4px -5px 0;
+  background: transparent;
+  border: 0;
+  border-radius: 5px;
+  color: var(--muted);
+  cursor: pointer;
+}
+.prospect-favorite.compact[aria-pressed="true"] {
+  color: var(--green);
+}
+.prospect-favorite.compact:hover {
+  background: var(--mint);
+}
+.prospect-overview {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: 40px;
+  padding: 30px 0;
+}
+.prospect-overview-status {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  margin: 0 0 25px;
+}
+.prospect-research-level {
+  color: var(--muted);
+  font-size: 10px;
+}
+.prospect-overview-summary h2,
+.prospect-detail-grid h2 {
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: -0.5px;
+  margin: 0 0 13px;
+}
+.prospect-page-description {
+  font-size: 14px;
+  line-height: 1.75;
+  margin: 0 0 16px;
+  max-width: 48ch;
+}
+.prospect-contact-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px 18px;
+  margin: 28px 0 0;
+}
+.prospect-contact-list .wide {
+  grid-column: 1 / -1;
+}
+.prospect-contact-list dt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.prospect-contact-list dd {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.prospect-map-page-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 15px;
+}
+.prospect-map-page-heading h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.2px;
+}
+.prospect-map-page-heading > span {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 10px;
+}
+.prospect-page-map .prospect-map-frame {
+  height: 350px;
+}
+.prospect-map-caption {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.7;
+  margin: 10px 0 3px;
+}
+.prospect-section-tabs {
+  display: flex;
+  gap: 26px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--line);
+}
+.prospect-section-tabs > button {
+  position: relative;
+  flex-shrink: 0;
+  padding: 15px 0;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.prospect-section-tabs > button[aria-selected="true"] {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+}
+.prospect-section-panel {
+  padding: 30px 0 18px;
+  min-height: 300px;
+}
+.prospect-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.65fr);
+  gap: 48px;
+}
+.prospect-detail-grid p,
+.prospect-detail-aside li {
+  font-size: 12px;
+  line-height: 1.8;
+}
+.prospect-detail-grid .section-caption {
+  display: block;
+  margin-bottom: 10px;
+}
+.prospect-detail-grid .research-registry {
+  margin-top: 20px;
+}
+.prospect-detail-aside {
+  padding-left: 26px;
+  border-left: 1px solid var(--line);
+}
+.prospect-detail-aside h3 {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  margin: 0 0 10px;
+}
+.prospect-detail-aside h3:not(:first-child) {
+  margin-top: 27px;
+}
+.prospect-detail-aside ul,
+.prospect-detail-aside ol {
+  padding-left: 18px;
+}
+.prospect-section-panel .prospect-google-section {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  max-width: 720px;
+}
+@media (max-width: 1050px) {
+  .prospect-overview {
+    gap: 25px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .prospect-page-heading {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 760px) {
+  .prospect-overview,
+  .prospect-detail-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 30px;
+  }
+  .prospect-detail-aside {
+    padding: 24px 0 0;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+  .prospect-page-map .prospect-map-frame {
+    height: 320px;
+  }
+  .prospect-section-tabs {
+    gap: 22px;
+  }
+  .prospect-favorite.compact {
+    width: 44px;
+    height: 44px;
+  }
 }

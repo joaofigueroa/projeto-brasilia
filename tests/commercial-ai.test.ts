@@ -34,6 +34,7 @@ describe("grounded commercial report contract", () => {
         reviewCount: 1,
         checkedAt: "2026-01-01",
         mapsUrl: "",
+        embedUrl: "",
         reviews: [
           {
             author: "Test",

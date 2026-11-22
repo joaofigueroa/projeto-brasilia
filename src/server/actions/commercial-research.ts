@@ -37,6 +37,7 @@ export async function saveProspectGoogleNoteAction(input: unknown) {
   return actionResult(async () => {
     const result = await saveProspectGoogleNote(input);
     revalidatePath("/inteligencia");
+    revalidatePath("/clientes/[id]", "page");
     return result;
   });
 }
@@ -44,6 +45,7 @@ export async function updateResearchedProfileAction(input: unknown) {
   return actionResult(async () => {
     const result = await updateResearchedProfile(input);
     revalidatePath("/inteligencia");
+    revalidatePath("/clientes/[id]", "page");
     return result;
   });
 }

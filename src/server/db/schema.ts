@@ -380,3 +380,22 @@ export const researchAiConnections = pgTable(
     index("research_ai_connections_updated_by_idx").on(table.updatedBy),
   ],
 );
+
+export const researchProspectFavorites = pgTable(
+  "research_prospect_favorites",
+  {
+    id: uuid("id").primaryKey().$defaultFn(v7),
+    prospectId: uuid("prospect_id")
+      .notNull()
+      .references(() => researchProspects.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: createdAt(),
+  },
+  (table) => [
+    uniqueIndex("research_prospect_favorites_user_prospect_idx").on(table.userId, table.prospectId),
+    index("research_prospect_favorites_user_idx").on(table.userId),
+    index("research_prospect_favorites_prospect_idx").on(table.prospectId),
+  ],
+);

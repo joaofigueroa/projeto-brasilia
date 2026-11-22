@@ -3,6 +3,7 @@ import { researchListFiltersSchema } from "./commercial-research";
 export const analysisKinds = [
   "market",
   "prospects",
+  "favorites",
   "vehicles",
   "opportunities",
   "notes",

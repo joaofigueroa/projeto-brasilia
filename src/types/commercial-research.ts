@@ -7,13 +7,14 @@ import type {
 } from "@/validators/commercial-research";
 
 export type CommercialResearch = z.infer<typeof commercialResearchSchema>;
-export type ResearchProspect = z.infer<typeof researchProspectSchema>;
+export type ResearchProspect = z.infer<typeof researchProspectSchema> & { isFavorite?: boolean };
 export type ResearchRegistry = NonNullable<ResearchProspect["registry"]>;
 export type ResearchProduct = CommercialResearch["products"][number];
 export type CommercialReport = CommercialResearch["reports"][number];
 export type CommercialResearchView = Omit<CommercialResearch, "projectId"> & {
   coverage: { cityCode: string; cityName: string; state: string; count: number }[];
   live?: {
+    favoritesOnly?: boolean;
     pagination: ReturnType<typeof paginationRange>;
     filters: z.infer<typeof researchListFiltersSchema>;
     stats: {

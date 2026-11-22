@@ -120,19 +120,28 @@ export function Sidebar({ viewer, projects }: { viewer: PublicUser; projects: Pr
                 {index === 2 && <span className="nav-label nav-space-label">ESPAÇO</span>}
                 <Link
                   key={href}
-                  className={`nav-link ${pathname.startsWith(href) ? "active" : ""}`}
+                  className={`nav-link ${pathname.startsWith(href) || (href === "/inteligencia" && pathname.startsWith("/clientes/")) ? "active" : ""}`}
                   href={`${href}${selectedProject ? `?project=${selectedProject}` : ""}`}
                   aria-label={label}
                   title={label}
-                  aria-current={pathname.startsWith(href) ? "page" : undefined}
+                  aria-current={
+                    pathname.startsWith(href) ||
+                    (href === "/inteligencia" && pathname.startsWith("/clientes/"))
+                      ? "page"
+                      : undefined
+                  }
                   onClick={() => setExpanded(false)}
                 >
-                  {pathname.startsWith(href) && (
+                  {(pathname.startsWith(href) ||
+                    (href === "/inteligencia" && pathname.startsWith("/clientes/"))) && (
                     <motion.span layoutId="active-nav" className="nav-active-bg" />
                   )}
                   <Icon size={19} />
                   <span className="nav-link-label">{label}</span>
-                  {pathname.startsWith(href) && <span className="nav-active-marker" />}
+                  {(pathname.startsWith(href) ||
+                    (href === "/inteligencia" && pathname.startsWith("/clientes/"))) && (
+                    <span className="nav-active-marker" />
+                  )}
                 </Link>
               </Fragment>
             ))}

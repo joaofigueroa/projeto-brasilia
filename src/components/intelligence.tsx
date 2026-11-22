@@ -17,6 +17,7 @@ import {
   Plus,
   Search,
   Settings2,
+  Star,
   Users,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
@@ -47,6 +48,7 @@ const regions = [
 const icons = {
   market: BarChart3,
   prospects: Users,
+  favorites: Star,
   vehicles: CarFront,
   opportunities: FileText,
   notes: Building2,
@@ -478,10 +480,11 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
   const controller = useIntelligence(data);
   const tabGroup = useId();
   const canManage = data.viewer.role === "admin";
+  const researchCount = data.research?.live?.stats.total ?? data.research?.prospects.length ?? 0;
   const [mapHidden, setMapHidden] = useState(false);
   function navigateTab(index: number) {
     const tab = data.tabs[(index + data.tabs.length) % data.tabs.length];
-    controller.navigate({ tab: tab.id });
+    controller.navigate({ tab: tab.id, researchPage: null });
     document.getElementById(`${tabGroup}-${tab.id}`)?.focus();
   }
   return (
@@ -733,8 +736,8 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
               <span className="section-caption">
                 {data.research ? (
                   <>
-                    {data.tab.kind === "prospects"
-                      ? `${(data.research.live?.stats.total ?? data.research.prospects.length).toLocaleString("pt-BR")} perfis disponíveis`
+                    {["prospects", "favorites"].includes(data.tab.kind)
+                      ? `${researchCount.toLocaleString("pt-BR")} ${researchCount === 1 ? "perfil disponível" : "perfis disponíveis"}`
                       : `${data.research.reports.length} ${data.research.reports.length === 1 ? "análise publicada" : "análises publicadas"}`}
                     {data.records.length > 0 ? ` · ${data.records.length} registros da equipe` : ""}
                   </>
@@ -746,7 +749,7 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
                   </>
                 )}
               </span>
-              {canManage && (
+              {canManage && data.tab.kind !== "favorites" && (
                 <div>
                   <button
                     className="icon-button"
@@ -779,7 +782,7 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
               )}
             </div>
           </div>
-          {data.research && (
+          {data.research && data.tab.kind !== "favorites" && (
             <ResearchControls
               key={`${data.project.id}-${data.territory.city ?? data.territory.uf}`}
               data={data}
@@ -822,7 +825,7 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
                   </>
                 )}
               </>
-            ) : data.tab.kind === "prospects" && data.research ? (
+            ) : ["prospects", "favorites"].includes(data.tab.kind) && data.research ? (
               <>
                 <ResearchedProspects
                   research={data.research}

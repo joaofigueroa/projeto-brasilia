@@ -2,6 +2,7 @@ import type { AnalysisKind, MetricKind } from "@/types/intelligence";
 export const analysisLabels: Record<AnalysisKind, string> = {
   market: "Mercado endereçável",
   prospects: "Possíveis clientes",
+  favorites: "Clientes favoritados",
   vehicles: "Veículos",
   opportunities: "Editais e oportunidades",
   notes: "Análise e abordagem",

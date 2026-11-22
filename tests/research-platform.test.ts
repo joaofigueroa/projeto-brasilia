@@ -1,3 +1,4 @@
+import { readFile } from "node:fs/promises";
 import { sql } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -17,6 +18,7 @@ const { query, closeDatabase } = await import("@/server/db/client");
 const repository = await import("@/server/repositories/commercial-research");
 const services = await import("@/server/services/commercial-research");
 const ai = await import("@/server/services/research-ai");
+const prospectPages = await import("@/server/services/prospect-page");
 const { researchListFiltersSchema } = await import("@/validators/commercial-research");
 const projectId = "019ab04a-1000-7000-8000-000000000003";
 const admin: PublicUser = {
@@ -213,5 +215,124 @@ describe("live research authorization and storage", () => {
     );
     expect(stored.encryptedKey).not.toContain(key);
     expect(JSON.stringify(await ai.researchAiStatus(projectId))).not.toContain(key);
+  });
+  it("isolates favorites by person, validates project ownership and keeps counts and pagination in sync", async () => {
+    const filters = researchListFiltersSchema.parse({ pageSize: 10 });
+    const [first, second] = await repository.listResearchProspects(
+      projectId,
+      ["5300108"],
+      filters,
+      0,
+    );
+    const input = { projectId, prospectId: first.databaseId, favorite: true };
+    await prospectPages.favoriteProspect(input);
+    await prospectPages.favoriteProspect(input);
+    expect(
+      (await repository.getProspectCounts(projectId, ["5300108"], filters, admin.id, true)).total,
+    ).toBe(1);
+    expect(
+      (
+        await repository.listResearchProspects(projectId, ["5300108"], filters, 0, admin.id, true)
+      )[0].isFavorite,
+    ).toBe(true);
+    session.viewer = collaborator;
+    expect(
+      (await repository.getProspectCounts(projectId, ["5300108"], filters, collaborator.id, true))
+        .total,
+    ).toBe(0);
+    await prospectPages.favoriteProspect({
+      projectId,
+      prospectId: second.databaseId,
+      favorite: true,
+      userId: admin.id,
+    });
+    const own = await repository.listResearchProspects(
+      projectId,
+      ["5300108"],
+      filters,
+      0,
+      collaborator.id,
+      true,
+    );
+    expect(own.map((item) => item.databaseId)).toEqual([second.databaseId]);
+    await expect(
+      prospectPages.favoriteProspect({
+        ...input,
+        projectId: "019ab04a-1000-7000-8000-000000000002",
+        favorite: false,
+      }),
+    ).rejects.toThrow("neste projeto");
+    await prospectPages.favoriteProspect({ ...input, favorite: false });
+    expect(
+      (await repository.getProspectCounts(projectId, ["5300108"], filters, admin.id, true)).total,
+    ).toBe(1);
+    session.viewer = admin;
+    await prospectPages.favoriteProspect({ ...input, favorite: false });
+    await prospectPages.favoriteProspect({ ...input, favorite: false });
+    expect(
+      (await repository.getProspectCounts(projectId, ["5300108"], filters, admin.id, true)).total,
+    ).toBe(0);
+    expect(
+      (await repository.getProspectCounts(projectId, ["5208707"], filters, collaborator.id, true))
+        .total,
+    ).toBe(0);
+    await query(sql`DELETE FROM research_prospect_favorites`);
+  });
+  it("loads standalone profiles with authentication and rejects mismatched project URLs", async () => {
+    const profile = (await repository.findResearchProfiles(projectId, ["minas-escapamentos"]))[0];
+    const page = await prospectPages.getProspectPage(profile.databaseId ?? "", projectId);
+    expect(page?.prospect.name).toBe(profile.name);
+    expect(page?.prospect.databaseId).toBe(profile.databaseId);
+    expect(page?.defaultBackHref).toContain("city=5300108");
+    expect(
+      await prospectPages.getProspectPage(
+        profile.databaseId ?? "",
+        "019ab04a-1000-7000-8000-000000000002",
+      ),
+    ).toBeNull();
+    expect(await prospectPages.getProspectPage("../invalid", projectId)).toBeNull();
+    session.viewer = null;
+    await expect(
+      prospectPages.getProspectPage(profile.databaseId ?? "", projectId),
+    ).rejects.toThrow("Authentication required");
+  });
+  it("allows database preparation to repeat without touching favorites or enabling another tab", async () => {
+    const [before] = await query<{ position: number }>(
+      sql`SELECT position FROM analysis_tabs WHERE project_id=${projectId}::uuid AND kind='favorites'`,
+    );
+    const profile = (await repository.findResearchProfiles(projectId, ["minas-escapamentos"]))[0];
+    await prospectPages.favoriteProspect({
+      projectId,
+      prospectId: profile.databaseId,
+      favorite: true,
+    });
+    const blocks = (await readFile("drizzle/0008_prospect_favorites.sql", "utf8"))
+      .split("--> statement-breakpoint")
+      .slice(0, 6)
+      .map((statement) => statement.trim());
+    expect(blocks).toHaveLength(6);
+    expect(blocks.every((block) => !block.includes("analysis_tabs"))).toBe(true);
+    for (let attempt = 0; attempt < 2; attempt++)
+      for (const block of blocks) await query(sql.raw(block));
+    const tabs = await query<{ position: number }>(
+      sql`SELECT position FROM analysis_tabs WHERE project_id=${projectId}::uuid AND kind='favorites'`,
+    );
+    expect(tabs).toEqual([before]);
+    expect(
+      (
+        await repository.getProspectCounts(
+          projectId,
+          ["5300108"],
+          researchListFiltersSchema.parse({}),
+          admin.id,
+          true,
+        )
+      ).total,
+    ).toBe(1);
+    await prospectPages.favoriteProspect({
+      projectId,
+      prospectId: profile.databaseId,
+      favorite: false,
+    });
   });
 });

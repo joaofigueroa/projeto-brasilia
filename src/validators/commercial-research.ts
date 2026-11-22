@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { normalizeGoogleMapsEmbedInput } from "@/libs/google-business";
 
 const googleUrl = z.union([
   z.literal(""),
@@ -6,6 +7,7 @@ const googleUrl = z.union([
     .url()
     .max(2000)
     .refine((value) => {
+      if (!URL.canParse(value)) return false;
       const url = new URL(value);
       return (
         url.protocol === "https:" &&
@@ -22,6 +24,35 @@ export const googleNoteFieldsSchema = z.object({
   reviewCount: z.number().int().nonnegative().max(100000000).nullable(),
   checkedAt: z.iso.date(),
   mapsUrl: googleUrl,
+  embedUrl: z
+    .string()
+    .trim()
+    .max(8000)
+    .transform(normalizeGoogleMapsEmbedInput)
+    .pipe(
+      z.union([
+        z.literal(""),
+        z
+          .url()
+          .max(4000)
+          .refine((value) => {
+            if (!URL.canParse(value)) return false;
+            const url = new URL(value);
+            return (
+              url.protocol === "https:" &&
+              ["www.google.com", "www.google.com.br"].includes(url.hostname) &&
+              url.pathname === "/maps/embed" &&
+              !!url.searchParams.get("pb")?.startsWith("!") &&
+              [...url.searchParams.keys()].every((key) => key === "pb" || key === "hl") &&
+              !url.username &&
+              !url.password &&
+              !url.port &&
+              !url.hash
+            );
+          }, "Use o endereço de incorporação fornecido pelo Google Maps."),
+      ]),
+    )
+    .default(""),
   reviews: z
     .array(
       z.object({

@@ -38,10 +38,27 @@ Opcionalmente, ambientes já configurados podem usar `GOOGLE_GENERATIVE_AI_API_K
 
 ## Google Maps sem faturamento
 
-Os cards e perfis possuem link gratuito de consulta no Google Maps. Administradores podem registrar nota, quantidade de avaliações, data e até cinco trechos breves, com autoria e fonte. A interface distingue consulta manual de sincronização e não mostra zero quando a nota é desconhecida. Não há scraping ou integração Places habilitada. A API Places exige faturamento; a chave de demonstração não oferece avaliações nem serve para produção.
+Cada empresa da pesquisa tem página própria em `/clientes/[id]`, autenticada e associada ao projeto. Os cards e as referências dos relatórios abrem essa página; o retorno conserva território, anos, filtros e página da lista. O resumo, contatos e iframe Google permanecem na área principal. O Google carrega ao entrar, sem expansão ou recolhimento; trocar as abas de informações não desmonta o mapa.
+
+As abas separam **Cadastro**, **Oportunidade comercial**, **Fontes e evidências** e **Consultas do Google**. Capital social permanece no cadastro, fora dos cards e do resumo. Edição comercial e registro de consultas continuam restritos a administradores.
+
+A busca incorporada gratuita usa nome, endereço e cidade, sem chave de API. Resultados podem ser ambíguos ou não existir para determinado CNPJ; a interface pede conferência e oferece refinamento temporário.
+
+Administradores podem fixar a ficha exata em **Consultas do Google → Registrar consulta → Ficha exata**, colando o código de Compartilhar → Incorporar um mapa. Apenas o endereço HTTPS `google.com/maps/embed?pb=…` é extraído e validado; o HTML não é renderizado. Endereços externos, API com chave, credenciais em URL e caminhos diferentes são rejeitados. A referência fica no JSON versionado da consulta, sem migration adicional.
+
+O Google controla o conteúdo incorporado: nota e quantidade de avaliações podem aparecer, mas comentários completos são abertos pelo próprio Google Maps. Não se deve prometer leitura completa dos comentários dentro do iframe. Consultas manuais ficam em uma aba própria e continuam distintas da ficha atual.
+
+Os cards mostram apenas os dados de prospecção e a estrela de favorito. O Google Maps fica na página do cliente; a aba de consultas oferece o link externo como alternativa. Administradores podem registrar nota, quantidade de avaliações, data e até cinco trechos breves, com autoria e fonte. A interface distingue consulta manual de sincronização e não mostra zero quando a nota é desconhecida. Não há scraping ou integração Places habilitada. A API Places exige faturamento; a chave de demonstração não oferece avaliações nem serve para produção.
 
 ## Paginação e permissões
 
 Empresas: filtros e paginação no PostgreSQL com 10, 20 ou 50 resultados; contagem e filtros consideram a base completa, não só a página. Município, projeto e filtros ficam na URL. Trocar território ou filtro retorna à primeira página. Veículos, registros e editais paginam a base disponível, preservando seus limites de cobertura publicados. Paginar não expande a amostra PNCP nem o ranking da fonte.
 
 Somente administradores atualizam cadastro, editam perfis, registram Google ou conectam/geram IA. Pessoas autenticadas podem consultar os resultados. Todas as escritas validam papel e projeto no servidor, usam controle de versão ou lease e não confiam em permissões da interface.
+
+
+## Favoritos pessoais
+
+A estrela nos cards e na página salva uma seleção pessoal da conta autenticada. A aba **Clientes favoritados** do 3C Automotive reutiliza os mesmos cards, filtros territoriais, busca e paginação SQL. Favoritar não altera prioridade, cadastro ou a seleção de outra pessoa. Administradores e colaboradores podem manter seus próprios favoritos; somente o servidor escolhe o usuário autor da escrita.
+
+A migration `0008_prospect_favorites` cria a relação única usuário/empresa, com UUIDv7 e índices nas FKs, e inclui a nova aba sem recriar projetos ou perfis. A publicação usa duas etapas: preparar os seis primeiros blocos idempotentes de DDL da migration (tabela, FKs e índices), publicar o código e então executar a migration completa, que habilita a nova aba. A versão anterior não recebe o tipo `favorites` antes do novo código. A preparação não cria favoritos, não altera posições de abas e não registra a migration como aplicada. O migrator grava a versão somente ao concluir o arquivo completo.

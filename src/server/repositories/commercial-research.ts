@@ -19,6 +19,11 @@ export function readCommercialResearch() {
 function cityWhere(projectId: string, cities: string[]) {
   return sql`p.project_id=${projectId}::uuid AND p.active=true AND p.city_code IN (SELECT jsonb_array_elements_text(${JSON.stringify(cities)}::jsonb))`;
 }
+function favoriteWhere(viewerId: string | undefined, only: boolean) {
+  return only
+    ? sql`EXISTS(SELECT 1 FROM research_prospect_favorites f WHERE f.prospect_id=p.id AND f.user_id=${viewerId ?? null}::uuid)`
+    : sql`true`;
+}
 function searchWhere(filters: ResearchListFilters) {
   const term = filters.query
     .normalize("NFD")
@@ -39,18 +44,22 @@ function profileRow(row: {
   google: unknown;
   googleVersion: number | null;
   revision: number;
+  isFavorite?: boolean;
 }) {
-  return researchProspectSchema.parse({
+  const profile = researchProspectSchema.parse({
     ...(row.profile as object),
     databaseId: row.id,
     revision: row.revision,
     google: row.google ? { ...(row.google as object), version: row.googleVersion } : null,
   });
+  return { ...profile, isFavorite: row.isFavorite ?? false };
 }
 export async function getProspectCounts(
   projectId: string,
   cities: string[],
   filters: ResearchListFilters,
+  viewerId?: string,
+  favoritesOnly = false,
 ) {
   const [row] = await query<{
     total: number;
@@ -61,7 +70,7 @@ export async function getProspectCounts(
     distributors: number;
     partsStores: number;
   }>(
-    sql`SELECT count(*)::int AS total,count(*) FILTER(WHERE ${searchWhere(filters)})::int AS filtered,count(*) FILTER(WHERE p.enrichment_level='researched')::int AS researched,count(*) FILTER(WHERE COALESCE(p.profile->>'activityMatch','primary')='primary')::int AS "primary",count(*) FILTER(WHERE p.segment='workshop')::int AS workshops,count(*) FILTER(WHERE p.segment='distributor')::int AS distributors,count(*) FILTER(WHERE p.segment='parts_store')::int AS "partsStores" FROM research_prospects p WHERE ${cityWhere(projectId, cities)}`,
+    sql`SELECT count(*)::int AS total,count(*) FILTER(WHERE ${searchWhere(filters)})::int AS filtered,count(*) FILTER(WHERE p.enrichment_level='researched')::int AS researched,count(*) FILTER(WHERE COALESCE(p.profile->>'activityMatch','primary')='primary')::int AS "primary",count(*) FILTER(WHERE p.segment='workshop')::int AS workshops,count(*) FILTER(WHERE p.segment='distributor')::int AS distributors,count(*) FILTER(WHERE p.segment='parts_store')::int AS "partsStores" FROM research_prospects p WHERE ${cityWhere(projectId, cities)} AND ${favoriteWhere(viewerId, favoritesOnly)}`,
   );
   return row;
 }
@@ -70,6 +79,8 @@ export async function listResearchProspects(
   cities: string[],
   filters: ResearchListFilters,
   offset: number,
+  viewerId?: string,
+  favoritesOnly = false,
 ) {
   const rows = await query<{
     id: string;
@@ -77,8 +88,9 @@ export async function listResearchProspects(
     google: unknown;
     googleVersion: number | null;
     revision: number;
+    isFavorite: boolean;
   }>(
-    sql`SELECT p.id,p.profile,p.version AS revision,n.data AS google,n.version AS "googleVersion" FROM research_prospects p LEFT JOIN prospect_google_notes n ON n.prospect_id=p.id WHERE ${cityWhere(projectId, cities)} AND ${searchWhere(filters)} ORDER BY CASE p.priority WHEN 'first' THEN 0 WHEN 'develop' THEN 1 ELSE 2 END,CASE p.enrichment_level WHEN 'researched' THEN 0 ELSE 1 END,CASE COALESCE(p.profile->>'activityMatch','primary') WHEN 'primary' THEN 0 ELSE 1 END,lower(p.name),p.id LIMIT ${filters.pageSize} OFFSET ${offset}`,
+    sql`SELECT EXISTS(SELECT 1 FROM research_prospect_favorites f WHERE f.prospect_id=p.id AND f.user_id=${viewerId ?? null}::uuid) AS "isFavorite",p.id,p.profile,p.version AS revision,n.data AS google,n.version AS "googleVersion" FROM research_prospects p LEFT JOIN prospect_google_notes n ON n.prospect_id=p.id WHERE ${cityWhere(projectId, cities)} AND ${searchWhere(filters)} AND ${favoriteWhere(viewerId, favoritesOnly)} ORDER BY CASE p.priority WHEN 'first' THEN 0 WHEN 'develop' THEN 1 ELSE 2 END,CASE p.enrichment_level WHEN 'researched' THEN 0 ELSE 1 END,CASE COALESCE(p.profile->>'activityMatch','primary') WHEN 'primary' THEN 0 ELSE 1 END,lower(p.name),p.id LIMIT ${filters.pageSize} OFFSET ${offset}`,
   );
   return rows.map(profileRow);
 }

@@ -4,6 +4,7 @@ import type { Project, PublicUser } from "./domain";
 export type AnalysisKind =
   | "market"
   | "prospects"
+  | "favorites"
   | "vehicles"
   | "opportunities"
   | "notes"

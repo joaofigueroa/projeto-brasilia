@@ -70,16 +70,21 @@ export async function getIntelligence(raw: unknown): Promise<IntelligenceData> {
     tab.kind === "opportunities"
       ? getPublicNoticesForYears(scope, input.years, tab.settings.keywords)
       : Promise.resolve(null),
-    tab.kind === "prospects" || tab.kind === "commercial"
-      ? getCommercialResearch(project.id, scope, {
-          page: input.researchPage,
-          pageSize: input.researchSize,
-          query: input.researchQuery,
-          segment: input.researchSegment,
-          priority: input.researchPriority,
-          enrichment: input.researchEnrichment,
-          primaryOnly: input.researchPrimary === "1",
-        })
+    ["prospects", "favorites", "commercial"].includes(tab.kind)
+      ? getCommercialResearch(
+          project.id,
+          scope,
+          {
+            page: input.researchPage,
+            pageSize: input.researchSize,
+            query: input.researchQuery,
+            segment: input.researchSegment,
+            priority: input.researchPriority,
+            enrichment: input.researchEnrichment,
+            primaryOnly: input.researchPrimary === "1",
+          },
+          tab.kind === "favorites",
+        )
       : Promise.resolve(null),
   ]);
   return {

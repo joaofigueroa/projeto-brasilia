@@ -24,7 +24,7 @@ export function ProjectSwitcher({
   const options = useRef<HTMLDivElement>(null);
   const id = useId();
   const selected = projects.find((p) => p.id === selectedId);
-  const requiresProject = pathname === "/inteligencia";
+  const requiresProject = pathname === "/inteligencia" || pathname.startsWith("/clientes/");
   useEffect(() => {
     if (!open) return;
     options.current?.querySelector<HTMLButtonElement>('[aria-pressed="true"],button')?.focus();
@@ -44,7 +44,10 @@ export function ProjectSwitcher({
     setOpen(!open);
   }
   function select(project: string | null) {
-    navigate({ project, tab: null, task: null });
+    navigate(
+      { project, tab: null, task: null, from: null, researchPage: null },
+      pathname.startsWith("/clientes/") ? "/inteligencia" : pathname,
+    );
     setOpen(false);
     onSelect();
     button.current?.focus();

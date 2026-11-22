@@ -37,13 +37,15 @@ export async function getCommercialResearch(
   projectId: string,
   territory: Territory,
   rawFilters: unknown = {},
+  favoritesOnly = false,
 ): Promise<CommercialResearchView | null> {
   const base = selectCommercialResearch(repository.readCommercialResearch(), projectId, territory);
   if (!base) return null;
+  const viewer = await requireViewer();
   const filters = researchListFiltersSchema.parse(rawFilters);
   const cities = base.reports.map((report) => report.cityCode);
   const [stats, coverage, runs, savedReports, ai] = await Promise.all([
-    repository.getProspectCounts(projectId, cities, filters),
+    repository.getProspectCounts(projectId, cities, filters, viewer.id, favoritesOnly),
     repository.researchCoverage(projectId),
     repository.listResearchRuns(projectId, cities),
     repository.listCommercialReports(projectId, cities),
@@ -55,6 +57,8 @@ export async function getCommercialResearch(
     cities,
     filters,
     pagination.offset,
+    viewer.id,
+    favoritesOnly,
   );
   const reports = base.reports.map(
     (report) => savedReports.find((saved) => saved.cityCode === report.cityCode)?.report ?? report,
@@ -76,6 +80,7 @@ export async function getCommercialResearch(
       count: coverage.find((row) => row.cityCode === city.cityCode)?.count ?? 0,
     })),
     live: {
+      favoritesOnly,
       ai,
       pagination,
       filters,
