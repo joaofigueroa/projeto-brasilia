@@ -32,7 +32,12 @@ export default async function ProspectProfilePage({ params, searchParams }: Prop
   return (
     <>
       <Topbar title="Possíveis clientes" viewer={data.viewer} />
-      <ProspectPage key={data.prospect.databaseId} data={data} backHref={backHref} />
+      <ProspectPage
+        key={data.prospect.databaseId}
+        data={data}
+        backHref={backHref}
+        initialSection={typeof search.section === "string" ? search.section : undefined}
+      />
     </>
   );
 }

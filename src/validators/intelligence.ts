@@ -4,6 +4,7 @@ export const analysisKinds = [
   "market",
   "prospects",
   "favorites",
+  "crm",
   "vehicles",
   "opportunities",
   "notes",
@@ -43,6 +44,7 @@ export const intelligenceFiltersSchema = z
     researchSegment: researchListFiltersSchema.shape.segment,
     researchPriority: researchListFiltersSchema.shape.priority,
     researchEnrichment: researchListFiltersSchema.shape.enrichment,
+    researchStage: researchListFiltersSchema.shape.stage,
     researchPrimary: z.enum(["0", "1"]).default("0"),
   })
   .transform((input) => {

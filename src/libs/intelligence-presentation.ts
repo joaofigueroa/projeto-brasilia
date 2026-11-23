@@ -3,6 +3,7 @@ export const analysisLabels: Record<AnalysisKind, string> = {
   market: "Mercado endereçável",
   prospects: "Possíveis clientes",
   favorites: "Clientes favoritados",
+  crm: "Acompanhamento",
   vehicles: "Veículos",
   opportunities: "Editais e oportunidades",
   notes: "Análise e abordagem",

@@ -14,12 +14,13 @@ import {
 import { AnimatePresence, motion } from "motion/react";
 import { useId, useState } from "react";
 import { useTaskForm } from "@/hooks/use-task-form";
-import { priorityLabels, statuses, statusLabels, timestampLabel } from "@/libs/presentation";
+import { priorityLabels, statuses, statusLabels } from "@/libs/presentation";
 import type { BoardData, Task, TaskStatus } from "@/types/domain";
 import { Avatar } from "./avatar";
 import { DeleteTaskDialog } from "./delete-task-dialog";
 import { Dialog } from "./dialog";
 import { FormError, SubmitButton } from "./feedback";
+import { HistoryTimeline } from "./history-timeline";
 
 const fieldLabels: Record<string, string> = {
   title: "Título",
@@ -329,39 +330,20 @@ export function TaskDialog({
                   <p>Veja quem alterou esta tarefa e o que mudou.</p>
                 </div>
               </div>
-              <ol className="history-list">
-                {data.history.map((entry) => (
-                  <li key={entry.id} className="history-event">
-                    <div className="history-avatar">
-                      <Avatar user={entry.actor} size="sm" />
-                    </div>
-                    <div className="history-event-content">
-                      <p>
-                        <strong>{entry.actor.name}</strong>{" "}
-                        {entry.kind === "created"
-                          ? "criou a tarefa"
-                          : entry.kind === "moved"
-                            ? "movimentou a tarefa"
-                            : entry.kind === "deleted"
-                              ? "excluiu a tarefa"
-                              : "editou a tarefa"}
-                      </p>
-                      <time dateTime={entry.createdAt}>{timestampLabel(entry.createdAt)}</time>
-                      {entry.changes.length > 0 && (
-                        <div className="history-changes">
-                          {entry.changes.map((change) => (
-                            <div key={change.field}>
-                              <strong>{fieldLabels[change.field] ?? change.field}</strong>
-                              <span className="history-before">{change.before}</span>
-                              <span className="history-after">{change.after}</span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </li>
-                ))}
-              </ol>
+              <HistoryTimeline
+                fieldLabels={fieldLabels}
+                entries={data.history.map((entry) => ({
+                  ...entry,
+                  label:
+                    entry.kind === "created"
+                      ? "criou a tarefa"
+                      : entry.kind === "moved"
+                        ? "movimentou a tarefa"
+                        : entry.kind === "deleted"
+                          ? "excluiu a tarefa"
+                          : "editou a tarefa",
+                }))}
+              />
               <p className="history-footnote">
                 <CircleHelp size={15} />O histórico é preservado e não pode ser editado.
               </p>

@@ -1,0 +1,38 @@
+{
+  "checked_on": "2026-11-22",
+  "purpose": "Source research only; not imported into the application",
+  "uf_table": {
+    "rows": 270,
+    "ufs": 27,
+    "years": [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025],
+    "pdf_page": 76,
+    "all_annual_sums_reconciled": true,
+    "model_dimension": false,
+    "municipality_dimension": false
+  },
+  "municipal_pdf_sample": {
+    "uf": "ES",
+    "municipality_ibge": "3205309",
+    "municipality": "Vitória",
+    "year": 2026,
+    "month": 8,
+    "vehicle_class": "AUTOMOVEL",
+    "quantity": 407,
+    "metric": "registrations",
+    "model": null,
+    "source_pdf_page": 13,
+    "source_url": "https://sincodives.com.br/assets/modules/publicacoes/download/files/2631/agosto-6.pdf"
+  },
+  "files": [
+    {
+      "file": "anfavea-2026.pdf",
+      "source_url": "https://anfavea.com.br/site/wp-content/uploads/2026/07/BOOK-ANUARIO-ANFAVEA-2026BAIXA.pdf",
+      "sha256": "f7c7103d1944ef0c8124024269103d7eef9f15e9af2271c9d262ca90fa959d64"
+    },
+    {
+      "file": "es-aug2026.pdf",
+      "source_url": "https://sincodives.com.br/assets/modules/publicacoes/download/files/2631/agosto-6.pdf",
+      "sha256": "fae12ff312518fd42164aaf27d9dafa47d0a200d0ed6ff060cf216eaaf2ef9b8"
+    }
+  ]
+}

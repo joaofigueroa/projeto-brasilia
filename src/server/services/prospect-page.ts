@@ -12,6 +12,7 @@ import { isProspectFavorite, setProspectFavorite } from "@/server/repositories/p
 import { businessError } from "@/server/security/business-error";
 import { requireViewer } from "@/server/security/session";
 import { prospectFavoriteSchema, prospectPageInputSchema } from "@/validators/prospect-page";
+import { getProspectCrm } from "./prospect-crm";
 export const getProspectPage = cache(async (id: string, projectId: string) => {
   const viewer = await requireViewer();
   const parsed = prospectPageInputSchema.safeParse({ id, projectId });
@@ -26,6 +27,7 @@ export const getProspectPage = cache(async (id: string, projectId: string) => {
   const project = projects.find((item) => item.id === projectId);
   if (!project || !prospect?.databaseId) return null;
   const favorite = await isProspectFavorite(viewer.id, prospect.databaseId);
+  const crm = await getProspectCrm({ projectId, prospectId: prospect.databaseId });
   const params = new URLSearchParams({
     project: project.id,
     uf: prospect.state,
@@ -37,6 +39,7 @@ export const getProspectPage = cache(async (id: string, projectId: string) => {
     viewer,
     project,
     prospect: { ...prospect, isFavorite: favorite },
+    crm,
     products: readCommercialResearch().products,
     defaultBackHref: `/inteligencia?${params}`,
   };

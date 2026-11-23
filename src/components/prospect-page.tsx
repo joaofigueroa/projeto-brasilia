@@ -13,6 +13,7 @@ import {
 import type { getProspectPage } from "@/server/services/prospect-page";
 import { Dialog } from "./dialog";
 import { ProspectFavoriteButton } from "./prospect-favorite-button";
+import { ProspectFollowup } from "./prospect-followup";
 import { ProspectGoogleMap } from "./prospect-google-map";
 import { ProspectProfileEditor } from "./prospect-profile-editor";
 import { ProspectSpecialization } from "./prospect-specialization";
@@ -21,13 +22,24 @@ import { StateFlag } from "./state-flag";
 
 type Data = NonNullable<Awaited<ReturnType<typeof getProspectPage>>>;
 const sections = [
+  { id: "crm", label: "Acompanhamento" },
   { id: "registry", label: "Cadastro" },
   { id: "commercial", label: "Oportunidade comercial" },
   { id: "sources", label: "Fontes e evidências" },
 ] as const;
-export function ProspectPage({ data, backHref }: { data: Data; backHref: string }) {
+export function ProspectPage({
+  data,
+  backHref,
+  initialSection = "registry",
+}: {
+  data: Data;
+  backHref: string;
+  initialSection?: string;
+}) {
   const { prospect, project, viewer } = data;
-  const [section, setSection] = useState<string>("registry");
+  const [section, setSection] = useState<string>(
+    sections.some((item) => item.id === initialSection) ? initialSection : "registry",
+  );
   const [editing, setEditing] = useState(false);
   const tabId = useId();
   const router = useRouter();
@@ -183,6 +195,14 @@ export function ProspectPage({ data, backHref }: { data: Data; backHref: string 
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.16 }}
       >
+        {section === "crm" && (
+          <ProspectFollowup
+            key={`${data.crm.version}:${data.crm.canManage}:${data.crm.history.entries[0]?.id}`}
+            projectId={project.id}
+            prospectId={prospect.databaseId ?? ""}
+            data={data.crm}
+          />
+        )}
         {section === "registry" && (
           <div className="prospect-detail-grid">
             <section>

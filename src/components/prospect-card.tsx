@@ -2,6 +2,7 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { researchPriorityLabels, researchSegmentLabels } from "@/libs/commercial-research";
+import { crmStageLabels } from "@/libs/prospect-crm";
 import { prospectPageHref } from "@/libs/prospect-navigation";
 import type { ResearchProspect } from "@/types/commercial-research";
 import { ProspectFavoriteButton } from "./prospect-favorite-button";
@@ -10,10 +11,12 @@ export function ProspectCard({
   prospect,
   projectId,
   from,
+  followupMode = false,
 }: {
   prospect: ResearchProspect;
   projectId: string;
   from: string;
+  followupMode?: boolean;
 }) {
   return (
     <article className={`research-prospect ${prospect.priority}`}>
@@ -35,7 +38,7 @@ export function ProspectCard({
       <Link
         className="research-open-profile"
         prefetch={false}
-        href={prospectPageHref(projectId, prospect.databaseId ?? prospect.id, from)}
+        href={`${prospectPageHref(projectId, prospect.databaseId ?? prospect.id, from)}${followupMode ? "&section=crm" : ""}`}
         aria-label={`Ver perfil de ${prospect.name}`}
       >
         <strong>{prospect.name}</strong>
@@ -52,11 +55,17 @@ export function ProspectCard({
           </span>
         </div>
         <div className="research-prospect-bottom">
-          <span className={`research-priority ${prospect.priority}`}>
-            {researchPriorityLabels[prospect.priority]}
-          </span>
+          {followupMode || prospect.isFavorite ? (
+            <span className={`crm-stage-badge ${prospect.crmStage ?? "new_lead"}`}>
+              {crmStageLabels[prospect.crmStage ?? "new_lead"]}
+            </span>
+          ) : (
+            <span className={`research-priority ${prospect.priority}`}>
+              {researchPriorityLabels[prospect.priority]}
+            </span>
+          )}
           <span>
-            Ver perfil
+            {followupMode ? "Acompanhar" : "Ver perfil"}
             <ArrowRight size={13} />
           </span>
         </div>

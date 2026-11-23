@@ -1,5 +1,6 @@
 import type { z } from "zod";
 import type { paginationRange } from "@/libs/pagination";
+import type { CrmStage } from "@/libs/prospect-crm";
 import type {
   commercialResearchSchema,
   researchListFiltersSchema,
@@ -7,7 +8,10 @@ import type {
 } from "@/validators/commercial-research";
 
 export type CommercialResearch = z.infer<typeof commercialResearchSchema>;
-export type ResearchProspect = z.infer<typeof researchProspectSchema> & { isFavorite?: boolean };
+export type ResearchProspect = z.infer<typeof researchProspectSchema> & {
+  isFavorite?: boolean;
+  crmStage?: CrmStage;
+};
 export type ResearchRegistry = NonNullable<ResearchProspect["registry"]>;
 export type ResearchProduct = CommercialResearch["products"][number];
 export type CommercialReport = CommercialResearch["reports"][number];

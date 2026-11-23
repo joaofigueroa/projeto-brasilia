@@ -64,6 +64,13 @@
       "when": 1795363983514,
       "tag": "0008_prospect_favorites",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1795383107328,
+      "tag": "0009_prospect_crm",
+      "breakpoints": true
     }
   ]
 }

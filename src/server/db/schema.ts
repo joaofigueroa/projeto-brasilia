@@ -15,11 +15,13 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 import { v7 } from "uuid";
+import { crmStages } from "@/libs/prospect-crm";
 import type { Change } from "@/types/domain";
 
 export const userRole = pgEnum("user_role", ["admin", "collaborator"]);
 export const taskStatus = pgEnum("task_status", ["open", "in_progress", "done"]);
 export const taskPriority = pgEnum("task_priority", ["low", "medium", "high"]);
+export const prospectCrmStage = pgEnum("prospect_crm_stage", crmStages);
 const createdAt = () => timestamp("created_at", { withTimezone: true }).notNull().defaultNow();
 const updatedAt = () => timestamp("updated_at", { withTimezone: true }).notNull().defaultNow();
 
@@ -397,5 +399,82 @@ export const researchProspectFavorites = pgTable(
     uniqueIndex("research_prospect_favorites_user_prospect_idx").on(table.userId, table.prospectId),
     index("research_prospect_favorites_user_idx").on(table.userId),
     index("research_prospect_favorites_prospect_idx").on(table.prospectId),
+  ],
+);
+
+export const prospectFollowups = pgTable(
+  "prospect_followups",
+  {
+    prospectId: uuid("prospect_id")
+      .primaryKey()
+      .references(() => researchProspects.id),
+    stage: prospectCrmStage("stage").notNull().default("new_lead"),
+    version: integer("version").notNull().default(1),
+    createdBy: uuid("created_by")
+      .notNull()
+      .references(() => users.id),
+    updatedBy: uuid("updated_by")
+      .notNull()
+      .references(() => users.id),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [
+    index("prospect_followups_created_by_idx").on(t.createdBy),
+    index("prospect_followups_updated_by_idx").on(t.updatedBy),
+    index("prospect_followups_stage_idx").on(t.stage),
+  ],
+);
+
+export const prospectFollowupEvents = pgTable(
+  "prospect_followup_events",
+  {
+    id: uuid("id").primaryKey().$defaultFn(v7),
+    prospectId: uuid("prospect_id")
+      .notNull()
+      .references(() => prospectFollowups.prospectId),
+    actorId: uuid("actor_id")
+      .notNull()
+      .references(() => users.id),
+    kind: text("kind").notNull(),
+    changes: jsonb("changes").$type<Change[]>().notNull().default(sql`'[]'::jsonb`),
+    snapshot: jsonb("snapshot").notNull(),
+    body: text("body").notNull().default(""),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    index("prospect_followup_events_prospect_idx").on(t.prospectId, t.createdAt, t.id),
+    index("prospect_followup_events_actor_idx").on(t.actorId),
+  ],
+);
+
+export const prospectAttachments = pgTable(
+  "prospect_attachments",
+  {
+    id: uuid("id").primaryKey().$defaultFn(v7),
+    prospectId: uuid("prospect_id")
+      .notNull()
+      .references(() => prospectFollowups.prospectId),
+    uploadedBy: uuid("uploaded_by")
+      .notNull()
+      .references(() => users.id),
+    name: text("name").notNull(),
+    contentType: text("content_type").notNull(),
+    size: integer("size").notNull(),
+    storageProvider: text("storage_provider").notNull(),
+    storageBucket: text("storage_bucket").notNull(),
+    storagePath: text("storage_path").notNull(),
+    status: text("status").notNull().default("pending"),
+    createdAt: createdAt(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  },
+  (t) => [
+    index("prospect_attachments_prospect_idx").on(t.prospectId, t.createdAt),
+    index("prospect_attachments_uploaded_by_idx").on(t.uploadedBy),
+    uniqueIndex("prospect_attachments_storage_idx").on(
+      t.storageProvider,
+      t.storageBucket,
+      t.storagePath,
+    ),
   ],
 );

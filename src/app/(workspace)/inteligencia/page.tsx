@@ -27,6 +27,7 @@ export default async function IntelligencePage({
     researchSegment: params.researchSegment,
     researchPriority: params.researchPriority,
     researchEnrichment: params.researchEnrichment,
+    researchStage: params.researchStage,
     researchPrimary: params.researchPrimary,
   });
   if (!params.project) {

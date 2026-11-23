@@ -5,6 +5,7 @@ export type AnalysisKind =
   | "market"
   | "prospects"
   | "favorites"
+  | "crm"
   | "vehicles"
   | "opportunities"
   | "notes"

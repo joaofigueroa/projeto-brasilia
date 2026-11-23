@@ -42,6 +42,8 @@ O PNCP consulta separadamente a janela dos últimos 31 dias de cada ano selecion
 
 ## Pesquisa de cobertura local — 21/11/2026
 
+**Revisão de 22/11/2026:** esta primeira pesquisa foi insuficiente para concluir o mapeamento. O [novo inventário das 27 UFs e capitais](vehicle-registration-sources.md) confirma, entre outras fontes abertas, modelo × município × período no Detran-SC, contagens municipais por tipo no Sincodiv-ES e totais anuais das 27 UFs na Anfavea. As limitações descritas abaixo são o estado da coleta anterior, não evidência de inexistência de dados públicos. Séries novas de pesquisa ainda não estão importadas na aplicação.
+
 A pesquisa identificou uma limitação de acesso, sem converter estoque em vendas:
 
 | Fonte primária | Conteúdo verificado | Uso na aplicação |

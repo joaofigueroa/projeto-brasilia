@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { normalizeGoogleMapsEmbedInput } from "@/libs/google-business";
+import { crmStages } from "@/libs/prospect-crm";
 
 const googleUrl = z.union([
   z.literal(""),
@@ -94,6 +95,7 @@ export const researchListFiltersSchema = z.object({
   priority: z.enum(["", "first", "develop", "validate"]).default(""),
   enrichment: z.enum(["", "researched", "registry"]).default(""),
   primaryOnly: z.boolean().default(false),
+  stage: z.enum(["", ...crmStages]).default(""),
 });
 
 const source = z.object({

@@ -61,6 +61,14 @@
 
 **Favorito de prospecção**: Seleção pessoal de uma empresa por usuário autenticado, independente do papel administrativo, prioridade comercial ou situação de abordagem. A mesma empresa pode ser favorita de várias pessoas; nenhuma pessoa altera a seleção das demais.
 
+**Acompanhamento comercial**: Histórico compartilhado da abordagem de uma empresa dentro de um projeto. Remover a empresa dos favoritos pessoais não apaga o acompanhamento da equipe.
+
+**Etapa comercial**: Situação atual da abordagem: Novo Lead, Tentativa de Contato, Em Qualificação, Reunião Agendada, Proposta Enviada, Em Negociação ou Fechamento / Contrato. A última etapa indica aceite em formalização, não venda concluída.
+
+**Comentário de acompanhamento**: Anotação de uma pessoa autenticada sobre a abordagem, com autoria e data preservadas na linha do tempo.
+
+**Anexo de acompanhamento**: Documento ou imagem vinculado a um cliente, com nome, tipo, tamanho, autoria e referência de armazenamento. Cada arquivo tem limite de 20 MB e pertence ao histórico compartilhado do projeto.
+
 **Página do possível cliente**: Endereço próprio do perfil pesquisado, com contexto de projeto, resumo e ficha Google na área principal. Dados cadastrais, oportunidade e fontes são categorias de informação em abas; a ficha Google permanece aberta na área principal. Não existe uma aba redundante de consultas.
 
 **Identificação por montadora**: Especialistas mostram pequenas logos das marcas declaradas. Multimarcas usam logos sobrepostas; quando não há marcas declaradas, os símbolos são apenas ilustrativos. Perfis a confirmar mantêm essa indicação, sem logos que sugiram confirmação.

@@ -2,6 +2,7 @@ import "server-only";
 import { sql } from "drizzle-orm";
 import { v7 } from "uuid";
 import dataset from "@/data/research/3c-automotive.json";
+import type { CrmStage } from "@/libs/prospect-crm";
 import { query } from "@/server/db/client";
 import type {
   CommercialReport,
@@ -34,6 +35,7 @@ function searchWhere(filters: ResearchListFilters) {
   return sql`(${filters.segment}='' OR p.segment=${filters.segment})
     AND (${filters.priority}='' OR p.priority=${filters.priority})
     AND (${filters.enrichment}='' OR p.enrichment_level=${filters.enrichment})
+    AND (${filters.stage}='' OR COALESCE((SELECT f.stage::text FROM prospect_followups f WHERE f.prospect_id=p.id),'new_lead')=${filters.stage})
     AND (${!filters.primaryOnly} OR COALESCE(p.profile->>'activityMatch','primary')='primary')
     AND (${!term} OR translate(lower(p.name || ' ' || COALESCE(p.profile->'registry'->>'address','') || ' ' || COALESCE(p.profile->>'brands','') || ' ' || COALESCE(p.cnpj,'')),'áàãâäéèêëíìîïóòõôöúùûüç','aaaaaeeeeiiiiooooouuuuc') LIKE ${`%${term}%`}
       OR (${digits.length >= 3} AND p.cnpj LIKE ${`%${digits}%`}))`;
@@ -45,6 +47,7 @@ function profileRow(row: {
   googleVersion: number | null;
   revision: number;
   isFavorite?: boolean;
+  crmStage?: CrmStage;
 }) {
   const profile = researchProspectSchema.parse({
     ...(row.profile as object),
@@ -52,7 +55,7 @@ function profileRow(row: {
     revision: row.revision,
     google: row.google ? { ...(row.google as object), version: row.googleVersion } : null,
   });
-  return { ...profile, isFavorite: row.isFavorite ?? false };
+  return { ...profile, isFavorite: row.isFavorite ?? false, crmStage: row.crmStage };
 }
 export async function getProspectCounts(
   projectId: string,
@@ -89,8 +92,9 @@ export async function listResearchProspects(
     googleVersion: number | null;
     revision: number;
     isFavorite: boolean;
+    crmStage: CrmStage;
   }>(
-    sql`SELECT EXISTS(SELECT 1 FROM research_prospect_favorites f WHERE f.prospect_id=p.id AND f.user_id=${viewerId ?? null}::uuid) AS "isFavorite",p.id,p.profile,p.version AS revision,n.data AS google,n.version AS "googleVersion" FROM research_prospects p LEFT JOIN prospect_google_notes n ON n.prospect_id=p.id WHERE ${cityWhere(projectId, cities)} AND ${searchWhere(filters)} AND ${favoriteWhere(viewerId, favoritesOnly)} ORDER BY CASE p.priority WHEN 'first' THEN 0 WHEN 'develop' THEN 1 ELSE 2 END,CASE p.enrichment_level WHEN 'researched' THEN 0 ELSE 1 END,CASE COALESCE(p.profile->>'activityMatch','primary') WHEN 'primary' THEN 0 ELSE 1 END,lower(p.name),p.id LIMIT ${filters.pageSize} OFFSET ${offset}`,
+    sql`SELECT EXISTS(SELECT 1 FROM research_prospect_favorites f WHERE f.prospect_id=p.id AND f.user_id=${viewerId ?? null}::uuid) AS "isFavorite",COALESCE((SELECT f.stage FROM prospect_followups f WHERE f.prospect_id=p.id),'new_lead') AS "crmStage",p.id,p.profile,p.version AS revision,n.data AS google,n.version AS "googleVersion" FROM research_prospects p LEFT JOIN prospect_google_notes n ON n.prospect_id=p.id WHERE ${cityWhere(projectId, cities)} AND ${searchWhere(filters)} AND ${favoriteWhere(viewerId, favoritesOnly)} ORDER BY CASE p.priority WHEN 'first' THEN 0 WHEN 'develop' THEN 1 ELSE 2 END,CASE p.enrichment_level WHEN 'researched' THEN 0 ELSE 1 END,CASE COALESCE(p.profile->>'activityMatch','primary') WHEN 'primary' THEN 0 ELSE 1 END,lower(p.name),p.id LIMIT ${filters.pageSize} OFFSET ${offset}`,
   );
   return rows.map(profileRow);
 }

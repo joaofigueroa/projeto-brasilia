@@ -49,6 +49,7 @@ const icons = {
   market: BarChart3,
   prospects: Users,
   favorites: Star,
+  crm: Users,
   vehicles: CarFront,
   opportunities: FileText,
   notes: Building2,
@@ -736,7 +737,7 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
               <span className="section-caption">
                 {data.research ? (
                   <>
-                    {["prospects", "favorites"].includes(data.tab.kind)
+                    {["prospects", "favorites", "crm"].includes(data.tab.kind)
                       ? `${researchCount.toLocaleString("pt-BR")} ${researchCount === 1 ? "perfil disponível" : "perfis disponíveis"}`
                       : `${data.research.reports.length} ${data.research.reports.length === 1 ? "análise publicada" : "análises publicadas"}`}
                     {data.records.length > 0 ? ` · ${data.records.length} registros da equipe` : ""}
@@ -749,7 +750,7 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
                   </>
                 )}
               </span>
-              {canManage && data.tab.kind !== "favorites" && (
+              {canManage && !["favorites", "crm"].includes(data.tab.kind) && (
                 <div>
                   <button
                     className="icon-button"
@@ -782,7 +783,7 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
               )}
             </div>
           </div>
-          {data.research && data.tab.kind !== "favorites" && (
+          {data.research && !["favorites", "crm"].includes(data.tab.kind) && (
             <ResearchControls
               key={`${data.project.id}-${data.territory.city ?? data.territory.uf}`}
               data={data}
@@ -825,9 +826,10 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
                   </>
                 )}
               </>
-            ) : ["prospects", "favorites"].includes(data.tab.kind) && data.research ? (
+            ) : ["prospects", "favorites", "crm"].includes(data.tab.kind) && data.research ? (
               <>
                 <ResearchedProspects
+                  followupMode={data.tab.kind === "crm"}
                   research={data.research}
                   controller={controller}
                   projectId={data.project.id}

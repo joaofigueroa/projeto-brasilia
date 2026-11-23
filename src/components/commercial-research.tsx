@@ -9,6 +9,7 @@ import {
   researchPriorityLabels,
   researchSegmentLabels,
 } from "@/libs/commercial-research";
+import { crmStageLabels, crmStages } from "@/libs/prospect-crm";
 import { prospectPageHref } from "@/libs/prospect-navigation";
 import type { CommercialResearchView } from "@/types/commercial-research";
 import { Pagination } from "./pagination";
@@ -69,16 +70,18 @@ function ResearchEdition({ research }: { research: CommercialResearchView }) {
   );
 }
 export function ResearchedProspects({
+  followupMode = false,
   research,
   controller,
   projectId,
-}: ResearchProps & { projectId: string; canManage?: boolean }) {
+}: ResearchProps & { projectId: string; canManage?: boolean; followupMode?: boolean }) {
   const filters = research.live?.filters ?? {
     query: "",
     segment: "",
     priority: "",
     enrichment: "",
     primaryOnly: false,
+    stage: "",
     page: 1,
     pageSize: 20,
   };
@@ -103,12 +106,16 @@ export function ResearchedProspects({
     return <ResearchCoverage research={research} controller={controller} />;
   return (
     <div className="commercial-research">
-      <ResearchEdition research={research} />
+      {!followupMode && <ResearchEdition research={research} />}
       <div className="research-intro">
         <div>
           <span className="section-caption">Prospecção · setor automotivo</span>
           <h3 id={`${id}-results`} tabIndex={-1}>
-            {favoritesOnly ? "Clientes favoritados" : "Empresas para avaliar"}
+            {followupMode
+              ? "Acompanhamento de clientes"
+              : favoritesOnly
+                ? "Clientes favoritados"
+                : "Empresas para avaliar"}
           </h3>
         </div>
         <span className="research-count">
@@ -117,9 +124,11 @@ export function ResearchedProspects({
         </span>
       </div>
       <p className="research-description">
-        {favoritesOnly
-          ? "Sua seleção de empresas neste território. Use a estrela para remover um cliente dos favoritos."
-          : "Estabelecimentos encontrados no cadastro e perfis com pesquisa comercial. Abra cada perfil para consultar os dados da empresa, fontes e oportunidades comerciais."}
+        {followupMode
+          ? "Etapas comerciais dos seus clientes favoritados. Abra o acompanhamento para registrar comentários, documentos e mudanças de etapa."
+          : favoritesOnly
+            ? "Sua seleção de empresas neste território. Use a estrela para remover um cliente dos favoritos."
+            : "Estabelecimentos encontrados no cadastro e perfis com pesquisa comercial. Abra cada perfil para consultar os dados da empresa, fontes e oportunidades comerciais."}
       </p>
       {research.live && !favoritesOnly && (
         <div className="research-census-summary">
@@ -199,6 +208,24 @@ export function ResearchedProspects({
             ))}
           </select>
         </label>
+        {favoritesOnly && (
+          <label htmlFor={`${id}-stage`}>
+            <span>Etapa comercial</span>
+            <select
+              id={`${id}-stage`}
+              value={filters.stage}
+              disabled={controller.navigating}
+              onChange={(event) => apply({ researchStage: event.target.value || null })}
+            >
+              <option value="">Todas as etapas</option>
+              {crmStages.map((stage) => (
+                <option key={stage} value={stage}>
+                  {crmStageLabels[stage]}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
       </form>
       <div className="research-extra-filters">
         <label>
@@ -234,6 +261,7 @@ export function ResearchedProspects({
               researchPriority: null,
               researchEnrichment: null,
               researchPrimary: null,
+              researchStage: null,
             })
           }
         >
@@ -259,7 +287,13 @@ export function ResearchedProspects({
       )}
       <div className="research-prospects" aria-busy={controller.navigating}>
         {research.prospects.map((prospect) => (
-          <ProspectCard key={prospect.id} prospect={prospect} projectId={projectId} from={from} />
+          <ProspectCard
+            followupMode={followupMode}
+            key={prospect.id}
+            prospect={prospect}
+            projectId={projectId}
+            from={from}
+          />
         ))}
       </div>
       <Pagination
@@ -310,7 +344,7 @@ export function CommercialIntelligence({
   research,
   controller,
   projectId,
-}: ResearchProps & { projectId: string; canManage?: boolean }) {
+}: ResearchProps & { projectId: string; canManage?: boolean; followupMode?: boolean }) {
   const from = `${usePathname()}?${useSearchParams().toString()}`;
   if (!research.reports.length)
     return <ResearchCoverage research={research} controller={controller} />;
