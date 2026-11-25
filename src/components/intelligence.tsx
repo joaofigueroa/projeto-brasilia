@@ -467,8 +467,9 @@ function Sources({ data }: { data: IntelligenceData }) {
         {data.project.slug === "pecas-automotivas" && (
           <p>
             Modelos: rankings nacionais de automóveis da Fenabrave, 2022–2025; DF e Brasília,
-            2022–2025; Mato Grosso, 2024. A aba Veículos detalha os anos disponíveis por UF e
-            capital. A cobertura dos demais territórios permanece incompleta.
+            2022–2025; Mato Grosso, 2024; Santa Catarina e Florianópolis, 2016–2025, pelo Detran-SC.
+            A aba Veículos detalha os anos disponíveis por UF e capital. A cobertura dos demais
+            territórios permanece incompleta.
           </p>
         )}
         <ExternalSource href="https://www.gov.br/receitafederal/dados">

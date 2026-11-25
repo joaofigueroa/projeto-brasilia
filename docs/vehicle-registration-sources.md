@@ -85,9 +85,9 @@ Regras para importação: (1) validar território, período e definição no ori
 
 ## Evidências reproduzíveis e sequência de integração
 
-O extrator `scripts/prepare-registration-source-audit.py` recebe os originais `anfavea-2026.pdf` e `es-aug2026.pdf`. Gera [270 contagens anuais por UF](research/registration-evidence/uf-car-registrations-2016-2025.csv) e [proveniência com SHA-256 e verificações](research/registration-evidence/provenance.json). Esses arquivos são evidência de pesquisa, separados dos dados usados em produção. A consulta de modelos de SC foi verificada pela interface; ainda não existe exportação integral versionada.
+O extrator `scripts/prepare-registration-source-audit.py` recebe os originais `anfavea-2026.pdf` e `es-aug2026.pdf`. Gera [270 contagens anuais por UF](research/registration-evidence/uf-car-registrations-2016-2025.csv) e [proveniência com SHA-256 e verificações](research/registration-evidence/provenance.json). Esses arquivos são evidência de pesquisa, separados dos dados usados em produção. A exportação integral de modelos de SC foi integrada em 25/11, conforme a seção abaixo.
 
-1. Integrar a exportação completa de SC por ano, estado e Florianópolis, preservando o filtro de múltiplos anos e a classificação da fonte. Conferir os limites de exportação/virtualização antes de declarar completude.
+1. Concluído em 25/11: integrar a exportação completa de SC por ano, estado e Florianópolis, preservando o filtro de múltiplos anos e a classificação da fonte. Limites de exportação e quantidade de linhas conferidos.
 2. Usar os totais estaduais da Anfavea como série própria e controle de cobertura, sem apresentá-los como modelos. Recuperar primeiro registro municipal do SP e os fechamentos municipais do ES.
 3. Priorizar GO/Goiânia: obter o agregado de primeiro registro do Detran-GO ou publicação primária do Sincodive-GO com modelo, ano de registro e município; confirmar o recorte dos eletrificados na ABVE como complemento, sem substituir todo o mercado.
 4. Completar os demais cruzamentos com exportações públicas dos painéis, arquivos regionais e solicitações específicas de tabelas agregadas. Site indisponível é pendência de acesso; esquema não conferido é pendência de validação.
@@ -103,3 +103,36 @@ Diagnóstico: a camada “Automóveis” do mapa era estoque de dezembro da Sena
 Reprodução: `python scripts/prepare-registration-totals.py DIRETORIO/anfavea-2026.pdf` (pdfplumber). O extrator reutiliza a validação da pesquisa, conserva SHA-256 e exclui comerciais leves, caminhões, ônibus e demais classes.
 
 Essa tabela não traz modelos nem municípios. A cobertura por modelo continua independente e não é apresentada como completa. Municípios não recebem os totais da UF; o recorte estatístico de Brasília corresponde ao DF inteiro. Nenhum estoque foi convertido em venda ou emplacamento.
+
+## Modelos estaduais — investigação de 25/11/2026
+
+O objetivo continua sendo o cruzamento **UF × marca/modelo × ano**, equivalente ao DF, sem substituir modelos por totais territoriais. A cobertura das 27 UFs **não foi concluída**.
+
+### Nova carga confirmada: Santa Catarina e Florianópolis
+
+A fonte pública do [Detran-SC](https://www.detran.sc.gov.br/primeiro-emplacamento-e-transferencias-de-veiculos/) publica um relatório com as entidades `view_primeiro_emplacamento` e `view_marcamodelo`. Foram consultadas somente contagens agregadas: marca, modelo, ano e soma de `num_total`, filtrando `tpo_veiculo = AUTOMOVEL`. Para a capital, aplica-se ainda `nom_municipio = FLORIANOPOLIS`. Não foram consultados registros individuais de veículos ou proprietários.
+
+O serviço independente de controle identifica todas as linhas como `PRIMEIRO EMPLACAMENTO`. As 20 tabelas anuais de 2016–2025 conferem com os doze totais mensais de cada território/ano: 1.796 observações modelo/ano na UF e 1.235 na capital, totalizando 3.031 observações. As exportações estão completas, sem truncamento; quantidade de linhas conferida com as métricas de execução. Foram conservados os rótulos publicados, inclusive um grupo com marca não informada em 2018.
+
+| Recorte | 2022 | 2023 | 2024 | 2025 |
+| --- | ---: | ---: | ---: | ---: |
+| SC, AUTOMOVEL | 52.553 | 60.760 | 70.638 | 67.334 |
+| Florianópolis, AUTOMOVEL | 8.108 | 8.366 | 9.433 | 9.273 |
+
+Em Florianópolis/2024, o ONIX tem 1.016, o HB20 715 e o T-CROSS 583, conferindo com a consulta visual anteriormente registrada. O cadastro administrativo do Detran-SC tem universo/classificação diferente da Anfavea; os totais não são somados nem forçados a coincidir.
+
+`scripts/prepare-sc-car-models.py` valida os filtros das consultas, integridade da exportação, período completo, duplicidades e reconciliação. Gera `src/data/official/sc-car-models.json` com hashes dos pedidos/respostas, origem, controle mensal, período e classificação. A integração conserva município exato, anos selecionados, soma/média e paginação já existentes. SC não empresta sua lista a outras UFs nem a outras cidades.
+
+Reprodução completa: `python3 scripts/prepare-sc-car-models.py .local/state-model-research/reproduced --fetch`. O comando consulta quatro agregados públicos (modelos e controles mensais, UF e capital), valida as respostas e só então substitui o JSON de runtime. Não exige credencial nem serviço contratado.
+
+### Novas rotas examinadas e limites encontrados
+
+- **ABVE, fonte original:** os esquemas públicos dos relatórios Geral e Geografia possuem modelo, município e UF. A consulta independente de tecnologias confirmou exclusivamente BEV, HEV, HEV FLEX, MHEV, MHEV 12V, MHEV 48V e PHEV, nos segmentos Auto e Comercial Leve. Isso pode oferecer um recorte real de eletrificados nas 27 UFs, mas não reproduz todo o mercado de automóveis solicitado. Não foi carregado como substituto.
+- **Fenabrave-MT, dezembro/2025:** o PDF `Auto-5.pdf` contém coluna dezembro ainda incompleta e foi publicado em 04/12/2025. Não foi tratado como fechamento integral do ano. O arquivo de dezembro/2023 examinado mostra imagem, sem tabela anual exportável confirmada.
+- **Fenabrave, área do jornalista:** a página oficial `https://www.fenabrave.org.br/jornalista/myLoginnew.asp` exige vínculo e e-mail de veículo de comunicação para liberar acesso. Não foi criado cadastro nem declarada condição profissional inexistente.
+- **MG, setembro/2026:** o PDF do sindicato examinado é resumo de uma página; não fornece a lista estadual completa de modelos.
+- **AL:** a página oficial define expressamente o painel de veículos como frota. Não foi usado como fluxo de emplacamentos.
+- **MS:** o link oficial do painel continua retornando 403 no coletor; isso permanece uma pendência de acesso, não comprovação de inexistência.
+- **Senatran/RENAVAM aberto:** continua sendo inventário de frota. Compilações de terceiros que calculam novos registros por diferença entre estoques não foram incorporadas como contagem direta.
+
+Há dois pedidos de orientação sobre publicações gratuitas redigidos localmente para Fenabrave e Senatran, sem solicitação de serviço pago. Ainda não foram enviados; dependem de autorização do usuário para mensagens externas.

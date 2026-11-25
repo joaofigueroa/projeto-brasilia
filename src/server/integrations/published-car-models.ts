@@ -2,6 +2,7 @@ import "server-only";
 import additionalSource from "@/data/official/additional-car-models.json";
 import nationalSource from "@/data/official/car-models.json";
 import regionalSource from "@/data/official/regional-car-models.json";
+import scSource from "@/data/official/sc-car-models.json";
 import { cities, states } from "@/libs/territories";
 import { isVehicleTerritoryIncluded, vehicleCapitalCode } from "@/libs/vehicle-scope";
 import type { CarModelCoverage, Territory } from "@/types/intelligence";
@@ -15,6 +16,8 @@ type Publication = {
   sourceUrl: string;
   supportingSources?: { name: string; url: string }[];
   notes?: string[];
+  listedTotal?: number;
+  sectionTotal?: number;
   rows: { make: string; model: string; value: number | null; issue?: string }[];
 };
 const national: Publication[] = Object.entries(nationalSource).map(([year, data]) => ({
@@ -24,7 +27,7 @@ const national: Publication[] = Object.entries(nationalSource).map(([year, data]
   city: null,
   territoryLabel: "Brasil",
 }));
-const regional: Publication[] = [
+const existingRegional: Publication[] = [
   ...regionalSource.publications,
   ...additionalSource.publications,
 ].map((data) => ({
@@ -44,6 +47,7 @@ const regional: Publication[] = [
       ? "Distrito Federal · área integral"
       : states.find((state) => state.code === data.uf)!.name,
 }));
+const regional: Publication[] = [...existingRegional, ...scSource.publications];
 
 function publicationsFor(territory: Pick<Territory, "level" | "uf" | "city">) {
   if (territory.level === "country") return national;
@@ -108,7 +112,17 @@ export function getPublishedCarModels(
       "Há observações com divergência entre o total anual e a soma mensal. Elas ficam sem valor e fora da consolidação até revisão.",
     );
   for (const publication of publications) notes.push(...(publication.notes ?? []));
-  if (publications.some((publication) => publication.notes?.length))
+  if (publications.some((publication) => publication.sourceUrl === scSource.sourceUrl))
+    notes[0] +=
+      " Tipo AUTOMOVEL no cadastro do Detran-SC; o universo administrativo difere da classificação setorial da Anfavea exibida no mapa.";
+  if (
+    publications.some(
+      (publication) =>
+        publication.listedTotal !== undefined &&
+        publication.sectionTotal !== undefined &&
+        publication.listedTotal !== publication.sectionTotal,
+    )
+  )
     notes[0] +=
       " Lista parcial: a soma dos modelos difere do total do resumo da entidade. Consulte os detalhes em Fontes e cobertura.";
   return {
