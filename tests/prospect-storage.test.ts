@@ -120,8 +120,8 @@ describe("attachment ownership and finalization", () => {
     ).rejects.toThrow("neste projeto");
   });
 
-  it("confirms several task files and lists them alongside direct files in the correct project", async () => {
-    const taskId = await tasks.createTask({
+  it("confirms several task files and keeps their project folders, storage and history consistent", async () => {
+    const taskFields = {
       projectId,
       title: "Relatório da oficina",
       description: "",
@@ -131,7 +131,8 @@ describe("attachment ownership and finalization", () => {
       status: "open",
       assigneeIds: [user.id],
       administratorId: user.id,
-    });
+    };
+    const taskId = await tasks.createTask(taskFields);
     const taskScope = { kind: "task", id: taskId };
     const projectScope = { kind: "project", id: projectId };
     const first = await workspace.prepareWorkspaceAttachment({
@@ -158,6 +159,9 @@ describe("attachment ownership and finalization", () => {
       }),
     ).rejects.toThrow("20 MB");
     await expect(projects.getProjectFiles({ id: projectId })).rejects.toThrow("administradores");
+    await expect(
+      projects.createProjectFileFolder({ projectId, name: "Evidências" }),
+    ).rejects.toThrow("administradores");
     for (const grant of [first, second, first]) {
       await workspace.finishWorkspaceAttachment({
         scope: taskScope,
@@ -214,7 +218,97 @@ describe("attachment ownership and finalization", () => {
           attachmentId: first.attachmentId,
         }),
       ).rejects.toThrow("Arquivo não encontrado");
-      await tasks.deleteTask({ id: taskId, version: 1 });
+
+      const evidence = await projects.createProjectFileFolder({
+        projectId,
+        name: "  Evidências  ",
+      });
+      const proposals = await projects.createProjectFileFolder({ projectId, name: "Propostas" });
+      const outside = await projects.createProjectFileFolder({
+        projectId: otherProject,
+        name: "Evidências",
+      });
+      await expect(
+        projects.createProjectFileFolder({ projectId, name: "evidências" }),
+      ).rejects.toThrow("Já existe");
+      expect(
+        await projects.getProjectFiles({ id: projectId, folderId: outside.folderId }),
+      ).toBeNull();
+      const move = {
+        projectId,
+        attachmentId: first.attachmentId,
+        sourceFolderId: null,
+        folderId: evidence.folderId,
+      };
+      await expect(
+        projects.moveProjectFile({ ...move, folderId: outside.folderId }),
+      ).rejects.toThrow("Não foi possível mover");
+      const projectUpload = {
+        scope: projectScope,
+        name: "Resumo.csv",
+        size: 19,
+        contentType: "text/csv",
+      };
+      await expect(
+        workspace.prepareWorkspaceAttachment({ ...projectUpload, folderId: outside.folderId }),
+      ).rejects.toThrow("não está disponível");
+      const folderUpload = await workspace.prepareWorkspaceAttachment({
+        ...projectUpload,
+        folderId: proposals.folderId,
+      });
+      await workspace.finishWorkspaceAttachment({
+        scope: projectScope,
+        attachmentId: folderUpload.attachmentId,
+      });
+      expect(
+        (await projects.getProjectFiles({ id: projectId, folderId: proposals.folderId }))?.files
+          .items[0]?.id,
+      ).toBe(folderUpload.attachmentId);
+
+      const before = await workspace.downloadWorkspaceAttachment({
+        scope: taskScope,
+        attachmentId: first.attachmentId,
+      });
+      await projects.moveProjectFile(move);
+      await expect(
+        projects.moveProjectFile({ ...move, folderId: proposals.folderId }),
+      ).rejects.toThrow("Não foi possível mover");
+      expect(
+        (
+          await projects.getProjectFiles({ id: projectId, folderId: evidence.folderId })
+        )?.files.items.map((file) => file.id),
+      ).toEqual([first.attachmentId]);
+      expect(
+        (await projects.getProjectFiles({ id: projectId }))?.files.items.map((file) => file.id),
+      ).not.toContain(first.attachmentId);
+      await projects.moveProjectFile({
+        ...move,
+        sourceFolderId: evidence.folderId,
+        folderId: proposals.folderId,
+      });
+      await projects.moveProjectFile({
+        ...move,
+        sourceFolderId: proposals.folderId,
+        folderId: null,
+      });
+      expect(await listTaskHistory(taskId)).toEqual(history);
+      expect(
+        await workspace.downloadWorkspaceAttachment({
+          scope: taskScope,
+          attachmentId: first.attachmentId,
+        }),
+      ).toEqual(before);
+      await projects.moveProjectFile(move);
+      await tasks.updateTask({ ...taskFields, projectId: otherProject, id: taskId, version: 1 });
+      expect(
+        (await projects.getProjectFiles({ id: otherProject }))?.files.items.map((file) => file.id),
+      ).toContain(first.attachmentId);
+      await tasks.updateTask({ ...taskFields, id: taskId, version: 2 });
+      expect(
+        (await projects.getProjectFiles({ id: projectId, folderId: evidence.folderId }))?.files
+          .items,
+      ).toEqual([]);
+      await tasks.deleteTask({ id: taskId, version: 3 });
       expect(
         (await projects.getProjectFiles({ id: projectId }))?.files.items.map((file) => file.id),
       ).toEqual([direct.attachmentId]);

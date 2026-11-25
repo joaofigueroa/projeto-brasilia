@@ -8,7 +8,7 @@ import {
 } from "@/server/actions/workspace-attachments";
 import type { AttachmentScope } from "@/types/domain";
 
-export function useWorkspaceAttachments(scope: AttachmentScope) {
+export function useWorkspaceAttachments(scope: AttachmentScope, folderId: string | null = null) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [progress, setProgress] = useState<{
@@ -33,6 +33,7 @@ export function useWorkspaceAttachments(scope: AttachmentScope) {
         try {
           const grant = await prepareWorkspaceAttachmentAction({
             scope,
+            folderId,
             name: file.name,
             size: file.size,
             contentType: file.type,

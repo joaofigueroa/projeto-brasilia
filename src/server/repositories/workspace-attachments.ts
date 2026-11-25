@@ -28,8 +28,7 @@ function permittedOwner({ scope, actorId }: WriteScope) {
 }
 
 export async function reserveWorkspaceAttachment(
-  input: WriteScope &
-    Pick<
+  input: WriteScope & { folderId: string | null } & Pick<
       StoredAttachment,
       "id" | "name" | "size" | "contentType" | "storageBucket" | "storagePath"
     >,
@@ -37,12 +36,15 @@ export async function reserveWorkspaceAttachment(
   const { scope, actorId } = input;
   const rows = await query<{ id: string }>(sql`
     WITH permitted AS (${permittedOwner(input)})
-    INSERT INTO workspace_attachments(id, task_id, project_id, uploaded_by, name, content_type,
+    INSERT INTO workspace_attachments(id, task_id, project_id, folder_id, uploaded_by, name, content_type,
       size, storage_bucket, storage_path, expires_at)
     SELECT ${input.id}::uuid, ${scope.kind === "task" ? scope.id : null}::uuid,
-      ${scope.kind === "project" ? scope.id : null}::uuid, ${actorId}::uuid, ${input.name}, ${input.contentType},
+      ${scope.kind === "project" ? scope.id : null}::uuid, ${input.folderId}::uuid,
+      ${actorId}::uuid, ${input.name}, ${input.contentType},
       ${input.size}, ${input.storageBucket}, ${input.storagePath}, now() + interval '2 hours'
-    FROM permitted RETURNING id
+    FROM permitted
+    WHERE ${allowedFolder(scope.kind === "project" ? scope.id : null, input.folderId)}
+    RETURNING id
   `);
   return rows[0] ?? null;
 }
@@ -85,9 +87,74 @@ export async function completeWorkspaceAttachment(
   return rows[0] ?? null;
 }
 
-export async function listProjectFiles(projectId: string, page: number, pageSize: number) {
+function allowedFolder(projectId: string | null, folderId: string | null) {
+  return folderId === null
+    ? sql`TRUE`
+    : sql`EXISTS (SELECT 1 FROM project_file_folders f
+      WHERE f.id=${folderId}::uuid AND f.project_id=${projectId}::uuid)`;
+}
+
+export function listProjectFileFolders(projectId: string) {
+  return query<{ id: string; name: string }>(sql`
+    SELECT id, name FROM project_file_folders WHERE project_id=${projectId}::uuid
+    ORDER BY lower(name), id
+  `);
+}
+
+export async function insertProjectFileFolder(input: {
+  projectId: string;
+  actorId: string;
+  name: string;
+}) {
+  const [result] = await query<{ id: string | null; allowed: boolean }>(sql`
+    WITH permitted AS (${permittedOwner({ scope: { kind: "project", id: input.projectId }, actorId: input.actorId })}),
+    inserted AS (
+      INSERT INTO project_file_folders (id, project_id, name)
+      SELECT ${v7()}::uuid, id, ${input.name} FROM permitted
+      ON CONFLICT (project_id, lower(name)) DO NOTHING RETURNING id
+    )
+    SELECT (SELECT id FROM inserted) AS id, EXISTS (SELECT 1 FROM permitted) AS allowed
+  `);
+  return result;
+}
+
+export async function moveProjectAttachment(input: {
+  projectId: string;
+  actorId: string;
+  attachmentId: string;
+  sourceFolderId: string | null;
+  folderId: string | null;
+}) {
+  const { projectId, actorId, attachmentId, sourceFolderId, folderId } = input;
+  const rows = await query<{ id: string }>(sql`
+    WITH permitted AS (${permittedOwner({ scope: { kind: "project", id: projectId }, actorId })}),
+    locked_task AS MATERIALIZED (
+      SELECT t.id FROM tasks t
+      JOIN workspace_attachments a ON a.task_id=t.id AND a.id=${attachmentId}::uuid
+      JOIN permitted p ON p.id=t.project_id
+      WHERE t.deleted_at IS NULL AND a.status='ready'
+      FOR UPDATE OF t
+    )
+    UPDATE workspace_attachments a SET folder_id=${folderId}::uuid
+    FROM permitted p
+    WHERE a.id=${attachmentId}::uuid AND a.status='ready'
+      AND (a.project_id=p.id OR a.task_id IN (SELECT id FROM locked_task))
+      AND a.folder_id IS NOT DISTINCT FROM ${sourceFolderId}::uuid
+      AND ${allowedFolder(projectId, folderId)}
+    RETURNING a.id
+  `);
+  return rows[0] ?? null;
+}
+
+export async function listProjectFiles(
+  projectId: string,
+  folderId: string | null,
+  page: number,
+  pageSize: number,
+) {
   const files = sql`FROM workspace_attachments a LEFT JOIN tasks t ON t.id=a.task_id
-    WHERE ${attachmentOwner({ kind: "project", id: projectId })} AND a.status='ready'`;
+    WHERE ${attachmentOwner({ kind: "project", id: projectId })} AND a.status='ready'
+      AND ${folderId ? sql`a.folder_id=${folderId}::uuid` : sql`a.folder_id IS NULL`}`;
   const [count] = await query<{ total: number }>(sql`SELECT count(*)::int AS total ${files}`);
   const pagination = paginationRange(count.total, page, pageSize);
   const items = await query<TaskAttachment & { taskTitle: string | null; createdAt: string }>(sql`

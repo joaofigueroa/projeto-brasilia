@@ -1,13 +1,21 @@
 import "server-only";
 import { v7 } from "uuid";
-import { z } from "zod";
 import { neonStorageConfigured } from "@/server/integrations/neon-storage";
 import { insertProject, listProjects, updateProject } from "@/server/repositories/projects";
-import { listProjectFiles } from "@/server/repositories/workspace-attachments";
+import {
+  insertProjectFileFolder,
+  listProjectFileFolders,
+  listProjectFiles,
+  moveProjectAttachment,
+} from "@/server/repositories/workspace-attachments";
 import { businessError } from "@/server/security/business-error";
 import { requireViewer } from "@/server/security/session";
-import { idSchema } from "@/validators";
 import { projectFieldsSchema, updateProjectSchema } from "@/validators/projects";
+import {
+  createFileFolderSchema,
+  moveProjectFileSchema,
+  projectFileListSchema,
+} from "@/validators/workspace-attachment";
 
 async function requireAdmin() {
   const viewer = await requireViewer();
@@ -21,25 +29,38 @@ export async function getProjectManagement() {
 }
 export async function getProjectFiles(raw: unknown) {
   const viewer = await requireAdmin();
-  const input = z
-    .object({
-      id: idSchema,
-      page: z.coerce.number().int().min(1).max(100000).catch(1),
-      size: z.coerce
-        .number()
-        .pipe(z.union([z.literal(10), z.literal(20), z.literal(50)]))
-        .catch(20),
-    })
-    .safeParse(raw);
+  const input = projectFileListSchema.safeParse(raw);
   if (!input.success) return null;
-  const project = (await listProjects()).find((item) => item.id === input.data.id);
+  const { id, folderId, page, size } = input.data;
+  const [projects, folders] = await Promise.all([listProjects(), listProjectFileFolders(id)]);
+  const project = projects.find((item) => item.id === id);
   if (!project) return null;
+  const folder = folders.find((item) => item.id === folderId) ?? null;
+  if (folderId && !folder) return null;
   return {
     viewer,
     project,
-    files: await listProjectFiles(project.id, input.data.page, input.data.size),
+    folders,
+    folder,
+    files: await listProjectFiles(project.id, folderId, page, size),
     storageConfigured: neonStorageConfigured(),
   };
+}
+export async function createProjectFileFolder(raw: unknown) {
+  const viewer = await requireAdmin();
+  const input = createFileFolderSchema.parse(raw);
+  const result = await insertProjectFileFolder({ ...input, actorId: viewer.id });
+  if (!result.allowed) throw businessError("Projeto indisponível. Confira seu acesso.");
+  if (!result.id) throw businessError("Já existe uma pasta com esse nome neste projeto.");
+  return { projectId: input.projectId, folderId: result.id };
+}
+export async function moveProjectFile(raw: unknown) {
+  const viewer = await requireAdmin();
+  const input = moveProjectFileSchema.parse(raw);
+  const moved = await moveProjectAttachment({ ...input, actorId: viewer.id });
+  if (!moved)
+    throw businessError("Não foi possível mover o arquivo. Atualize a lista e confira o destino.");
+  return { projectId: input.projectId };
 }
 export async function createProject(raw: unknown) {
   const viewer = await requireAdmin();

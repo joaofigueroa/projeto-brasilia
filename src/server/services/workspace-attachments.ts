@@ -56,7 +56,12 @@ export async function prepareWorkspaceAttachment(raw: unknown) {
     storageBucket: bucket,
     storagePath: path,
   });
-  if (!saved) throw businessError("Não foi possível iniciar o envio. Confira seu acesso.");
+  if (!saved)
+    throw businessError(
+      input.folderId
+        ? "A pasta selecionada não está disponível para este projeto."
+        : "Não foi possível iniciar o envio. Confira seu acesso.",
+    );
   return { attachmentId: id, url: form.url, fields: form.fields };
 }
 

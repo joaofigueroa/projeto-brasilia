@@ -85,6 +85,13 @@
       "when": 1795649663138,
       "tag": "0011_workspace_attachments",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1795650416200,
+      "tag": "0012_project_file_folders",
+      "breakpoints": true
     }
   ]
 }

@@ -174,12 +174,30 @@ export const taskEvents = pgTable(
   ],
 );
 
+export const projectFileFolders = pgTable(
+  "project_file_folders",
+  {
+    id: uuid("id").primaryKey().$defaultFn(v7),
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projects.id),
+    name: text("name").notNull(),
+  },
+  (table) => [
+    uniqueIndex("project_file_folders_project_name_idx").on(
+      table.projectId,
+      sql`lower(${table.name})`,
+    ),
+  ],
+);
+
 export const workspaceAttachments = pgTable(
   "workspace_attachments",
   {
     id: uuid("id").primaryKey().$defaultFn(v7),
     taskId: uuid("task_id").references(() => tasks.id),
     projectId: uuid("project_id").references(() => projects.id),
+    folderId: uuid("folder_id").references(() => projectFileFolders.id),
     uploadedBy: uuid("uploaded_by")
       .notNull()
       .references(() => users.id),
@@ -195,6 +213,7 @@ export const workspaceAttachments = pgTable(
   (table) => [
     index("workspace_attachments_task_id_idx").on(table.taskId),
     index("workspace_attachments_project_id_idx").on(table.projectId),
+    index("workspace_attachments_folder_id_idx").on(table.folderId),
     index("workspace_attachments_uploaded_by_idx").on(table.uploadedBy),
     uniqueIndex("workspace_attachments_storage_idx").on(table.storageBucket, table.storagePath),
   ],

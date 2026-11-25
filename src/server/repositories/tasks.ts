@@ -84,6 +84,10 @@ export async function saveTask(
         AND (t.administrator_id = ${input.actorId}::uuid OR EXISTS (SELECT 1 FROM users WHERE id = ${input.actorId}::uuid AND role = 'admin')
           OR (${input.kind === "moved"} AND EXISTS (SELECT 1 FROM task_assignees WHERE task_id = t.id AND user_id = ${input.actorId}::uuid)))
       RETURNING *
+    ), reset_folders AS (
+      UPDATE workspace_attachments a SET folder_id=NULL
+      FROM updated u JOIN tasks previous ON previous.id=u.id
+      WHERE a.task_id=u.id AND previous.project_id<>u.project_id
     ), removed AS (
       DELETE FROM task_assignees WHERE task_id IN (SELECT id FROM updated)
       AND user_id NOT IN (SELECT value::uuid FROM jsonb_array_elements_text(${JSON.stringify(input.assigneeIds)}::jsonb))
