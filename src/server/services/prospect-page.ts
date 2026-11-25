@@ -2,9 +2,9 @@ import "server-only";
 import { cache } from "react";
 import { z } from "zod";
 import {
+  findCommercialResearch,
   findResearchProfileById,
   findResearchProfiles,
-  readCommercialResearch,
 } from "@/server/repositories/commercial-research";
 import { listAnalysisTabs } from "@/server/repositories/intelligence";
 import { listProjects } from "@/server/repositories/projects";
@@ -40,7 +40,7 @@ export const getProspectPage = cache(async (id: string, projectId: string) => {
     project,
     prospect: { ...prospect, isFavorite: favorite },
     crm,
-    products: readCommercialResearch().products,
+    products: findCommercialResearch(projectId)?.products ?? [],
     defaultBackHref: `/inteligencia?${params}`,
   };
 });

@@ -21,12 +21,14 @@ export type Project = {
   description: string;
 };
 export type Change = { field: string; before: string; after: string };
-export type TaskHistory = {
-  id: string;
-  kind: "created" | "updated" | "moved" | "deleted";
+export type TaskAttachment = { id: string; name: string; size: number };
+export type AttachmentScope = { kind: "task" | "project"; id: string };
+export type TaskHistoryCursor = { id: string; createdAt: string };
+export type TaskHistory = TaskHistoryCursor & {
+  kind: "created" | "updated" | "moved" | "deleted" | "attachment_added";
   actor: Pick<PublicUser, "id" | "name" | "image">;
-  createdAt: string;
   changes: Change[];
+  attachment: TaskAttachment | null;
 };
 
 export type Task = {
@@ -60,6 +62,8 @@ export type BoardData = {
   stats: { total: number; done: number; inProgress: number; completion: number };
   selectedTask: Task | null;
   history: TaskHistory[];
+  hasOlderHistory: boolean;
+  taskStorageConfigured: boolean;
 };
 
 export type ActionResult<T = undefined> =

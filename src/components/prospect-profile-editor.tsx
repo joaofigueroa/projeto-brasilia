@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { wineProjectId } from "@/libs/commercial-research";
 import { updateResearchedProfileAction } from "@/server/actions/commercial-research";
 import type { ResearchProspect } from "@/types/commercial-research";
 import { FormError } from "./feedback";
@@ -16,6 +17,7 @@ export function ProspectProfileEditor({
   onCancel: () => void;
 }) {
   const router = useRouter();
+  const wine = projectId === wineProjectId;
   const name = useRef<HTMLInputElement>(null);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
@@ -36,11 +38,13 @@ export function ProspectProfileEditor({
         revision: prospect.revision,
         name: text("name"),
         summary: text("summary"),
-        specialization: text("specialization"),
-        brands: text("brands")
-          .split(",")
-          .map((item) => item.trim())
-          .filter(Boolean),
+        specialization: wine ? prospect.specialization : text("specialization"),
+        brands: wine
+          ? prospect.brands
+          : text("brands")
+              .split(",")
+              .map((item) => item.trim())
+              .filter(Boolean),
         website: text("website"),
         phone: text("phone"),
         foundationYear: text("foundationYear") ? Number(text("foundationYear")) : null,
@@ -92,18 +96,22 @@ export function ProspectProfileEditor({
             defaultValue={prospect.summary}
           />
         </label>
-        <label className="field">
-          <span>Perfil de atendimento</span>
-          <select name="specialization" defaultValue={prospect.specialization}>
-            <option value="unconfirmed">A confirmar</option>
-            <option value="multibrand">Multimarcas</option>
-            <option value="specialist">Especializada</option>
-          </select>
-        </label>
-        <label className="field">
-          <span>Montadoras atendidas (separadas por vírgula)</span>
-          <input name="brands" maxLength={1000} defaultValue={prospect.brands.join(", ")} />
-        </label>
+        {!wine && (
+          <>
+            <label className="field">
+              <span>Perfil de atendimento</span>
+              <select name="specialization" defaultValue={prospect.specialization}>
+                <option value="unconfirmed">A confirmar</option>
+                <option value="multibrand">Multimarcas</option>
+                <option value="specialist">Especializada</option>
+              </select>
+            </label>
+            <label className="field">
+              <span>Montadoras atendidas (separadas por vírgula)</span>
+              <input name="brands" maxLength={1000} defaultValue={prospect.brands.join(", ")} />
+            </label>
+          </>
+        )}
         <div className="form-grid two">
           <label className="field">
             <span>Fundação declarada da marca</span>

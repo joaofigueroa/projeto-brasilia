@@ -28,6 +28,7 @@ function PersonDialog({
 }) {
   const { submit, pending, error } = usePersonForm(user, onSaved);
   const passwordId = useId();
+  const confirmationId = useId();
   return (
     <Dialog
       title={user ? "Editar pessoa" : "Adicionar pessoa"}
@@ -100,19 +101,33 @@ function PersonDialog({
             </div>
             <small>O papel de acesso é independente da função profissional.</small>
           </div>
-          {!user && (
-            <label className="field" htmlFor={passwordId}>
-              <span>Senha inicial</span>
+          <label className="field" htmlFor={passwordId}>
+            <span>{user ? "Nova senha (opcional)" : "Senha inicial"}</span>
+            <PasswordInput
+              id={passwordId}
+              name="password"
+              autoComplete="new-password"
+              minLength={6}
+              placeholder="Pelo menos 6 caracteres"
+              required={!user}
+            />
+            <small>
+              {user
+                ? "A alteração encerra as sessões ativas desta pessoa."
+                : "Compartilhe o acesso com a pessoa. Ela poderá alterar a senha no perfil."}
+            </small>
+          </label>
+          {user && (
+            <label className="field" htmlFor={confirmationId}>
+              <span>Confirme a nova senha</span>
               <PasswordInput
-                id={passwordId}
-                name="password"
+                id={confirmationId}
+                name="passwordConfirmation"
                 autoComplete="new-password"
                 minLength={6}
-                placeholder="Pelo menos 6 caracteres"
+                placeholder="Repita a nova senha"
+                required={false}
               />
-              <small>
-                Compartilhe o acesso com a pessoa. Ela poderá alterar a senha no perfil.
-              </small>
             </label>
           )}
         </fieldset>

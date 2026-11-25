@@ -2,6 +2,7 @@ import "server-only";
 import { sql } from "drizzle-orm";
 import { v7 } from "uuid";
 import dataset from "@/data/research/3c-automotive.json";
+import wineDataset from "@/data/research/vms-importadora.json";
 import type { CrmStage } from "@/libs/prospect-crm";
 import { query } from "@/server/db/client";
 import type {
@@ -13,8 +14,12 @@ import type {
 import { commercialResearchSchema, researchProspectSchema } from "@/validators/commercial-research";
 
 const research = commercialResearchSchema.parse(dataset);
+const wineResearch = commercialResearchSchema.parse(wineDataset);
 export function readCommercialResearch() {
   return research;
+}
+export function findCommercialResearch(projectId: string) {
+  return [research, wineResearch].find((dataset) => dataset.projectId === projectId);
 }
 
 function cityWhere(projectId: string, cities: string[]) {
@@ -37,7 +42,7 @@ function searchWhere(filters: ResearchListFilters) {
     AND (${filters.enrichment}='' OR p.enrichment_level=${filters.enrichment})
     AND (${filters.stage}='' OR COALESCE((SELECT f.stage::text FROM prospect_followups f WHERE f.prospect_id=p.id),'new_lead')=${filters.stage})
     AND (${!filters.primaryOnly} OR COALESCE(p.profile->>'activityMatch','primary')='primary')
-    AND (${!term} OR translate(lower(p.name || ' ' || COALESCE(p.profile->'registry'->>'address','') || ' ' || COALESCE(p.profile->>'brands','') || ' ' || COALESCE(p.cnpj,'')),'áàãâäéèêëíìîïóòõôöúùûüç','aaaaaeeeeiiiiooooouuuuc') LIKE ${`%${term}%`}
+    AND (${!term} OR translate(lower(p.name || ' ' || COALESCE(p.profile->'registry'->>'address','') || ' ' || COALESCE(p.profile->>'businessAddress','') || ' ' || COALESCE(p.profile->>'brands','') || ' ' || COALESCE(p.cnpj,'')),'áàãâäéèêëíìîïóòõôöúùûüç','aaaaaeeeeiiiiooooouuuuc') LIKE ${`%${term}%`}
       OR (${digits.length >= 3} AND p.cnpj LIKE ${`%${digits}%`}))`;
 }
 function profileRow(row: {

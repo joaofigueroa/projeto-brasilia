@@ -127,6 +127,10 @@ export function Projects({ projects }: { projects: Project[] }) {
               <h2>{project.name}</h2>
               <p>{project.description || "Descrição não informada."}</p>
               <div className="project-entry-links">
+                <Link href={`/projetos/${project.id}`} aria-label={`Abrir projeto ${project.name}`}>
+                  Abrir projeto
+                  <ArrowUpRight size={12} />
+                </Link>
                 <Link href={`/tarefas?project=${project.id}`}>
                   Tarefas
                   <ArrowUpRight size={12} />

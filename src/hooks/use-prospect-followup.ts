@@ -1,5 +1,6 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { downloadSignedFile, uploadSignedFile } from "@/libs/file-transfer";
 import { attachmentMime, type CrmStage, MAX_ATTACHMENT_BYTES } from "@/libs/prospect-crm";
 import {
   changeProspectStageAction,
@@ -104,28 +105,9 @@ export function useProspectFollowup(projectId: string, prospectId: string, data:
           setError(prepared.error);
           return;
         }
-        await new Promise<void>((resolve, reject) => {
-          const form = new FormData();
-          for (const [name, value] of Object.entries(prepared.data.fields))
-            form.append(name, value);
-          form.append("file", file);
-          const request = new XMLHttpRequest();
-          request.open("POST", prepared.data.url);
-          request.timeout = 180000;
-          request.upload.onprogress = (event) => {
-            if (event.lengthComputable)
-              setUploadProgress({
-                name: file.name,
-                percent: Math.min(100, Math.round((event.loaded / event.total) * 100)),
-              });
-          };
-          request.onload = () =>
-            request.status >= 200 && request.status < 300
-              ? resolve()
-              : reject(new Error("Upload failed"));
-          request.onerror = request.ontimeout = () => reject(new Error("Upload interrupted"));
-          request.send(form);
-        });
+        await uploadSignedFile(prepared.data, file, (percent) =>
+          setUploadProgress({ name: file.name, percent }),
+        );
         const saved = await finishProspectAttachmentAction({
           ...scope,
           attachmentId: prepared.data.attachmentId,
@@ -147,11 +129,7 @@ export function useProspectFollowup(projectId: string, prospectId: string, data:
         setError(result.error);
         return;
       }
-      const link = document.createElement("a");
-      link.href = result.data.url;
-      link.download = result.data.name;
-      link.rel = "noopener noreferrer";
-      link.click();
+      downloadSignedFile(result.data);
     });
   }
   return {

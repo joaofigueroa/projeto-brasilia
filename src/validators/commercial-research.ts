@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { researchSegments } from "@/libs/commercial-research";
 import { normalizeGoogleMapsEmbedInput } from "@/libs/google-business";
 import { crmStages } from "@/libs/prospect-crm";
 
@@ -91,7 +92,7 @@ export const researchListFiltersSchema = z.object({
     .pipe(z.union([z.literal(10), z.literal(20), z.literal(50)]))
     .default(20),
   query: z.string().trim().max(160).default(""),
-  segment: z.enum(["", "workshop", "distributor", "parts_store"]).default(""),
+  segment: z.enum(["", ...researchSegments]).default(""),
   priority: z.enum(["", "first", "develop", "validate"]).default(""),
   enrichment: z.enum(["", "researched", "registry"]).default(""),
   primaryOnly: z.boolean().default(false),
@@ -133,11 +134,12 @@ export const researchProspectSchema = z.object({
   cityCode: z.enum(["5300108", "5208707"]),
   cityName: z.enum(["Brasília", "Goiânia"]),
   state: z.enum(["DF", "GO"]),
-  segment: z.enum(["workshop", "distributor", "parts_store"]),
+  segment: z.enum(researchSegments),
   specialization: z.enum(["multibrand", "specialist", "unconfirmed"]),
   brands: z.array(z.string()),
   website: z.union([z.literal(""), z.url().startsWith("https://")]),
   phone: z.string(),
+  businessAddress: z.string().optional(),
   summary: z.string(),
   priority: z.enum(["first", "develop", "validate"]),
   rationale: z.string(),
@@ -168,6 +170,7 @@ export const commercialResearchSchema = z.object({
       brands: z.array(z.string()),
       application: z.string(),
       url: z.url().startsWith("https://"),
+      catalogPage: z.number().int().positive().optional(),
     }),
   ),
   prospects: z.array(researchProspectSchema),

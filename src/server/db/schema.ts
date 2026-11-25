@@ -174,6 +174,32 @@ export const taskEvents = pgTable(
   ],
 );
 
+export const workspaceAttachments = pgTable(
+  "workspace_attachments",
+  {
+    id: uuid("id").primaryKey().$defaultFn(v7),
+    taskId: uuid("task_id").references(() => tasks.id),
+    projectId: uuid("project_id").references(() => projects.id),
+    uploadedBy: uuid("uploaded_by")
+      .notNull()
+      .references(() => users.id),
+    name: text("name").notNull(),
+    contentType: text("content_type").notNull(),
+    size: integer("size").notNull(),
+    storageBucket: text("storage_bucket").notNull(),
+    storagePath: text("storage_path").notNull(),
+    status: text("status").notNull().default("pending"),
+    createdAt: createdAt(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  },
+  (table) => [
+    index("workspace_attachments_task_id_idx").on(table.taskId),
+    index("workspace_attachments_project_id_idx").on(table.projectId),
+    index("workspace_attachments_uploaded_by_idx").on(table.uploadedBy),
+    uniqueIndex("workspace_attachments_storage_idx").on(table.storageBucket, table.storagePath),
+  ],
+);
+
 export const authSchema = {
   user: users,
   session: sessions,

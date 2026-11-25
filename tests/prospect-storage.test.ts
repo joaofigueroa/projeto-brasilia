@@ -46,6 +46,10 @@ const services = await import("@/server/services/prospect-crm");
 const favorites = await import("@/server/services/prospect-page");
 const research = await import("@/server/repositories/commercial-research");
 const repository = await import("@/server/repositories/prospect-crm");
+const workspace = await import("@/server/services/workspace-attachments");
+const projects = await import("@/server/services/projects");
+const tasks = await import("@/server/services/tasks");
+const { listTaskHistory } = await import("@/server/repositories/tasks");
 const projectId = "019ab04a-1000-7000-8000-000000000003";
 const user: PublicUser = {
   id: v7(),
@@ -114,5 +118,109 @@ describe("attachment ownership and finalization", () => {
         projectId: "019ab04a-1000-7000-8000-000000000002",
       }),
     ).rejects.toThrow("neste projeto");
+  });
+
+  it("confirms several task files and lists them alongside direct files in the correct project", async () => {
+    const taskId = await tasks.createTask({
+      projectId,
+      title: "Relatório da oficina",
+      description: "",
+      weekStart: "2026-11-23",
+      dueDate: null,
+      priority: "medium",
+      status: "open",
+      assigneeIds: [user.id],
+      administratorId: user.id,
+    });
+    const taskScope = { kind: "task", id: taskId };
+    const projectScope = { kind: "project", id: projectId };
+    const first = await workspace.prepareWorkspaceAttachment({
+      scope: taskScope,
+      name: "Relatório.pdf",
+      size: 5_000_000,
+      contentType: "application/pdf",
+    });
+    const second = await workspace.prepareWorkspaceAttachment({
+      scope: taskScope,
+      name: "Foto.png",
+      size: 27,
+      contentType: "image/png",
+    });
+    await expect(
+      workspace.downloadWorkspaceAttachment({ scope: taskScope, attachmentId: first.attachmentId }),
+    ).rejects.toThrow("Arquivo não encontrado");
+    await expect(
+      workspace.prepareWorkspaceAttachment({
+        scope: taskScope,
+        name: "Grande.pdf",
+        size: 20 * 1024 * 1024 + 1,
+        contentType: "application/pdf",
+      }),
+    ).rejects.toThrow("20 MB");
+    await expect(projects.getProjectFiles({ id: projectId })).rejects.toThrow("administradores");
+    for (const grant of [first, second, first]) {
+      await workspace.finishWorkspaceAttachment({
+        scope: taskScope,
+        attachmentId: grant.attachmentId,
+      });
+    }
+    const history = await listTaskHistory(taskId);
+    expect(history).toHaveLength(3);
+    expect(history[0].attachment).toEqual({ id: second.attachmentId, name: "Foto.png", size: 27 });
+    expect(history[1].attachment?.id).toBe(first.attachmentId);
+    expect(
+      (await workspace.getOlderTaskHistory({ taskId, cursor: history[0] })).entries,
+    ).toHaveLength(2);
+    expect(
+      await workspace.downloadWorkspaceAttachment({
+        scope: taskScope,
+        attachmentId: first.attachmentId,
+      }),
+    ).toMatchObject({ name: "Relatório.pdf", url: expect.stringContaining("/workspace/task/") });
+    await expect(
+      workspace.prepareWorkspaceAttachment({
+        scope: projectScope,
+        name: "Projeto.csv",
+        size: 31,
+        contentType: "text/csv",
+      }),
+    ).rejects.toThrow("administradores");
+    await query(sql`UPDATE users SET role='admin' WHERE id=${user.id}::uuid`);
+    state.viewer = { ...user, role: "admin" };
+    try {
+      const direct = await workspace.prepareWorkspaceAttachment({
+        scope: projectScope,
+        name: "Projeto.csv",
+        size: 31,
+        contentType: "text/csv",
+      });
+      await workspace.finishWorkspaceAttachment({
+        scope: projectScope,
+        attachmentId: direct.attachmentId,
+      });
+      const data = await projects.getProjectFiles({ id: projectId });
+      expect(data?.files.pagination.total).toBe(3);
+      expect(data?.files.items).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ name: "Projeto.csv", taskTitle: null }),
+          expect.objectContaining({ name: "Relatório.pdf", taskTitle: "Relatório da oficina" }),
+        ]),
+      );
+      const otherProject = "019ab04a-1000-7000-8000-000000000002";
+      expect((await projects.getProjectFiles({ id: otherProject }))?.files.items).toEqual([]);
+      await expect(
+        workspace.downloadWorkspaceAttachment({
+          scope: { kind: "project", id: otherProject },
+          attachmentId: first.attachmentId,
+        }),
+      ).rejects.toThrow("Arquivo não encontrado");
+      await tasks.deleteTask({ id: taskId, version: 1 });
+      expect(
+        (await projects.getProjectFiles({ id: projectId }))?.files.items.map((file) => file.id),
+      ).toEqual([direct.attachmentId]);
+    } finally {
+      await query(sql`UPDATE users SET role='collaborator' WHERE id=${user.id}::uuid`);
+      state.viewer = user;
+    }
   });
 });

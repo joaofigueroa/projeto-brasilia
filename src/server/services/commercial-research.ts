@@ -1,6 +1,11 @@
 import "server-only";
 import { v7 } from "uuid";
-import { selectCommercialResearch } from "@/libs/commercial-research";
+import {
+  automotiveResearchSegments,
+  selectCommercialResearch,
+  wineProjectId,
+  wineResearchSegments,
+} from "@/libs/commercial-research";
 import { automotiveProjectId, buildCensusProfile, censusCities } from "@/libs/company-census";
 import { paginationRange } from "@/libs/pagination";
 import { generateCommercialAnalysis } from "@/server/integrations/commercial-ai";
@@ -23,14 +28,16 @@ import {
 } from "@/validators/commercial-research";
 import { researchAiStatus } from "./research-ai";
 
-async function requireResearchAdmin(projectId: string) {
+async function requireResearchAdmin(projectId: string, automotiveOnly = true) {
   const viewer = await requireViewer();
   if (viewer.role !== "admin")
     throw businessError(
       "Somente administradores podem atualizar pesquisas, avaliações e análises por IA.",
     );
-  if (projectId !== automotiveProjectId)
+  if (automotiveOnly && projectId !== automotiveProjectId)
     throw businessError("Esta pesquisa pertence ao projeto 3C Automotive.");
+  if (!repository.findCommercialResearch(projectId))
+    throw businessError("Não há pesquisa comercial configurada para este projeto.");
   return viewer;
 }
 export async function getCommercialResearch(
@@ -39,11 +46,16 @@ export async function getCommercialResearch(
   rawFilters: unknown = {},
   favoritesOnly = false,
 ): Promise<CommercialResearchView | null> {
-  const base = selectCommercialResearch(repository.readCommercialResearch(), projectId, territory);
+  const dataset = repository.findCommercialResearch(projectId);
+  if (!dataset) return null;
+  const base = selectCommercialResearch(dataset, projectId, territory);
   if (!base) return null;
   const viewer = await requireViewer();
   const filters = researchListFiltersSchema.parse(rawFilters);
-  const cities = base.reports.map((report) => report.cityCode);
+  const segments: readonly string[] =
+    projectId === wineProjectId ? wineResearchSegments : automotiveResearchSegments;
+  if (!segments.includes(filters.segment)) filters.segment = "";
+  const cities = base.selectedCities;
   const [stats, coverage, runs, savedReports, ai] = await Promise.all([
     repository.getProspectCounts(projectId, cities, filters, viewer.id, favoritesOnly),
     repository.researchCoverage(projectId),
@@ -244,7 +256,7 @@ export async function generateCityAnalysis(raw: unknown) {
 }
 export async function saveProspectGoogleNote(raw: unknown) {
   const input = googleNoteInputSchema.parse(raw);
-  const viewer = await requireResearchAdmin(input.projectId);
+  const viewer = await requireResearchAdmin(input.projectId, false);
   if (input.fields.checkedAt > new Date().toISOString().slice(0, 10))
     throw businessError("A data da consulta não pode estar no futuro.");
   const prospect = await repository.findResearchProfileById(input.projectId, input.prospectId);
@@ -261,7 +273,7 @@ export async function saveProspectGoogleNote(raw: unknown) {
 }
 export async function updateResearchedProfile(raw: unknown) {
   const input = prospectProfileUpdateSchema.parse(raw);
-  const viewer = await requireResearchAdmin(input.projectId);
+  const viewer = await requireResearchAdmin(input.projectId, false);
   if (input.foundationYear && input.foundationYear > new Date().getFullYear())
     throw businessError("O ano de fundação não pode estar no futuro.");
   const previous = await repository.findResearchProfileById(input.projectId, input.prospectId);

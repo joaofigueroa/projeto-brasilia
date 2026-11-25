@@ -301,6 +301,43 @@ describe("authentication, roles and profiles", () => {
       role: "collaborator",
     });
   });
+  it("lets only admins set a new six-digit password and signs out the affected user", async () => {
+    await query(sql`DELETE FROM rate_limits`);
+    const target = await createUser({
+      name: "Edit Password",
+      email: "edit-password@test.local",
+      jobTitle: "Operations",
+      role: "collaborator",
+      password,
+    });
+    const { cookie } = await signIn(target.email);
+    expect(cookie).not.toBe("");
+    session.viewer = collaborator;
+    const update = { ...target, newPassword: "047592" };
+    await expect(configureUser(update)).rejects.toThrow(/administradores/);
+    session.viewer = admin;
+    await expect(configureUser({ ...update, newPassword: "47592" })).rejects.toThrow(
+      /6 caracteres/,
+    );
+    await configureUser({ ...target, jobTitle: "Analista" });
+    const getExistingSession = async () => {
+      const response = await (await getAuth()).handler(
+        new Request("http://localhost:3000/api/auth/get-session", { headers: { cookie } }),
+      );
+      return response.json();
+    };
+    expect(await getExistingSession()).not.toBeNull();
+    await configureUser({ ...update, jobTitle: "Analista" });
+    expect(await getExistingSession()).toBeNull();
+    expect((await signIn(target.email)).response.status).toBe(401);
+    expect((await signIn(target.email, update.newPassword)).response.status).toBe(200);
+    expect(await findUserById(target.id)).toMatchObject({
+      email: target.email,
+      role: target.role,
+      jobTitle: "Analista",
+    });
+    await query(sql`DELETE FROM rate_limits`);
+  });
   it("updates personal information without allowing profile-based role escalation", async () => {
     session.viewer = collaborator;
     await updateProfile({
@@ -563,18 +600,17 @@ describe("project intelligence", () => {
       "Authentication required",
     );
   });
-  it("retires only the three initial automotive menus and resolves their old links without deleting data", async () => {
+  it("retires the four initial automotive menus and resolves their old links without deleting data", async () => {
     const { getIntelligence } = await services();
     const { listAnalysisTabs } = await import("@/server/repositories/intelligence");
     const project = "019ab04a-1000-7000-8000-000000000003";
     const stored = await listAnalysisTabs(project);
     const retired = stored.filter((item) =>
-      ["commercial", "opportunities", "notes"].includes(item.kind),
+      ["market", "commercial", "opportunities", "notes"].includes(item.kind),
     );
-    expect(retired).toHaveLength(3);
+    expect(retired).toHaveLength(4);
     const current = await getIntelligence({ project, uf: "DF" });
     expect(current.tabs.map((item) => item.kind)).toEqual([
-      "market",
       "prospects",
       "favorites",
       "crm",
@@ -587,6 +623,7 @@ describe("project intelligence", () => {
     }
     expect(await listAnalysisTabs(project)).toEqual(stored);
     const wine = await getIntelligence({ project: projects[1].id, uf: "DF" });
+    expect(wine.tabs.map((item) => item.kind)).toContain("market");
     expect(wine.tabs.map((item) => item.kind)).toContain("opportunities");
     expect(wine.tabs.map((item) => item.kind)).toContain("notes");
   });

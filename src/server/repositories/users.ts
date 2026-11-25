@@ -47,6 +47,7 @@ export async function saveUserProfile(input: {
   jobTitle: string;
   image?: string;
   role?: Role;
+  passwordHash?: string;
   revokeSessions: boolean;
 }) {
   const rows = await query<PublicUser>(sql`
@@ -56,6 +57,12 @@ export async function saveUserProfile(input: {
         role = CASE WHEN ${input.role !== undefined} THEN ${input.role ?? "collaborator"}::user_role ELSE role END,
         email_verified = CASE WHEN email != ${input.email} THEN false ELSE email_verified END, updated_at = now()
       WHERE id = ${input.id}::uuid RETURNING *
+    ), updated_password AS (
+      INSERT INTO accounts (id, user_id, account_id, provider_id, password)
+      SELECT ${input.passwordHash ? v7() : null}::uuid, id, id::text, 'credential', ${input.passwordHash ?? null}
+      FROM updated_user WHERE ${input.passwordHash !== undefined}
+      ON CONFLICT (provider_id, account_id)
+      DO UPDATE SET password = excluded.password, updated_at = now()
     ), revoked AS (
       DELETE FROM sessions WHERE user_id IN (SELECT id FROM updated_user) AND ${input.revokeSessions}
     ) SELECT ${publicColumns} FROM updated_user

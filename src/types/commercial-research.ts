@@ -17,6 +17,7 @@ export type ResearchProduct = CommercialResearch["products"][number];
 export type CommercialReport = CommercialResearch["reports"][number];
 export type CommercialResearchView = Omit<CommercialResearch, "projectId"> & {
   coverage: { cityCode: string; cityName: string; state: string; count: number }[];
+  selectedCities: string[];
   live?: {
     favoritesOnly?: boolean;
     pagination: ReturnType<typeof paginationRange>;

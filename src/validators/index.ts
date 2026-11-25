@@ -79,7 +79,7 @@ export const createUserSchema = z.object({
 });
 export const configureUserSchema = createUserSchema
   .omit({ password: true })
-  .extend({ id: idSchema });
+  .extend({ id: idSchema, newPassword: passwordSchema.optional() });
 export const profileSchema = createUserSchema.omit({ role: true, password: true }).extend({
   image: imageSchema.optional(),
   currentPassword: z.string().max(128).optional(),

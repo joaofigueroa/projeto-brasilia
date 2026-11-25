@@ -1,8 +1,12 @@
 import "server-only";
 import { v7 } from "uuid";
+import { z } from "zod";
+import { neonStorageConfigured } from "@/server/integrations/neon-storage";
 import { insertProject, listProjects, updateProject } from "@/server/repositories/projects";
+import { listProjectFiles } from "@/server/repositories/workspace-attachments";
 import { businessError } from "@/server/security/business-error";
 import { requireViewer } from "@/server/security/session";
+import { idSchema } from "@/validators";
 import { projectFieldsSchema, updateProjectSchema } from "@/validators/projects";
 
 async function requireAdmin() {
@@ -14,6 +18,28 @@ async function requireAdmin() {
 export async function getProjectManagement() {
   const viewer = await requireAdmin();
   return { viewer, projects: await listProjects() };
+}
+export async function getProjectFiles(raw: unknown) {
+  const viewer = await requireAdmin();
+  const input = z
+    .object({
+      id: idSchema,
+      page: z.coerce.number().int().min(1).max(100000).catch(1),
+      size: z.coerce
+        .number()
+        .pipe(z.union([z.literal(10), z.literal(20), z.literal(50)]))
+        .catch(20),
+    })
+    .safeParse(raw);
+  if (!input.success) return null;
+  const project = (await listProjects()).find((item) => item.id === input.data.id);
+  if (!project) return null;
+  return {
+    viewer,
+    project,
+    files: await listProjectFiles(project.id, input.data.page, input.data.size),
+    storageConfigured: neonStorageConfigured(),
+  };
 }
 export async function createProject(raw: unknown) {
   const viewer = await requireAdmin();

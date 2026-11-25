@@ -3,7 +3,7 @@ import { sql } from "drizzle-orm";
 import { v7 } from "uuid";
 import { statusLabels } from "@/libs/presentation";
 import { query } from "@/server/db/client";
-import type { Change, Task, TaskHistory, TaskStatus } from "@/types/domain";
+import type { Change, Task, TaskHistory, TaskHistoryCursor, TaskStatus } from "@/types/domain";
 import type { TaskFields } from "@/validators";
 
 export type StoredTask = Omit<Task, "canEdit" | "canMove">;
@@ -28,12 +28,16 @@ export async function findTask(id: string) {
   return rows[0] ?? null;
 }
 
-export function listTaskHistory(taskId: string) {
+export const taskHistoryPageSize = 50;
+export function listTaskHistory(taskId: string, cursor?: TaskHistoryCursor) {
   return query<TaskHistory>(sql`
-    SELECT e.id, e.kind, e.created_at::text AS "createdAt", e.changes,
+    SELECT e.id, e.kind, to_char(e.created_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS "createdAt", e.changes,
+      CASE WHEN e.kind = 'attachment_added' THEN e.snapshot ELSE NULL END AS attachment,
       jsonb_build_object('id', u.id, 'name', u.name, 'image', u.image) AS actor
     FROM task_events e JOIN users u ON u.id = e.actor_id
-    WHERE e.task_id = ${taskId}::uuid ORDER BY e.created_at DESC, e.id DESC LIMIT 200
+    WHERE e.task_id = ${taskId}::uuid
+    ${cursor ? sql`AND (e.created_at, e.id) < (${cursor.createdAt}::timestamptz, ${cursor.id}::uuid)` : sql``}
+    ORDER BY e.created_at DESC, e.id DESC LIMIT ${taskHistoryPageSize}
   `);
 }
 

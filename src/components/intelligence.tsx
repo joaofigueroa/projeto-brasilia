@@ -823,12 +823,14 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
               }
             />
           )}
-          {data.research && !["favorites", "crm"].includes(data.tab.kind) && (
-            <ResearchControls
-              key={`${data.project.id}-${data.territory.city ?? data.territory.uf}`}
-              data={data}
-            />
-          )}
+          {data.project.id === automotiveProjectId &&
+            data.research &&
+            !["favorites", "crm"].includes(data.tab.kind) && (
+              <ResearchControls
+                key={`${data.project.id}-${data.territory.city ?? data.territory.uf}`}
+                data={data}
+              />
+            )}
           <motion.div
             key={`${data.project.id}-${data.tab.id}-${data.territory.label}-${data.years.join(",")}-${data.metric}`}
             role="tabpanel"

@@ -2,11 +2,11 @@
 import {
   CalendarDays,
   Check,
-  CircleHelp,
   Clock3,
   FileText,
   History,
   LockKeyhole,
+  Paperclip,
   ShieldCheck,
   Trash2,
   Users,
@@ -20,20 +20,7 @@ import { Avatar } from "./avatar";
 import { DeleteTaskDialog } from "./delete-task-dialog";
 import { Dialog } from "./dialog";
 import { FormError, SubmitButton } from "./feedback";
-import { HistoryTimeline } from "./history-timeline";
-
-const fieldLabels: Record<string, string> = {
-  title: "Título",
-  description: "Descrição",
-  status: "Status",
-  priority: "Prioridade",
-  projectId: "Projeto",
-  assigneeIds: "Responsáveis",
-  administratorId: "Administração do card",
-  weekStart: "Semana",
-  dueDate: "Prazo",
-  availability: "Disponibilidade",
-};
+import { TaskHistoryPanel } from "./task-history";
 
 export function TaskDialog({
   data,
@@ -97,7 +84,12 @@ export function TaskDialog({
               >
                 <Icon size={16} />
                 {label}
-                {id === "history" && <span className="tab-count">{data.history.length}</span>}
+                {id === "history" && (
+                  <span className="tab-count">
+                    {data.history.length}
+                    {data.hasOlderHistory ? "+" : ""}
+                  </span>
+                )}
                 {tab === id && <motion.span className="tab-underline" layoutId="task-tab" />}
               </button>
             ))}
@@ -281,6 +273,19 @@ export function TaskDialog({
                   </div>
                 </label>
               )}
+              {task?.canMove && (
+                <button
+                  type="button"
+                  className="button secondary task-attachment-shortcut"
+                  onClick={() => {
+                    setTab("history");
+                    document.getElementById(`${tabId}-tab-history`)?.focus();
+                  }}
+                >
+                  <Paperclip size={15} />
+                  Anexos da tarefa
+                </button>
+              )}
               <FormError message={error} />
               <div className="dialog-form-footer">
                 {task && editable ? (
@@ -323,30 +328,7 @@ export function TaskDialog({
               style={{ overflow: "hidden" }}
               inert={tab !== "history"}
             >
-              <div className="history-intro">
-                <History size={20} />
-                <div>
-                  <h3>Histórico de alterações</h3>
-                  <p>Veja quem alterou esta tarefa e o que mudou.</p>
-                </div>
-              </div>
-              <HistoryTimeline
-                fieldLabels={fieldLabels}
-                entries={data.history.map((entry) => ({
-                  ...entry,
-                  label:
-                    entry.kind === "created"
-                      ? "criou a tarefa"
-                      : entry.kind === "moved"
-                        ? "movimentou a tarefa"
-                        : entry.kind === "deleted"
-                          ? "excluiu a tarefa"
-                          : "editou a tarefa",
-                }))}
-              />
-              <p className="history-footnote">
-                <CircleHelp size={15} />O histórico é preservado e não pode ser editado.
-              </p>
+              <TaskHistoryPanel data={data} task={task} />
             </motion.div>
           )}
         </div>

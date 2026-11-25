@@ -6,7 +6,12 @@ export function normalizeGoogleMapsEmbedInput(input: string) {
   return frame?.[2].replaceAll("&amp;", "&") ?? value;
 }
 export function googleMapsSearchQuery(prospect: ResearchProspect) {
-  return [prospect.name, prospect.registry?.address, prospect.cityName, prospect.state]
+  return [
+    prospect.name,
+    prospect.registry?.address ?? prospect.businessAddress,
+    prospect.cityName,
+    prospect.state,
+  ]
     .filter(Boolean)
     .join(", ");
 }
@@ -20,6 +25,6 @@ export function googleMapsEmbedUrl(query: string) {
 export function googleMapsProfileUrl(prospect: ResearchProspect) {
   return (
     prospect.google?.mapsUrl ||
-    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([prospect.name, prospect.registry?.address, prospect.cityName, prospect.state].filter(Boolean).join(" "))}`
+    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(googleMapsSearchQuery(prospect))}`
   );
 }

@@ -41,9 +41,14 @@ export async function configureUser(rawInput: unknown) {
   if (!previous) throw businessError("Pessoa não encontrada.");
   if (viewer.id === input.id && input.role !== "admin")
     throw businessError("Você não pode remover o próprio acesso de administrador.");
+  if (input.newPassword !== undefined && !(await consumeSensitiveAttempt(viewer.id)))
+    throw businessError("Muitas tentativas. Aguarde um minuto e tente novamente.");
+  const { newPassword, ...profile } = input;
   return saveUserProfile({
-    ...input,
-    revokeSessions: previous.role !== input.role || previous.email !== input.email,
+    ...profile,
+    passwordHash: newPassword === undefined ? undefined : await hashPassword(newPassword),
+    revokeSessions:
+      newPassword !== undefined || previous.role !== input.role || previous.email !== input.email,
   });
 }
 

@@ -1,7 +1,11 @@
 "use client";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { researchPriorityLabels, researchSegmentLabels } from "@/libs/commercial-research";
+import {
+  researchPriorityLabels,
+  researchSegmentLabels,
+  wineProjectId,
+} from "@/libs/commercial-research";
 import { crmStageLabels } from "@/libs/prospect-crm";
 import { prospectPageHref } from "@/libs/prospect-navigation";
 import type { ResearchProspect } from "@/types/commercial-research";
@@ -18,6 +22,7 @@ export function ProspectCard({
   from: string;
   followupMode?: boolean;
 }) {
+  const wine = projectId === wineProjectId;
   return (
     <article className={`research-prospect ${prospect.priority}`}>
       <div className="research-prospect-top">
@@ -42,7 +47,7 @@ export function ProspectCard({
         aria-label={`Ver perfil de ${prospect.name}`}
       >
         <strong>{prospect.name}</strong>
-        <ProspectSpecialization prospect={prospect} compact />
+        {!wine && <ProspectSpecialization prospect={prospect} compact />}
         <span className="research-profile-level">
           {prospect.enrichmentLevel === "researched"
             ? "Com pesquisa comercial"
@@ -50,9 +55,13 @@ export function ProspectCard({
           {prospect.activityMatch === "secondary" ? " · atividade secundária" : ""}
         </span>
         <div className="research-prospect-facts">
-          <span>
-            CNPJ desde <b>{prospect.registry?.openedAt?.slice(0, 4) ?? "A confirmar"}</b>
-          </span>
+          {wine ? (
+            <span>{prospect.businessAddress ?? prospect.summary}</span>
+          ) : (
+            <span>
+              CNPJ desde <b>{prospect.registry?.openedAt?.slice(0, 4) ?? "A confirmar"}</b>
+            </span>
+          )}
         </div>
         <div className="research-prospect-bottom">
           {followupMode || prospect.isFavorite ? (

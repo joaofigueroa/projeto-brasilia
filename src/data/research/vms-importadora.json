@@ -1,0 +1,182 @@
+{
+  "version": "1.0",
+  "checkedAt": "2026-11-25",
+  "projectId": "019ab04a-1000-7000-8000-000000000002",
+  "catalogUrl": "https://www.instagram.com/vmsimportadora/",
+  "catalogCount": 15,
+  "catalogFamilies": [
+    "Espanha",
+    "França",
+    "Portugal",
+    "Brasil"
+  ],
+  "products": [
+    {
+      "id": "basado",
+      "name": "Crápula Basado en Hechos Reales",
+      "family": "Crápula Wines · Jumilla, Espanha",
+      "brands": [
+        "Crápula Wines"
+      ],
+      "application": "Tinto de Monastrell de vinhas velhas com Syrah e Cabernet. Sugestão para carnes grelhadas.",
+      "url": "https://www.instagram.com/vmsimportadora/",
+      "catalogPage": 5
+    },
+    {
+      "id": "soul",
+      "name": "Crápula Soul Edição Limitada",
+      "family": "Crápula Wines · Jumilla, Espanha",
+      "brands": [
+        "Crápula Wines"
+      ],
+      "application": "Tinto estruturado com passagem por carvalho. Sugestão para carta premium e degustações.",
+      "url": "https://www.instagram.com/vmsimportadora/",
+      "catalogPage": 5
+    },
+    {
+      "id": "crianza",
+      "name": "Gerón Crianza",
+      "family": "Viñas del Carmen · Rioja, Espanha",
+      "brands": [
+        "Viñas del Carmen"
+      ],
+      "application": "Tempranillo com passagem por carvalho. Sugestão para queijos curados e carnes assadas.",
+      "url": "https://www.instagram.com/vmsimportadora/",
+      "catalogPage": 7
+    },
+    {
+      "id": "geron",
+      "name": "Gerón Jovem",
+      "family": "Viñas del Carmen · Rioja, Espanha",
+      "brands": [
+        "Viñas del Carmen"
+      ],
+      "application": "Tinto jovem de Tempranillo com Garnacha. Sugestão para seleção por taça e tábuas de frios.",
+      "url": "https://www.instagram.com/vmsimportadora/",
+      "catalogPage": 7
+    },
+    {
+      "id": "gewurz",
+      "name": "Gewürztraminer BIO",
+      "family": "Domaine Wassler · Alsácia, França",
+      "brands": [
+        "Domaine Wassler"
+      ],
+      "application": "Branco aromático com doçura residual. Sugestão para pratos aromáticos e queijos azuis.",
+      "url": "https://www.instagram.com/vmsimportadora/",
+      "catalogPage": 9
+    },
+    {
+      "id": "riesling",
+      "name": "Riesling BIO",
+      "family": "Domaine Wassler · Alsácia, França",
+      "brands": [
+        "Domaine Wassler"
+      ],
+      "application": "Branco vivo e mineral. Sugestão para peixes, frutos do mar e serviço em taça.",
+      "url": "https://www.instagram.com/vmsimportadora/",
+      "catalogPage": 9
+    },
+    {
+      "id": "frankstein",
+      "name": "Riesling Grand Cru Frankstein BIO",
+      "family": "Domaine Wassler · Alsácia, França",
+      "brands": [
+        "Domaine Wassler"
+      ],
+      "application": "Riesling de vinhas velhas com acidez marcada. Sugestão para carta de brancos e harmonizações.",
+      "url": "https://www.instagram.com/vmsimportadora/",
+      "catalogPage": 10
+    },
+    {
+      "id": "barquinha",
+      "name": "Barquinha Reserva",
+      "family": "Colinas do Douro · Douro, Portugal",
+      "brands": [
+        "Colinas do Douro"
+      ],
+      "application": "Tinto de castas do Douro com estágio em carvalho francês. Sugestão para assados e seleção de reservas.",
+      "url": "https://www.instagram.com/vmsimportadora/",
+      "catalogPage": 12
+    },
+    {
+      "id": "britango",
+      "name": "Britango Reserva",
+      "family": "Colinas do Douro · Douro, Portugal",
+      "brands": [
+        "Colinas do Douro"
+      ],
+      "application": "Tinto de corpo médio com estágio em carvalho. Sugestão para queijos curados e carnes.",
+      "url": "https://www.instagram.com/vmsimportadora/",
+      "catalogPage": 12
+    },
+    {
+      "id": "notavel-b",
+      "name": "Notável Vila Branco",
+      "family": "Rosa Santos Wines · Alentejo, Portugal",
+      "brands": [
+        "Rosa Santos Wines"
+      ],
+      "application": "Corte branco fresco de Arinto, Antão Vaz e Alvarinho. Sugestão para bacalhau, peixes e queijos.",
+      "url": "https://www.instagram.com/vmsimportadora/",
+      "catalogPage": 14
+    },
+    {
+      "id": "notavel-t",
+      "name": "Notável Vila Tinto",
+      "family": "Rosa Santos Wines · Alentejo, Portugal",
+      "brands": [
+        "Rosa Santos Wines"
+      ],
+      "application": "Tinto de boa acidez, com estágio em carvalho e ânforas. Sugestão para charcutaria e assados.",
+      "url": "https://www.instagram.com/vmsimportadora/",
+      "catalogPage": 14
+    },
+    {
+      "id": "pirata",
+      "name": "Pirata e Katita Cabernet Franc",
+      "family": "Peruzzo · Campanha Gaúcha, Brasil",
+      "brands": [
+        "Peruzzo"
+      ],
+      "application": "Cabernet Franc sem filtração e com estágio em carvalho. Sugestão para parrilla e seleção brasileira.",
+      "url": "https://www.instagram.com/vmsimportadora/",
+      "catalogPage": 16
+    },
+    {
+      "id": "elos",
+      "name": "Três Elos Três Tempos Arinarnoa",
+      "family": "Peruzzo · Campanha Gaúcha, Brasil",
+      "brands": [
+        "Peruzzo"
+      ],
+      "application": "Tinto de Arinarnoa com passagem curta por carvalho. Sugestão para degustação de uvas pouco usuais.",
+      "url": "https://www.instagram.com/vmsimportadora/",
+      "catalogPage": 16
+    },
+    {
+      "id": "brut",
+      "name": "Maravilhosa Brut",
+      "family": "Área 15 · Brasil",
+      "brands": [
+        "Área 15"
+      ],
+      "application": "Espumante Chardonnay e Pinot Noir pelo método Charmat. Sugestão para aperitivos e eventos.",
+      "url": "https://www.instagram.com/vmsimportadora/",
+      "catalogPage": 18
+    },
+    {
+      "id": "bossa",
+      "name": "Bossa Nova Chardonnay Sauvignon Blanc",
+      "family": "Área 15 · Brasil",
+      "brands": [
+        "Área 15"
+      ],
+      "application": "Branco de perfil frutado, com passagem parcial por madeira. Sugestão para entradas e aves.",
+      "url": "https://www.instagram.com/vmsimportadora/",
+      "catalogPage": 18
+    }
+  ],
+  "prospects": [],
+  "reports": []
+}

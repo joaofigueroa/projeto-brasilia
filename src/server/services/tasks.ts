@@ -2,6 +2,7 @@ import "server-only";
 import { v7 } from "uuid";
 import { addDays } from "@/libs/calendar";
 import { priorityLabels, statusLabels } from "@/libs/presentation";
+import { neonStorageConfigured } from "@/server/integrations/neon-storage";
 import { listProjects } from "@/server/repositories/projects";
 import {
   findTask,
@@ -12,6 +13,7 @@ import {
   type StoredTask,
   saveTask,
   softDeleteTask,
+  taskHistoryPageSize,
 } from "@/server/repositories/tasks";
 import { listUsers } from "@/server/repositories/users";
 import { businessError } from "@/server/security/business-error";
@@ -109,6 +111,8 @@ export async function getBoard(rawInput: unknown): Promise<BoardData> {
     viewer,
     selectedTask,
     history,
+    hasOlderHistory: history.length === taskHistoryPageSize,
+    taskStorageConfigured: neonStorageConfigured(),
     weekStart: input.week,
     projectId: input.project ?? null,
     assigneeId: input.assignee ?? null,

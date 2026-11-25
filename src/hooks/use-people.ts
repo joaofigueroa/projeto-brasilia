@@ -15,11 +15,16 @@ export function usePersonForm(user: PublicUser | null, onSaved: () => void) {
       jobTitle: String(form.get("jobTitle") ?? ""),
       role: String(form.get("role") ?? "collaborator"),
     };
+    const password = String(form.get("password") ?? "");
+    if (user && password !== String(form.get("passwordConfirmation") ?? "")) {
+      setError("A confirmação deve ser igual à nova senha.");
+      return;
+    }
     setError("");
     startTransition(async () => {
       const result = user
-        ? await configureUserAction({ ...input, id: user.id })
-        : await createUserAction({ ...input, password: String(form.get("password") ?? "") });
+        ? await configureUserAction({ ...input, id: user.id, newPassword: password || undefined })
+        : await createUserAction({ ...input, password });
       if (!result.success) {
         setError(result.error);
         return;

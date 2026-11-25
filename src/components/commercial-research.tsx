@@ -5,9 +5,12 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useId, useState } from "react";
 import type { IntelligenceController } from "@/hooks/use-intelligence";
 import {
+  automotiveResearchSegments,
   researchDate,
   researchPriorityLabels,
   researchSegmentLabels,
+  wineProjectId,
+  wineResearchSegments,
 } from "@/libs/commercial-research";
 import { crmStageLabels, crmStages } from "@/libs/prospect-crm";
 import { prospectPageHref } from "@/libs/prospect-navigation";
@@ -40,15 +43,19 @@ function ResearchCities({ research, controller }: ResearchProps) {
     </div>
   );
 }
-function ResearchCoverage({ research, controller }: ResearchProps) {
+function ResearchCoverage({
+  research,
+  controller,
+  wine = false,
+}: ResearchProps & { wine?: boolean }) {
   return (
     <div className="research-coverage">
       <FileSearch size={24} />
       <h3>Pesquisa disponível em Brasília e Goiânia</h3>
       <p>
-        Selecione uma das cidades para consultar empresas e análise comercial. O levantamento
-        cadastral cobre os CNPJs ativos nos CNAEs definidos, dentro dessas cidades. Perfis
-        comerciais pesquisados são identificados separadamente.
+        {wine
+          ? "Selecione uma das cidades para consultar os estabelecimentos pesquisados."
+          : "Selecione uma das cidades para consultar as empresas e o levantamento cadastral local."}
       </p>
       <ResearchCities research={research} controller={controller} />
     </div>
@@ -100,22 +107,28 @@ export function ResearchedProspects({
   };
   const total = research.live?.stats.total ?? research.prospects.length;
   const favoritesOnly = research.live?.favoritesOnly ?? false;
+  const wine = projectId === wineProjectId;
+  const segments = wine ? wineResearchSegments : automotiveResearchSegments;
   const apply = (changes: Record<string, string | null>) =>
     controller.navigate({ researchPage: null, researchQuery: query || null, ...changes });
-  if (!research.reports.length)
-    return <ResearchCoverage research={research} controller={controller} />;
+  if (!research.selectedCities.length)
+    return <ResearchCoverage research={research} controller={controller} wine={wine} />;
   return (
     <div className="commercial-research">
       {!followupMode && <ResearchEdition research={research} />}
       <div className="research-intro">
         <div>
-          <span className="section-caption">Prospecção · setor automotivo</span>
+          <span className="section-caption">
+            {wine ? "Prospecção · vinhos" : "Prospecção · setor automotivo"}
+          </span>
           <h3 id={`${id}-results`} tabIndex={-1}>
             {followupMode
               ? "Acompanhamento de clientes"
               : favoritesOnly
                 ? "Clientes favoritados"
-                : "Empresas para avaliar"}
+                : wine
+                  ? "Possíveis clientes"
+                  : "Empresas para avaliar"}
           </h3>
         </div>
         <span className="research-count">
@@ -128,9 +141,11 @@ export function ResearchedProspects({
           ? "Etapas comerciais dos seus clientes favoritados. Abra o acompanhamento para registrar comentários, documentos e mudanças de etapa."
           : favoritesOnly
             ? "Sua seleção de empresas neste território. Use a estrela para remover um cliente dos favoritos."
-            : "Estabelecimentos encontrados no cadastro e perfis com pesquisa comercial. Abra cada perfil para consultar os dados da empresa, fontes e oportunidades comerciais."}
+            : wine
+              ? "Estabelecimentos com perfil para o catálogo da VMS. Abra o perfil para consultar as fontes e os rótulos sugeridos."
+              : "Estabelecimentos encontrados no cadastro e perfis com pesquisa comercial. Abra cada perfil para consultar os dados da empresa, fontes e oportunidades comerciais."}
       </p>
-      {research.live && !favoritesOnly && (
+      {research.live && !favoritesOnly && !wine && (
         <div className="research-census-summary">
           <span>
             <strong>{research.live.stats.primary.toLocaleString("pt-BR")}</strong> com atividade
@@ -146,7 +161,7 @@ export function ResearchedProspects({
           </span>
         </div>
       )}
-      {!favoritesOnly && (
+      {!favoritesOnly && !wine && (
         <p className="research-period-note">
           Os perfis cadastrais não comprovam atuação em linha leve, especialização ou demanda. O
           período de veículos permanece independente da competência do cadastro. Brasília
@@ -164,7 +179,7 @@ export function ResearchedProspects({
           <Search size={15} aria-hidden="true" />
           <input
             aria-label="Buscar empresas pesquisadas"
-            placeholder="Empresa, marca, CNPJ ou bairro"
+            placeholder={wine ? "Empresa ou bairro" : "Empresa, marca, CNPJ ou bairro"}
             value={query}
             onChange={(event) => setDraft({ base: filters.query, value: event.target.value })}
           />
@@ -185,9 +200,9 @@ export function ResearchedProspects({
             onChange={(event) => apply({ researchSegment: event.target.value || null })}
           >
             <option value="">Todos</option>
-            {Object.entries(researchSegmentLabels).map(([key, label]) => (
+            {segments.map((key) => (
               <option key={key} value={key}>
-                {label}
+                {researchSegmentLabels[key]}
               </option>
             ))}
           </select>
@@ -228,28 +243,32 @@ export function ResearchedProspects({
         )}
       </form>
       <div className="research-extra-filters">
-        <label>
-          Perfil
-          <select
-            aria-label="Filtrar nível de pesquisa"
-            value={filters.enrichment}
-            disabled={controller.navigating}
-            onChange={(event) => apply({ researchEnrichment: event.target.value || null })}
-          >
-            <option value="">Cadastro e pesquisa comercial</option>
-            <option value="researched">Com pesquisa comercial</option>
-            <option value="registry">Somente cadastro</option>
-          </select>
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={filters.primaryOnly}
-            disabled={controller.navigating}
-            onChange={(event) => apply({ researchPrimary: event.target.checked ? "1" : null })}
-          />
-          Somente atividade principal
-        </label>
+        {!wine && (
+          <>
+            <label>
+              Perfil
+              <select
+                aria-label="Filtrar nível de pesquisa"
+                value={filters.enrichment}
+                disabled={controller.navigating}
+                onChange={(event) => apply({ researchEnrichment: event.target.value || null })}
+              >
+                <option value="">Cadastro e pesquisa comercial</option>
+                <option value="researched">Com pesquisa comercial</option>
+                <option value="registry">Somente cadastro</option>
+              </select>
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={filters.primaryOnly}
+                disabled={controller.navigating}
+                onChange={(event) => apply({ researchPrimary: event.target.checked ? "1" : null })}
+              />
+              Somente atividade principal
+            </label>
+          </>
+        )}
         <button
           className="text-button"
           type="button"
@@ -313,28 +332,39 @@ export function ResearchedProspects({
       )}
       <details className="research-method">
         <summary>Critérios da pesquisa e cobertura</summary>
-        <p>
-          Cadastro de CNPJs ativos no município, com CNAEs principais ou secundários 4520-0/01
-          (mecânica), 4520-0/03 (elétrica), 4520-0/04 (alinhamento), 4530-7/01 (atacado de peças
-          novas) ou 4530-7/03 (varejo de peças novas). A atividade secundária pode não ser exercida
-          atualmente. CNAE não comprova foco em automóveis de linha leve; perfis sem fonte comercial
-          permanecem em validação.
-        </p>
-        <p>
-          O levantamento cadastral usa um espelho público dos arquivos da Receita Federal, com
-          competência e progresso identificados. A cobertura não inclui empresas informais,
-          cadastros sem esses CNAEs ou alterações posteriores à competência. Pesquisa comercial e
-          cadastro são níveis distintos; a especialização só é confirmada com fonte. Nenhuma empresa
-          foi contatada.
-        </p>
-        <p>
-          Abertura do CNPJ é distinta da fundação da marca. Capital pertence à pessoa jurídica,
-          inclusive em filiais, e não mede receita ou orçamento de compras. “Priorizar contato” e
-          “Desenvolver conta” são hipóteses de abordagem.
-        </p>
-        <ResearchLink href={research.catalogUrl}>
-          Catálogo 3C Automotive · referências e aplicações
-        </ResearchLink>
+        {wine ? (
+          <p>
+            Seleção de restaurantes com carta ou serviço de vinho, supermercados e empórios com
+            adega, lojas especializadas e distribuidoras presentes em Brasília ou Goiânia. As
+            sugestões usam o Catálogo VMS Importadora 2026 V2. Interesse de compra e condições
+            comerciais ficam a confirmar.
+          </p>
+        ) : (
+          <>
+            <p>
+              Cadastro de CNPJs ativos no município, com CNAEs principais ou secundários 4520-0/01
+              (mecânica), 4520-0/03 (elétrica), 4520-0/04 (alinhamento), 4530-7/01 (atacado de peças
+              novas) ou 4530-7/03 (varejo de peças novas). A atividade secundária pode não ser
+              exercida atualmente. CNAE não comprova foco em automóveis de linha leve; perfis sem
+              fonte comercial permanecem em validação.
+            </p>
+            <p>
+              O levantamento cadastral usa um espelho público dos arquivos da Receita Federal, com
+              competência e progresso identificados. A cobertura não inclui empresas informais,
+              cadastros sem esses CNAEs ou alterações posteriores à competência. Pesquisa comercial
+              e cadastro são níveis distintos; a especialização só é confirmada com fonte. Nenhuma
+              empresa foi contatada.
+            </p>
+            <p>
+              Abertura do CNPJ é distinta da fundação da marca. Capital pertence à pessoa jurídica,
+              inclusive em filiais, e não mede receita ou orçamento de compras. “Priorizar contato”
+              e “Desenvolver conta” são hipóteses de abordagem.
+            </p>
+            <ResearchLink href={research.catalogUrl}>
+              Catálogo 3C Automotive · referências e aplicações
+            </ResearchLink>
+          </>
+        )}
         <ResearchCities research={research} controller={controller} />
       </details>
     </div>

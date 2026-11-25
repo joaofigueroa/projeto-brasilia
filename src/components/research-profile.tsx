@@ -21,6 +21,16 @@ export function CatalogReferences({
     <div className="catalog-references">
       {ids.map((id) => {
         const product = products.find((item) => item.id === id);
+        if (product?.catalogPage) {
+          return (
+            <div className="catalog-reference" key={id}>
+              <span>{product.family}</span>
+              <strong>{product.name}</strong>
+              <small>{product.application}</small>
+              <small>Catálogo VMS 2026 · p. {product.catalogPage}</small>
+            </div>
+          );
+        }
         return product ? (
           <a
             key={id}

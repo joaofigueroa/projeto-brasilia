@@ -4287,6 +4287,114 @@ button:active:not(:disabled),
 .crm-files-heading .crm-section-heading {
   margin: 0;
 }
+.project-detail .project-detail-heading {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 18px;
+  margin: 26px 0 24px;
+}
+
+.project-detail-nav {
+  display: flex;
+  border-bottom: 1px solid var(--line);
+}
+
+.project-detail-nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  color: var(--ink);
+  border-bottom: 2px solid var(--green);
+  font-weight: 650;
+}
+
+.project-file-panel {
+  margin-top: 24px;
+  padding: clamp(16px, 3vw, 28px);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.project-file-panel h2 {
+  font-size: 20px;
+  margin: 0 0 12px;
+}
+
+.project-files-empty {
+  padding: 22px 0 0;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.workspace-attachment-upload {
+  margin-bottom: 18px;
+}
+
+.workspace-attachment-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px 14px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.workspace-attachment-success,
+.workspace-attachment-errors {
+  margin: 10px 0 0;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.workspace-attachment-success {
+  color: var(--green);
+}
+
+.workspace-attachment-errors {
+  padding-left: 18px;
+  color: var(--ink);
+}
+
+.task-form .task-attachment-shortcut {
+  align-self: flex-start;
+  margin-top: 16px;
+}
+
+.history-attachment {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 8px;
+  padding: 8px 10px;
+  max-width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  text-align: left;
+}
+
+.history-attachment:hover {
+  border-color: var(--green);
+}
+
+.history-attachment > span {
+  overflow-wrap: anywhere;
+}
+
+.history-attachment > svg,
+.history-attachment > small {
+  flex-shrink: 0;
+}
+
+.history-attachment > small {
+  color: var(--muted);
+}
+
 .crm-file-pagination {
   display: flex;
   justify-content: space-between;

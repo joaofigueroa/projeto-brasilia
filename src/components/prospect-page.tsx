@@ -9,6 +9,7 @@ import {
   researchDate,
   researchPriorityLabels,
   researchSegmentLabels,
+  wineProjectId,
 } from "@/libs/commercial-research";
 import type { getProspectPage } from "@/server/services/prospect-page";
 import { Dialog } from "./dialog";
@@ -30,15 +31,20 @@ const sections = [
 export function ProspectPage({
   data,
   backHref,
-  initialSection = "registry",
+  initialSection,
 }: {
   data: Data;
   backHref: string;
   initialSection?: string;
 }) {
   const { prospect, project, viewer } = data;
+  const wine = project.id === wineProjectId;
   const [section, setSection] = useState<string>(
-    sections.some((item) => item.id === initialSection) ? initialSection : "registry",
+    initialSection && sections.some((item) => item.id === initialSection)
+      ? initialSection
+      : wine
+        ? "commercial"
+        : "registry",
   );
   const [editing, setEditing] = useState(false);
   const tabId = useId();
@@ -108,7 +114,7 @@ export function ProspectPage({
           </div>
           <h2 id={`${tabId}-overview`}>Perfil da empresa</h2>
           <p className="prospect-page-description">{prospect.summary}</p>
-          <ProspectSpecialization prospect={prospect} />
+          {!wine && <ProspectSpecialization prospect={prospect} />}
           <dl className="prospect-contact-list">
             {prospect.phone && (
               <div>
@@ -130,6 +136,14 @@ export function ProspectPage({
                     {new URL(prospect.website).hostname.replace(/^www\./, "")}
                   </ResearchLink>
                 </dd>
+              </div>
+            )}
+            {prospect.businessAddress && (
+              <div className="wide">
+                <dt>
+                  <MapPin size={14} /> Localização comercial
+                </dt>
+                <dd>{prospect.businessAddress}</dd>
               </div>
             )}
             {prospect.registry && (
@@ -229,10 +243,12 @@ export function ProspectPage({
                 Capital social pertence à pessoa jurídica, inclusive em filiais. Não representa
                 faturamento ou orçamento de compras.
               </p>
-              <p>
-                O cadastro pode ter defasagem. A atividade declarada não comprova demanda nem
-                atuação em automóveis de passeio.
-              </p>
+              {!wine && (
+                <p>
+                  O cadastro pode ter defasagem. A atividade declarada não comprova demanda nem
+                  atuação em automóveis de passeio.
+                </p>
+              )}
             </aside>
           </div>
         )}
@@ -240,12 +256,13 @@ export function ProspectPage({
           <div className="prospect-detail-grid">
             <section>
               <span className="section-caption">Hipótese comercial</span>
-              <h2>Relação com o catálogo 3C</h2>
+              <h2>{wine ? "Relação com o catálogo VMS" : "Relação com o catálogo 3C"}</h2>
               <p>{prospect.rationale}</p>
               <CatalogReferences products={data.products} ids={prospect.productIds} />
               <p className="research-footnote">
-                Conferir modelo, ano, motor, câmbio e equivalência OEM antes de cotar. Não há
-                demanda confirmada para a frota de clientes da empresa.
+                {wine
+                  ? "Confirme interesse, disponibilidade dos rótulos e condições comerciais com o comprador."
+                  : "Conferir modelo, ano, motor, câmbio e equivalência OEM antes de cotar. Não há demanda confirmada para a frota de clientes da empresa."}
               </p>
             </section>
             <aside className="prospect-detail-aside">

@@ -8,6 +8,7 @@ export type HistoryTimelineEntry = {
   label: string;
   changes: Change[];
   body?: string;
+  extra?: ReactNode;
 };
 export function HistoryTimeline({
   entries,
@@ -29,6 +30,7 @@ export function HistoryTimeline({
             </p>
             <time dateTime={entry.createdAt}>{timestampLabel(entry.createdAt)}</time>
             {entry.body && <p className="history-comment">{entry.body}</p>}
+            {entry.extra}
             {entry.changes.length > 0 && (
               <div className="history-changes">
                 {entry.changes.map((change) => (
@@ -46,3 +48,5 @@ export function HistoryTimeline({
     </ol>
   );
 }
+
+import type { ReactNode } from "react";

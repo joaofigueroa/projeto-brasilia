@@ -47,6 +47,46 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllGlobals());
 afterAll(() => closeDatabase());
 describe("live research authorization and storage", () => {
+  it("shows VMS profiles by city and segment with their own catalog and personal favorites", async () => {
+    const { wineProjectId } = await import("@/libs/commercial-research");
+    const { getIntelligence } = await import("@/server/services/intelligence");
+    const wine = await getIntelligence({ project: wineProjectId, uf: "GO" });
+    const prospects = wine.tabs.find((tab) => tab.kind === "prospects");
+    const favorites = wine.tabs.find((tab) => tab.kind === "favorites");
+    expect(prospects).toBeDefined();
+    expect(favorites).toBeDefined();
+    const goiania = { project: wineProjectId, tab: prospects?.id, uf: "GO", city: "5208707" };
+    const list = await getIntelligence({ ...goiania, researchSize: 10, researchPage: 2 });
+    expect(list.research?.live?.pagination).toMatchObject({ total: 20, page: 2, pages: 2 });
+    expect(list.research?.prospects).toHaveLength(10);
+    expect(list.research?.prospects.every((profile) => profile.cityCode === "5208707")).toBe(true);
+    const brasilia = await getIntelligence({
+      project: wineProjectId,
+      tab: prospects?.id,
+      uf: "DF",
+      city: "5300108",
+      researchSegment: "distributor",
+    });
+    expect(brasilia.research?.live?.stats).toMatchObject({ total: 16, filtered: 4 });
+    const [prospect] = brasilia.research?.prospects ?? [];
+    const page = await prospectPages.getProspectPage(prospect.databaseId ?? "", wineProjectId);
+    expect(page?.prospect.sources.length).toBeGreaterThan(0);
+    expect(page?.products.filter((product) => prospect.productIds.includes(product.id))).toEqual(
+      expect.arrayContaining([expect.objectContaining({ catalogPage: expect.any(Number) })]),
+    );
+    const favoriteScope = { project: wineProjectId, tab: favorites?.id, uf: "DF" };
+    await prospectPages.favoriteProspect({
+      projectId: wineProjectId,
+      prospectId: prospect.databaseId,
+      favorite: true,
+    });
+    expect(
+      (await getIntelligence(favoriteScope)).research?.prospects.map((profile) => profile.id),
+    ).toEqual([prospect.id]);
+    session.viewer = collaborator;
+    expect((await getIntelligence(favoriteScope)).research?.prospects).toEqual([]);
+    expect(await prospectPages.getProspectPage(prospect.databaseId ?? "", projectId)).toBeNull();
+  });
   it("paginates the seeded public profiles and rejects collaborator writes before network calls", async () => {
     const filters = researchListFiltersSchema.parse({});
     const profiles = await repository.listResearchProspects(projectId, ["5300108"], filters, 0);
@@ -108,7 +148,7 @@ describe("live research authorization and storage", () => {
         ...input,
         projectId: "019ab04a-1000-7000-8000-000000000002",
       }),
-    ).rejects.toThrow("pertence");
+    ).rejects.toThrow("Perfil não encontrado neste projeto.");
     session.viewer = collaborator;
     await expect(services.saveProspectGoogleNote({ ...input, version: 1 })).rejects.toThrow(
       "Somente administradores",

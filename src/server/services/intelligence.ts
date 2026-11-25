@@ -38,6 +38,7 @@ function fail(message: string): never {
   throw businessError(message);
 }
 const retiredAutomotiveTabs = new Set([
+  "01a1ffdc-a669-7b05-bef5-0d7d1d54dd32",
   "01a1ffdc-a669-7124-97ef-f9b6e526ff5b",
   "01a1ffdc-a669-7c8b-945d-16298a91a350",
   "01a2071b-1000-7000-8000-000000000001",

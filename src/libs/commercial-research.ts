@@ -5,10 +5,28 @@ import type {
 } from "@/types/commercial-research";
 import type { Territory } from "@/types/intelligence";
 
+export const wineProjectId = "019ab04a-1000-7000-8000-000000000002";
+export const automotiveResearchSegments = ["workshop", "distributor", "parts_store"] as const;
+export const wineResearchSegments = [
+  "supermarket",
+  "restaurant",
+  "wine_shop",
+  "distributor",
+] as const;
+export const researchSegments = [
+  ...automotiveResearchSegments,
+  "supermarket",
+  "restaurant",
+  "wine_shop",
+] as const;
+
 export const researchSegmentLabels = {
   workshop: "Oficina",
   distributor: "Distribuidora",
   parts_store: "Autopeças",
+  supermarket: "Supermercado / empório",
+  restaurant: "Restaurante / wine bar",
+  wine_shop: "Loja de vinhos",
 };
 export const researchPriorityLabels = {
   first: "Priorizar contato",
@@ -36,6 +54,13 @@ export function selectCommercialResearch(
     );
   };
   const { projectId: _projectId, ...data } = research;
+  const coverage = [
+    { cityCode: "5300108", cityName: "Brasília", state: "DF" },
+    { cityCode: "5208707", cityName: "Goiânia", state: "GO" },
+  ].map((city) => ({
+    ...city,
+    count: research.prospects.filter((p) => p.cityCode === city.cityCode).length,
+  }));
   return {
     ...data,
     prospects: research.prospects
@@ -44,20 +69,8 @@ export function selectCommercialResearch(
         (a, b) => order[a.priority] - order[b.priority] || a.name.localeCompare(b.name, "pt-BR"),
       ),
     reports: research.reports.filter((r) => matches(r.cityCode)),
-    coverage: [
-      {
-        cityCode: "5300108",
-        cityName: "Brasília",
-        state: "DF",
-        count: research.prospects.filter((p) => p.cityCode === "5300108").length,
-      },
-      {
-        cityCode: "5208707",
-        cityName: "Goiânia",
-        state: "GO",
-        count: research.prospects.filter((p) => p.cityCode === "5208707").length,
-      },
-    ],
+    coverage,
+    selectedCities: coverage.filter((city) => matches(city.cityCode)).map((city) => city.cityCode),
   };
 }
 export function filterResearchProspects(
@@ -88,6 +101,7 @@ export function filterResearchProspects(
               formatCnpj(candidate.cnpj),
             ]),
             p.registry?.address ?? "",
+            p.businessAddress ?? "",
           ].join(" "),
         ).includes(query)),
   );
