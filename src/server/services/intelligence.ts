@@ -4,6 +4,7 @@ import { v7 } from "uuid";
 import { automotiveProjectId } from "@/libs/company-census";
 import { parseCsv } from "@/libs/csv";
 import { resolveTerritory } from "@/libs/territories";
+import { getCarRegistrations } from "@/server/integrations/car-registrations";
 import { getMunicipalMap } from "@/server/integrations/municipal-maps";
 import {
   getMapStatistics,
@@ -128,6 +129,7 @@ export async function getIntelligence(raw: unknown): Promise<IntelligenceData> {
     records,
     research,
     official,
+    registrations: getCarRegistrations(scope, input.years),
     notices,
     states: getMapStatistics(input.years),
     cities: getMunicipalStatistics(scope.uf, input.years).sort((a, b) =>

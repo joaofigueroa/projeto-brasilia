@@ -2,6 +2,7 @@ import "server-only";
 import fleetSource from "@/data/official/fleet.json";
 import { cities, states } from "@/libs/territories";
 import type { OfficialContext, Territory } from "@/types/intelligence";
+import { getMapCarRegistrations } from "./car-registrations";
 
 type FleetData = {
   headers: string[];
@@ -74,6 +75,7 @@ export function getMapStatistics(year: number | number[]) {
   return states.map((s) => ({
     ...s,
     fleet: carAverage(years.map((y) => fleet.years[String(y)]?.states[s.code])),
+    registrations: getMapCarRegistrations({ uf: s.code, city: null, region: null }, years),
   }));
 }
 export function getMunicipalStatistics(uf: string | null, years: number[]) {
@@ -83,6 +85,7 @@ export function getMunicipalStatistics(uf: string | null, years: number[]) {
         .map((city) => ({
           ...city,
           fleet: carAverage(years.map((y) => fleet.years[String(y)]?.cities[city.code])),
+          registrations: getMapCarRegistrations({ uf, city: city.code, region: null }, years),
         }))
     : [];
 }

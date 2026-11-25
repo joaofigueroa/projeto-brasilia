@@ -7,9 +7,11 @@ import { periodLabel } from "@/libs/analysis-period";
 export function AnalysisPeriodFilter({
   years,
   controller,
+  registrationYears,
 }: {
   years: number[];
   controller: IntelligenceController;
+  registrationYears?: number[];
 }) {
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState(years);
@@ -100,7 +102,9 @@ export function AnalysisPeriodFilter({
                       onChange={() => toggle(year)}
                     />
                     <span>{year}</span>
-                    {[2022, 2023, 2024].includes(year) && <small>Base inicial</small>}
+                    {registrationYears
+                      ? registrationYears.includes(year) && <small>Total UF</small>
+                      : [2022, 2023, 2024].includes(year) && <small>Base inicial</small>}
                   </label>
                 ))}
               </div>

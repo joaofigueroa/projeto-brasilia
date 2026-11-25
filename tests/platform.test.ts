@@ -424,6 +424,24 @@ describe("project intelligence", () => {
     expect(getOfficialContext(resolveTerritory({ uf: "DF" }), 2026).fleet).toBeNull();
     expect(() => resolveTerritory({ uf: "DF", city: "5208707" })).toThrow();
   });
+  it("serves matching map and selected-state automobile registration totals with the requested years", async () => {
+    const { getIntelligence } = await services();
+    const project = "019ab04a-1000-7000-8000-000000000003";
+    const selected = await tab("vehicles", project);
+    const data = await getIntelligence({
+      project,
+      tab: selected.id,
+      uf: "GO",
+      years: "2022,2024",
+      metric: "registrations",
+    });
+    expect(data.registrations).toMatchObject({ total: 106399, complete: true });
+    expect(data.states.find((row) => row.code === "GO")?.registrations).toBe(
+      data.registrations.total,
+    );
+    expect(data.models.rows).toEqual([]);
+    expect(data.registrations.source.name).toContain("Anfavea");
+  });
   it("stores records by project, tab, territory and year without mixing other businesses", async () => {
     const { saveIntelligenceRecord, getIntelligence } = await services();
     const selected = await tab();

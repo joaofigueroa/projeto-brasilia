@@ -6,7 +6,8 @@ import statePaths from "@/data/brazil-map.json";
 import type { IntelligenceController } from "@/hooks/use-intelligence";
 import { useMapViewport } from "@/hooks/use-map-viewport";
 import { periodLabel } from "@/libs/analysis-period";
-import { compactNumber, formatNumber } from "@/libs/intelligence-presentation";
+import { automotiveProjectId } from "@/libs/company-census";
+import { formatNumber } from "@/libs/intelligence-presentation";
 import type { IntelligenceData } from "@/types/intelligence";
 import { StateFlag } from "./state-flag";
 export function BrazilMap({
@@ -17,9 +18,20 @@ export function BrazilMap({
   controller: IntelligenceController;
 }) {
   const [hovered, setHovered] = useState<string | null>(null);
-  const [layer, setLayer] = useState<"population" | "fleet">(
-    data.project.slug === "pecas-automotivas" ? "fleet" : "population",
-  );
+  const automotive = data.project.id === automotiveProjectId;
+  const [preference, setPreference] = useState<{
+    project: string;
+    layer: "population" | "fleet" | "registrations";
+  } | null>(null);
+  const layer =
+    preference?.project === data.project.id
+      ? preference.layer
+      : automotive
+        ? "registrations"
+        : "population";
+  function setLayer(next: "population" | "fleet" | "registrations") {
+    setPreference({ project: data.project.id, layer: next });
+  }
   const viewport = useMapViewport();
   const { zoom } = viewport;
   const [pointer, setPointer] = useState<{ x: number; y: number } | null>(null);
@@ -49,6 +61,10 @@ export function BrazilMap({
     data.years.length > 1
       ? `automóveis · média anual · ${period}`
       : `automóveis registrados · dez/${period}`;
+  const vehicleDescription =
+    layer === "registrations"
+      ? `emplacamentos de automóveis · ${data.years.length > 1 ? "soma dos anos · " : ""}${period}`
+      : fleetDescription;
   function select(code: string) {
     if (controller.navigating) return;
     setHovered(code);
@@ -76,7 +92,7 @@ export function BrazilMap({
   }
   const title = (shape: (typeof features)[number]) => {
     const value = statistics.get(shape.code)?.[layer];
-    return `${shape.name}${value === null || value === undefined ? ", sem dado para o período completo" : `, ${formatNumber(value)} ${layer === "population" ? "habitantes · Censo 2022" : fleetDescription}`}`;
+    return `${shape.name}${value === null || value === undefined ? ", sem dado para o período completo" : `, ${formatNumber(value)} ${layer === "population" ? "habitantes · Censo 2022" : vehicleDescription}`}`;
   };
   return (
     <section
@@ -134,8 +150,12 @@ export function BrazilMap({
         >
           População <small>2022</small>
         </button>
-        <button type="button" aria-pressed={layer === "fleet"} onClick={() => setLayer("fleet")}>
-          Automóveis <small>{period}</small>
+        <button
+          type="button"
+          aria-pressed={layer === (automotive ? "registrations" : "fleet")}
+          onClick={() => setLayer(automotive ? "registrations" : "fleet")}
+        >
+          {automotive ? "Emplacamentos" : "Frota de automóveis"} <small>{period}</small>
         </button>
       </div>
       {
@@ -338,7 +358,7 @@ export function BrazilMap({
                 {activeStats?.[layer] === null
                   ? "Sem dado para o período completo"
                   : activeStats
-                    ? `${compactNumber(activeStats[layer] ?? 0)} ${layer === "population" ? "habitantes · Censo 2022" : fleetDescription}`
+                    ? `${formatNumber(activeStats[layer] ?? 0)} ${layer === "population" ? "habitantes · Censo 2022" : vehicleDescription}`
                     : municipal
                       ? "Selecione um município"
                       : "Selecione uma UF no mapa"}
@@ -358,6 +378,13 @@ export function BrazilMap({
         <p className="bi-map-level-hint">
           Sem cobertura de automóveis para todos os anos selecionados. As áreas hachuradas continuam
           clicáveis. A base do mapa cobre 2022–2024; ajuste os anos ou escolha População 2022.
+        </p>
+      )}
+      {layer === "registrations" && (
+        <p className="bi-map-level-hint">
+          {municipal && data.territory.uf !== "DF"
+            ? "Totais de emplacamentos disponíveis por UF. Os municípios não herdam o total estadual; use Estados para consultá-lo."
+            : "Emplacamentos anuais de automóveis · 27 UFs · 2016–2025. Anos sem publicação permanecem sem dado."}
         </p>
       )}
       <div className="bi-map-legend">
@@ -384,7 +411,7 @@ export function BrazilMap({
           IBGE
         </a>{" "}
         · {data.territory.uf === "DF" && municipal ? "DF: recorte de Brasília · " : ""}indicadores:
-        IBGE e Senatran
+        {layer === "registrations" ? "IBGE e Anfavea" : "IBGE e Senatran"}
       </div>
     </section>
   );

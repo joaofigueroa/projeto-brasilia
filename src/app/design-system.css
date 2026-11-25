@@ -4049,6 +4049,74 @@ button:active:not(:disabled),
   padding-bottom: 25px;
   border-bottom: 1px solid var(--line);
 }
+.car-registration-summary {
+  padding: 22px 0;
+  border-bottom: 1px solid var(--line);
+}
+.car-registration-summary.is-detailed {
+  padding-top: 0;
+  margin-bottom: 28px;
+}
+.car-registration-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+.car-registration-heading h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+.car-registration-heading p,
+.car-registration-note {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.car-registration-total {
+  font-size: 30px;
+  line-height: 1.15;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.car-registration-total small {
+  display: block;
+  margin-top: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--muted);
+}
+.car-registration-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 15px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.car-registration-footer a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.car-registration-series {
+  margin-top: 18px;
+}
+@media (max-width: 600px) {
+  .car-registration-heading {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .car-registration-total {
+    font-size: 26px;
+  }
+}
 .crm-stage-header h2 {
   margin: 8px 0;
 }

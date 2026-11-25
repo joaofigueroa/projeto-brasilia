@@ -93,3 +93,13 @@ O extrator `scripts/prepare-registration-source-audit.py` recebe os originais `a
 4. Completar os demais cruzamentos com exportações públicas dos painéis, arquivos regionais e solicitações específicas de tabelas agregadas. Site indisponível é pendência de acesso; esquema não conferido é pendência de validação.
 
 Minuta técnica para solicitar dados ao publicador, **não enviada**: “Solicito tabela agregada mensal de primeiros registros de automóveis zero quilômetro, de janeiro/2022 a dezembro/2025 e meses fechados de 2026, para o total da UF e sua capital identificada pelo IBGE. Dimensões: ano/mês do primeiro registro, município de registro, marca, modelo e tipo de veículo; medida: quantidade. Favor distinguir novos de transferências/licenciamento anual e informar classificação, revisões, cobertura e dicionário. Não são necessários placa, chassi, Renavam individual, CPF/CNPJ, endereço ou identificação de proprietários.”
+
+## Integração dos totais estaduais — 25/11/2026
+
+Diagnóstico: a camada “Automóveis” do mapa era estoque de dezembro da Senatran, enquanto a aba Veículos consumia publicações de emplacamentos por modelo. Os 270 totais estaduais extraídos nesta pesquisa ainda não participavam do runtime. O clique selecionava corretamente o território; a aparente divergência vinha de indicadores e coberturas diferentes.
+
+`state-car-registrations.json` passa a publicar os 27 totais anuais de automóveis de 2016–2025, com reconciliação dos dez totais nacionais da tabela 2.2.2 da Anfavea (página 76 do PDF; página impressa 74). A camada inicial da 3C Automotive agora é **Emplacamentos**, usa essa mesma série no hover e no painel, e soma somente os anos explicitamente selecionados. A aplicação exibe total, série anual, média dos anos disponíveis, fonte e lacunas. O mapa exige cobertura do período completo para colorir uma UF; totais parciais no painel são identificados.
+
+Reprodução: `python scripts/prepare-registration-totals.py DIRETORIO/anfavea-2026.pdf` (pdfplumber). O extrator reutiliza a validação da pesquisa, conserva SHA-256 e exclui comerciais leves, caminhões, ônibus e demais classes.
+
+Essa tabela não traz modelos nem municípios. A cobertura por modelo continua independente e não é apresentada como completa. Municípios não recebem os totais da UF; o recorte estatístico de Brasília corresponde ao DF inteiro. Nenhum estoque foi convertido em venda ou emplacamento.

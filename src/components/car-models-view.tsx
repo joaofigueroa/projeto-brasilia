@@ -8,6 +8,7 @@ import { periodLabel } from "@/libs/analysis-period";
 import { formatNumber } from "@/libs/intelligence-presentation";
 import type { IntelligenceData } from "@/types/intelligence";
 import { CarModelTerritories } from "./car-model-territories";
+import { CarRegistrationSummary } from "./car-registration-summary";
 import { Pagination } from "./pagination";
 export function CarModelsView({
   data,
@@ -47,6 +48,14 @@ export function CarModelsView({
   }
   return (
     <>
+      {report.measure === "registrations" && (
+        <CarRegistrationSummary
+          report={data.registrations}
+          territory={data.territory.label}
+          years={data.years}
+          detailed
+        />
+      )}
       <div className="bi-panel-intro">
         <h3 id={`${coverageId}-results`} tabIndex={-1}>
           Modelos de automóveis
@@ -236,7 +245,7 @@ export function CarModelsView({
           <CarFront size={26} />
           <h3>
             {report.coverage.scopeIncluded
-              ? "Sem publicação verificada neste recorte"
+              ? "Detalhamento por modelo ainda não carregado"
               : "Município fora desta etapa"}
           </h3>
           <p>

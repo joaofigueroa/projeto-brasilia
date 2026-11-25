@@ -76,3 +76,5 @@
 **Identificação por montadora**: Especialistas mostram pequenas logos das marcas declaradas. Multimarcas usam logos sobrepostas; quando não há marcas declaradas, os símbolos são apenas ilustrativos. Perfis a confirmar mantêm essa indicação, sem logos que sugiram confirmação.
 
 **Navegação do 3C Automotive**: As abas iniciais de Editais, Abordagem e Inteligência comercial estão retiradas da navegação, sem exclusão de registros. Endereços antigos dessas abas abrem Mercado endereçável. A configuração dos demais projetos permanece independente.
+
+**Emplacamentos estaduais no mapa**: Na 3C Automotive, a camada inicial usa os totais de automóveis da Anfavea de 2016–2025 para as 27 UFs. Hover e painel compartilham a mesma série e somam somente os anos selecionados. O total do território é independente de rankings por modelo. Municípios não herdam totais estaduais; Brasília representa o recorte estatístico do DF inteiro. Períodos incompletos ficam sem cor no mapa e com totais parciais identificados no painel.

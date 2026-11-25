@@ -26,11 +26,13 @@ import type { IntelligenceController } from "@/hooks/use-intelligence";
 import { useIntelligence } from "@/hooks/use-intelligence";
 import { usePagination } from "@/hooks/use-pagination";
 import { periodLabel } from "@/libs/analysis-period";
+import { automotiveProjectId } from "@/libs/company-census";
 import { formatNumber, metricLabels, prospectLabels } from "@/libs/intelligence-presentation";
 import type { IntelligenceData, IntelligenceRecord } from "@/types/intelligence";
 import { AnalysisPeriodFilter } from "./analysis-period-filter";
 import { BrazilMap } from "./brazil-map";
 import { CarModelsView } from "./car-models-view";
+import { CarRegistrationSummary } from "./car-registration-summary";
 import { CommercialIntelligence, ResearchedProspects } from "./commercial-research";
 import { Toast } from "./feedback";
 import { IntelligenceDialogs } from "./intelligence-dialogs";
@@ -441,9 +443,24 @@ function Sources({ data }: { data: IntelligenceData }) {
           sem vínculo de nome.
         </p>
         <p>
-          O mapa mostra somente automóveis. Para vários anos, usa a média dos estoques de dezembro,
-          com dados em todos os anos selecionados. Esse indicador não representa vendas.
+          A camada Frota de automóveis usa a média dos estoques de dezembro para vários anos, com
+          dados em todos os anos selecionados. Esse indicador não representa vendas nem
+          emplacamentos anuais.
         </p>
+        {data.project.id === automotiveProjectId && (
+          <>
+            <ExternalSource
+              href={`${data.registrations.source.url}#page=${data.registrations.source.pdfPage}`}
+            >
+              Anfavea · emplacamentos anuais de automóveis · 27 UFs
+            </ExternalSource>
+            <p>
+              2016–2025, tabela 2.2.2. O mapa e o total do painel usam a mesma série e somam apenas
+              os anos selecionados. A base estadual não possui detalhamento por modelo ou município;
+              os rankings por modelo têm cobertura própria.
+            </p>
+          </>
+        )}
         <ExternalSource href="https://servicodados.ibge.gov.br/api/docs/malhas?versao=3">
           IBGE · malhas de UFs e municípios
         </ExternalSource>
@@ -482,6 +499,7 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
   const tabGroup = useId();
   const canManage = data.viewer.role === "admin";
   const researchCount = data.research?.live?.stats.total ?? data.research?.prospects.length ?? 0;
+  const vehiclesTab = data.tabs.find((tab) => tab.kind === "vehicles");
   const [mapHidden, setMapHidden] = useState(false);
   function navigateTab(index: number) {
     const tab = data.tabs[(index + data.tabs.length) % data.tabs.length];
@@ -507,6 +525,11 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
               key={data.project.id}
               years={data.years}
               controller={controller}
+              registrationYears={
+                data.project.id === automotiveProjectId
+                  ? data.registrations.availableYears
+                  : undefined
+              }
             />
           </div>
         </div>
@@ -658,7 +681,7 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
             </div>
           </details>
           <BrazilMap
-            key={`${data.project.id}-${data.territory.uf ?? "BR"}-${data.mapView}`}
+            key={`${data.project.id}-${data.mapView === "municipalities" ? data.territory.uf : "BR"}-${data.mapView}`}
             data={data}
             controller={controller}
           />
@@ -783,6 +806,22 @@ export function Intelligence({ data }: { data: IntelligenceData }) {
               )}
             </div>
           </div>
+          {data.project.id === automotiveProjectId && data.tab.kind !== "vehicles" && (
+            <CarRegistrationSummary
+              report={data.registrations}
+              territory={data.territory.label}
+              years={data.years}
+              onViewModels={
+                vehiclesTab
+                  ? () =>
+                      controller.navigate({
+                        tab: vehiclesTab.id,
+                        metric: "registrations",
+                      })
+                  : undefined
+              }
+            />
+          )}
           {data.research && !["favorites", "crm"].includes(data.tab.kind) && (
             <ResearchControls
               key={`${data.project.id}-${data.territory.city ?? data.territory.uf}`}

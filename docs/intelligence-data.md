@@ -141,3 +141,9 @@ python scripts/prepare-expanded-car-models.py /caminho/para/expanded-models
 ```
 
 Arquivos esperados: `MT-2024.pdf`, `MT-2024-summary.pdf` e `BR-2025.pdf`. O extrator valida o cabeçalho territorial, os 12 meses, cada total anual e os 50 lugares da lista nacional antes de gravar. A aplicação continua Next.js/Neon e não baixa PDFs no build.
+
+### Totais de emplacamentos estaduais (25/11/2026)
+
+A série `state-car-registrations.json` integra 270 observações (27 UFs × 2016–2025) da tabela 2.2.2 de AUTOMÓVEIS do Anuário Anfavea 2026. Os dez totais nacionais foram reconciliados com as somas estaduais e a página original foi conferida visualmente. O projeto 3C Automotive inicia o mapa em Emplacamentos, com a mesma série no hover e no painel do território. Totais e tabela anual ficam disponíveis independentemente da existência de um ranking de modelos. Seleções de múltiplos anos somam apenas os anos selecionados; períodos parciais mostram lacunas, e a média considera somente os anos com dados.
+
+A camada Frota de automóveis conserva seu significado de estoque nos demais projetos. A série estadual de emplacamentos não contém dimensão de modelo nem de município. Os dados por modelo existentes continuam disponíveis com sua fonte e cobertura próprias. O total nacional ou estadual nunca é utilizado para completar modelos ou municípios faltantes.

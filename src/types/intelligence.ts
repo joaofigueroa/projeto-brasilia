@@ -98,6 +98,7 @@ export type IntelligenceData = {
   records: IntelligenceRecord[];
   research: CommercialResearchView | null;
   official: OfficialContext;
+  registrations: RegistrationReport;
   notices: NoticeResult | null;
   states: {
     code: string;
@@ -106,8 +107,26 @@ export type IntelligenceData = {
     regionName: string;
     population: number | null;
     fleet: number | null;
+    registrations: number | null;
   }[];
-  cities: { code: string; name: string; population: number | null; fleet: number | null }[];
+  cities: {
+    code: string;
+    name: string;
+    population: number | null;
+    fleet: number | null;
+    registrations: number | null;
+  }[];
+};
+
+export type RegistrationReport = {
+  series: { year: number; value: number | null }[];
+  total: number | null;
+  average: number | null;
+  complete: boolean;
+  supportedTerritory: boolean;
+  availableYears: number[];
+  missingYears: number[];
+  source: { name: string; url: string; pdfPage: number };
 };
 
 export type MunicipalMap = {
