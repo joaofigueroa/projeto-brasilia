@@ -5,6 +5,7 @@ import { statuses } from "@/libs/presentation";
 import { moveTaskAction, postponeTaskAction } from "@/server/actions/tasks";
 import type { BoardData, Task, TaskStatus } from "@/types/domain";
 import { useNavigation } from "./use-navigation";
+import type { BulkTaskResult } from "./use-task-bulk-action";
 
 export function useBoard(data: BoardData) {
   const { navigate, pending: navigating, router } = useNavigation();
@@ -51,6 +52,17 @@ export function useBoard(data: BoardData) {
       }
     });
   }
+  function bulkCompleted(result: BulkTaskResult) {
+    const label = `${result.count} ${result.count === 1 ? "tarefa" : "tarefas"}`;
+    setNotice({
+      message: result.weekStart
+        ? `${label} ${result.count === 1 ? "movida" : "movidas"} para a semana de ${formatDay(result.weekStart, { day: "2-digit", month: "2-digit" })}.`
+        : `${label} ${result.count === 1 ? "excluída" : "excluídas"}.`,
+      error: false,
+      week: result.weekStart,
+    });
+    document.querySelector<HTMLButtonElement>(".new-task")?.focus();
+  }
   function dragStart(event: DragStartEvent) {
     setActive(tasks.find((task) => task.id === event.active.id) ?? null);
   }
@@ -76,6 +88,7 @@ export function useBoard(data: BoardData) {
   }
   return {
     deleted,
+    bulkCompleted,
     tasks,
     creating,
     setCreating,

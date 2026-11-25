@@ -4,8 +4,10 @@ import { revalidatePath } from "next/cache";
 import {
   createTask,
   deleteTask,
+  deleteTasksInBulk,
   moveTask,
   postponeTask,
+  rescheduleTasksInBulk,
   updateTask,
 } from "@/server/services/tasks";
 import { actionResult } from "./result";
@@ -43,6 +45,21 @@ export async function deleteTaskAction(input: unknown) {
 export async function postponeTaskAction(input: unknown) {
   return actionResult(async () => {
     const result = await postponeTask(input);
+    revalidatePath("/tarefas");
+    return result;
+  });
+}
+
+export async function rescheduleTasksInBulkAction(input: unknown) {
+  return actionResult(async () => {
+    const result = await rescheduleTasksInBulk(input);
+    revalidatePath("/tarefas");
+    return result;
+  });
+}
+export async function deleteTasksInBulkAction(input: unknown) {
+  return actionResult(async () => {
+    const result = await deleteTasksInBulk(input);
     revalidatePath("/tarefas");
     return result;
   });

@@ -10,6 +10,7 @@ Plataforma de gestão de pessoas, projetos e tarefas semanais. Aplicação indep
 - Perfil com nome, e-mail, função, foto e troca de senha.
 - Kanban semanal com status em aberto, em andamento e finalizada.
 - Atalho de próxima semana nos cards e na lista, disponível aos administradores do espaço ou do card, com histórico e acesso à semana de destino.
+- Seleção de até 200 tarefas visíveis e editáveis na lista, com barra flutuante para mudar para uma semana escolhida ou excluir. As duas operações exigem confirmação, são atômicas e conservam o histórico de cada tarefa. Trocar filtros, semana ou visualização encerra a seleção.
 - Criação e edição de tarefas com projeto obrigatório, múltiplos responsáveis, administrador do card, descrição, prioridade e prazo opcional.
 - Arraste com mouse ou toque, navegação por teclado e seletor de status como alternativa.
 - Histórico com autor, horário e valores anteriores/novos, preservado no banco.

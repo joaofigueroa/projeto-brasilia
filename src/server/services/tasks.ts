@@ -8,6 +8,7 @@ import {
   insertTask,
   listTaskHistory,
   listTasks,
+  mutateTasksInBulk,
   type StoredTask,
   saveTask,
   softDeleteTask,
@@ -18,6 +19,8 @@ import { requireViewer } from "@/server/security/session";
 import type { BoardData, Change, Project, PublicUser } from "@/types/domain";
 import {
   boardFiltersSchema,
+  bulkDeleteTasksSchema,
+  bulkRescheduleTasksSchema,
   createTaskSchema,
   deleteTaskSchema,
   moveTaskSchema,
@@ -206,4 +209,32 @@ export async function postponeTask(rawInput: unknown) {
   });
   if (!id) fail("Esta tarefa foi alterada ou seu acesso mudou. Atualize o quadro.");
   return { id, weekStart };
+}
+
+const bulkConflictMessage =
+  "Nenhuma tarefa foi alterada. Alguma tarefa mudou, foi excluída ou está sem permissão. Atualize a lista e selecione novamente.";
+export async function rescheduleTasksInBulk(rawInput: unknown) {
+  const input = bulkRescheduleTasksSchema.parse(rawInput);
+  const viewer = await requireViewer();
+  const result = await mutateTasksInBulk({
+    tasks: input.tasks,
+    actorId: viewer.id,
+    operation: "week",
+    weekStart: input.weekStart,
+  });
+  if (result.matched !== input.tasks.length) fail(bulkConflictMessage);
+  if (result.changed === 0)
+    fail("As tarefas selecionadas já estão nesta semana. Escolha outra semana.");
+  return { count: result.changed, weekStart: input.weekStart };
+}
+export async function deleteTasksInBulk(rawInput: unknown) {
+  const input = bulkDeleteTasksSchema.parse(rawInput);
+  const viewer = await requireViewer();
+  const result = await mutateTasksInBulk({
+    tasks: input.tasks,
+    actorId: viewer.id,
+    operation: "delete",
+  });
+  if (result.matched !== input.tasks.length) fail(bulkConflictMessage);
+  return { count: result.changed };
 }

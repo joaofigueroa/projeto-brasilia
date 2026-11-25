@@ -411,9 +411,11 @@ export function Kanban({ data }: { data: BoardData }) {
       >
         {view === "list" ? (
           <TaskList
+            key={`${data.weekStart}:${data.projectId}:${data.assigneeId}:${data.query}:${activeDay}`}
+            onBulkCompleted={board.bulkCompleted}
             data={data}
             tasks={visibleTasks}
-            moving={board.moving}
+            moving={board.moving || board.navigating}
             onOpen={(task) => board.navigate({ task })}
             onMove={board.move}
             onPostpone={board.postpone}

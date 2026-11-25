@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { dateFromKey, mondayOf } from "@/libs/calendar";
+import { MAX_BULK_TASKS } from "@/libs/task-bulk";
 
 export const idSchema = z.uuidv7("Identificador inválido.");
 export const dateSchema = z
@@ -88,3 +89,17 @@ export const changePasswordSchema = z.object({
   newPassword: passwordSchema,
 });
 export type TaskFields = z.input<typeof taskFieldsSchema>;
+
+const bulkTaskSelectionSchema = z
+  .array(z.object({ id: idSchema, version: z.number().int().positive() }))
+  .min(1, "Selecione pelo menos uma tarefa.")
+  .max(MAX_BULK_TASKS, `Selecione até ${MAX_BULK_TASKS} tarefas por operação.`)
+  .refine(
+    (items) => new Set(items.map((item) => item.id)).size === items.length,
+    "A seleção contém tarefas repetidas.",
+  );
+export const bulkDeleteTasksSchema = z.object({
+  tasks: bulkTaskSelectionSchema,
+  confirmed: z.literal(true, { error: "Confirme a ação em massa antes de continuar." }),
+});
+export const bulkRescheduleTasksSchema = bulkDeleteTasksSchema.extend({ weekStart: weekSchema });

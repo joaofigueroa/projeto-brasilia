@@ -2563,14 +2563,27 @@ button:active:not(:disabled),
 .task-list .project-image img {
   object-fit: contain;
 }
-.project-form > .modal-footer,
-.delete-task-body + .modal-footer {
+.app-dialog .dialog-panel :is(.modal-footer, .dialog-footer) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin: 0;
   padding: 18px 28px;
+  border-top: 1px solid var(--line);
+}
+/* This form already supplies the outside gutters and bottom inset. */
+.app-dialog .dialog-panel .person-form > .modal-footer {
+  margin-top: 24px;
+  padding: 21px 0 0;
 }
 @media (max-width: 760px) {
-  .project-form > .modal-footer,
-  .delete-task-body + .modal-footer {
+  .app-dialog .dialog-panel :is(.modal-footer, .dialog-footer) {
     padding: 18px 20px;
+  }
+  .app-dialog .dialog-panel .person-form > .modal-footer {
+    padding: 21px 0 0;
   }
 }
 
@@ -4267,5 +4280,160 @@ button:active:not(:disabled),
   .task-next-week:hover:not(:disabled) {
     background: var(--surface-hover, #eae9e3);
     color: var(--ink);
+  }
+}
+
+/* Task selection and confirmed batch operations. */
+.task-list-shell.has-selection {
+  padding-bottom: 90px;
+}
+.task-list .task-selection-cell {
+  width: 48px;
+  min-width: 48px;
+  padding-inline: 16px;
+}
+.task-selection-cell input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  vertical-align: middle;
+  cursor: pointer;
+}
+.task-selection-cell input:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+.task-list tbody tr {
+  transition: background-color 160ms ease-out;
+}
+.task-list tbody tr.task-selected {
+  background: var(--mint);
+}
+.bulk-task-dock {
+  position: fixed;
+  z-index: 60;
+  left: calc(50% + var(--sidebar-width, 0px) / 2);
+  bottom: 24px;
+  transform: translateX(-50%);
+  max-width: calc(100vw - var(--sidebar-width, 0px) - 32px);
+  pointer-events: none;
+}
+.bulk-task-toolbar {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: 0 8px 32px #242a2c20;
+  white-space: nowrap;
+}
+.bulk-task-toolbar button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 36px;
+  padding: 0 11px;
+  border-radius: 7px;
+  font-size: 13px;
+  transition: background-color 160ms ease-out;
+}
+.bulk-task-count {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 0 6px;
+}
+.bulk-task-divider {
+  height: 23px;
+  width: 1px;
+  background: var(--line);
+  margin: 0 3px;
+}
+.bulk-task-toolbar .bulk-task-delete {
+  color: #aa3c35;
+}
+.bulk-task-toolbar .bulk-task-clear {
+  padding: 0 7px;
+  color: var(--muted);
+}
+.bulk-task-confirmation {
+  margin: 0;
+  padding: 24px 28px;
+  display: grid;
+  gap: 18px;
+}
+.bulk-task-confirmation > p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.bulk-task-preview {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 230px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+}
+.bulk-task-preview li {
+  padding: 11px 13px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 15px;
+  font-size: 13px;
+}
+.bulk-task-preview li + li {
+  border-top: 1px solid var(--line);
+}
+.bulk-task-preview strong {
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.bulk-task-preview span {
+  flex-shrink: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .bulk-task-toolbar button:hover:not(:disabled) {
+    background: var(--background);
+  }
+}
+@media (max-width: 700px) {
+  .bulk-task-dock {
+    left: 50%;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    max-width: calc(100vw - 20px);
+    width: max-content;
+  }
+  .bulk-task-toolbar {
+    gap: 2px;
+    padding: 7px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .bulk-task-toolbar button {
+    font-size: 12px;
+    padding: 0 8px;
+  }
+  .bulk-task-count {
+    font-size: 12px;
+  }
+  .bulk-task-divider {
+    margin: 0 2px;
+  }
+  .bulk-task-confirmation {
+    padding: 20px;
+  }
+  .bulk-task-preview li {
+    flex-direction: column;
+    gap: 4px;
   }
 }

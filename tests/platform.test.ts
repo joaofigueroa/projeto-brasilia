@@ -1014,3 +1014,164 @@ describe("six-digit passwords", () => {
     expect((await signIn(user.email, password)).response.status).toBe(401);
   });
 });
+
+describe("confirmed atomic bulk task actions", () => {
+  const reschedule = async (raw: unknown) =>
+    (await import("@/server/services/tasks")).rescheduleTasksInBulk(raw);
+  const remove = async (raw: unknown) =>
+    (await import("@/server/services/tasks")).deleteTasksInBulk(raw);
+  const selection = (ids: string[]) => ids.map((id) => ({ id, version: 1 }));
+
+  it("moves all selected tasks to a chosen Monday, preserving other fields and auditing each one", async () => {
+    const a = await createTask(input({ title: "Bulk first", status: "in_progress" }));
+    const b = await createTask(
+      input({ title: "Bulk second", status: "done", dueDate: null, projectId: projects[1].id }),
+    );
+    const before = await Promise.all([findTask(a), findTask(b)]);
+    expect(
+      await reschedule({ tasks: selection([a, b]), weekStart: "2026-12-07", confirmed: true }),
+    ).toEqual({ count: 2, weekStart: "2026-12-07" });
+    for (const [index, id] of [a, b].entries()) {
+      expect(await findTask(id)).toMatchObject({
+        ...before[index],
+        weekStart: "2026-12-07",
+        version: 2,
+        updatedAt: expect.any(String),
+      });
+      expect((await listTaskHistory(id))[0]).toMatchObject({
+        kind: "updated",
+        actor: { id: admin.id },
+        changes: [{ field: "weekStart", before: "2026-11-16", after: "2026-12-07" }],
+      });
+    }
+    await expect(
+      reschedule({
+        tasks: [
+          { id: a, version: 2 },
+          { id: b, version: 2 },
+        ],
+        weekStart: "2026-12-07",
+        confirmed: true,
+      }),
+    ).rejects.toThrow("já estão nesta semana");
+    expect(await listTaskHistory(a)).toHaveLength(2);
+  });
+  it("requires explicit confirmation, unique selections, a real Monday and at least one item", async () => {
+    const id = await createTask(input());
+    const tasks = selection([id]);
+    await expect(reschedule({ tasks, weekStart: "2026-12-07" })).rejects.toThrow(/Confirme/);
+    await expect(remove({ tasks, confirmed: false })).rejects.toThrow(/Confirme/);
+    await expect(remove({ tasks: [], confirmed: true })).rejects.toThrow(/Selecione/);
+    await expect(remove({ tasks: [...tasks, ...tasks], confirmed: true })).rejects.toThrow(
+      /repetidas/,
+    );
+    await expect(reschedule({ tasks, confirmed: true, weekStart: "2026-12-08" })).rejects.toThrow(
+      /segunda/,
+    );
+    expect((await findTask(id))?.version).toBe(1);
+    expect(await listTaskHistory(id)).toHaveLength(1);
+  });
+  it("changes nothing when one selected task is stale, missing or already deleted", async () => {
+    const a = await createTask(input());
+    const b = await createTask(input());
+    await moveTask({ id: b, version: 1, status: "done" });
+    await expect(
+      reschedule({ tasks: selection([a, b]), weekStart: "2026-12-07", confirmed: true }),
+    ).rejects.toThrow(/Nenhuma tarefa/);
+    await expect(remove({ tasks: selection([a, v7()]), confirmed: true })).rejects.toThrow(
+      /Nenhuma tarefa/,
+    );
+    await (await import("@/server/services/tasks")).deleteTask({ id: b, version: 2 });
+    await expect(
+      remove({
+        tasks: [
+          { id: a, version: 1 },
+          { id: b, version: 3 },
+        ],
+        confirmed: true,
+      }),
+    ).rejects.toThrow(/Nenhuma tarefa/);
+    expect((await findTask(a))?.version).toBe(1);
+    expect(await listTaskHistory(a)).toHaveLength(1);
+  });
+  it("denies the entire selection if a collaborator can edit only part of it", async () => {
+    const a = await createTask(input({ administratorId: collaborator.id }));
+    const b = await createTask(input());
+    session.viewer = collaborator;
+    const raw = { tasks: selection([a, b]), confirmed: true, weekStart: "2026-12-07" };
+    await expect(reschedule(raw)).rejects.toThrow(/Nenhuma tarefa/);
+    await expect(remove(raw)).rejects.toThrow(/Nenhuma tarefa/);
+    for (const id of [a, b]) {
+      expect((await findTask(id))?.version).toBe(1);
+      expect(await listTaskHistory(id)).toHaveLength(1);
+    }
+    session.viewer = null;
+    await expect(remove(raw)).rejects.toThrow(/Authentication/);
+    session.viewer = collaborator;
+    expect(await reschedule({ ...raw, tasks: selection([a]) })).toMatchObject({ count: 1 });
+  });
+  it("soft-deletes the full selection with one immutable event and intact assignments per task", async () => {
+    const ids = await Promise.all([createTask(input()), createTask(input())]);
+    expect(await remove({ tasks: selection(ids), confirmed: true })).toEqual({ count: 2 });
+    for (const id of ids) {
+      expect(await findTask(id)).toBeNull();
+      expect((await listTaskHistory(id)).map((event) => event.kind)).toEqual([
+        "deleted",
+        "created",
+      ]);
+      const [stored] = await query<{ version: number; assignees: number }>(
+        sql`SELECT version,(SELECT count(*)::int FROM task_assignees WHERE task_id=${id}::uuid) AS assignees FROM tasks WHERE id=${id}::uuid`,
+      );
+      expect(stored).toEqual({ version: 2, assignees: 1 });
+    }
+  });
+  it("has one winner for concurrent overlapping batches and rechecks roles in the write", async () => {
+    const ids = await Promise.all([
+      createTask(input({ administratorId: stranger.id })),
+      createTask(input({ administratorId: stranger.id })),
+    ]);
+    const raw = { tasks: selection(ids), confirmed: true, weekStart: "2026-12-07" };
+    const results = await Promise.allSettled([reschedule(raw), reschedule(raw)]);
+    expect(results.filter((result) => result.status === "fulfilled")).toHaveLength(1);
+    for (const id of ids) {
+      expect((await findTask(id))?.version).toBe(2);
+      expect(await listTaskHistory(id)).toHaveLength(2);
+    }
+    const { mutateTasksInBulk } = await import("@/server/repositories/tasks");
+    await query(sql`UPDATE users SET role='collaborator' WHERE id=${admin.id}::uuid`);
+    try {
+      expect(
+        await mutateTasksInBulk({
+          tasks: ids.map((id) => ({ id, version: 2 })),
+          actorId: admin.id,
+          operation: "delete",
+        }),
+      ).toEqual({ matched: 0, changed: 0 });
+    } finally {
+      await query(sql`UPDATE users SET role='admin' WHERE id=${admin.id}::uuid`);
+    }
+    expect(await findTask(ids[0])).not.toBeNull();
+  });
+  it("rolls the entire batch back if an audit insert fails", async () => {
+    const ids = await Promise.all([createTask(input()), createTask(input())]);
+    await query(
+      sql`CREATE FUNCTION reject_bulk_audit() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'Audit failure'; END $$`,
+    );
+    await query(
+      sql`CREATE TRIGGER reject_bulk_audit BEFORE INSERT ON task_events FOR EACH ROW EXECUTE FUNCTION reject_bulk_audit()`,
+    );
+    try {
+      await expect(remove({ tasks: selection(ids), confirmed: true })).rejects.toThrow();
+      await expect(
+        reschedule({ tasks: selection(ids), confirmed: true, weekStart: "2026-12-07" }),
+      ).rejects.toThrow();
+    } finally {
+      await query(sql`DROP TRIGGER reject_bulk_audit ON task_events`);
+      await query(sql`DROP FUNCTION reject_bulk_audit()`);
+    }
+    for (const id of ids) {
+      expect((await findTask(id))?.version).toBe(1);
+      expect(await listTaskHistory(id)).toHaveLength(1);
+    }
+  });
+});

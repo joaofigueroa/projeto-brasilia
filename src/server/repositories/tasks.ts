@@ -112,3 +112,48 @@ export async function softDeleteTask(input: { id: string; version: number; actor
  `);
   return rows[0]?.id ?? null;
 }
+
+export async function mutateTasksInBulk(
+  input: {
+    tasks: { id: string; version: number }[];
+    actorId: string;
+  } & ({ operation: "delete" } | { operation: "week"; weekStart: string }),
+) {
+  const deleting = input.operation === "delete";
+  const weekStart = input.operation === "week" ? input.weekStart : null;
+  const requested = input.tasks.map((task) => ({ ...task, event_id: v7() }));
+  const [result] = await query<{ matched: number; changed: number }>(sql`
+    WITH requested AS MATERIALIZED (
+      SELECT * FROM jsonb_to_recordset(${JSON.stringify(requested)}::jsonb)
+        AS r(id uuid, version integer, event_id uuid)
+    ), locked AS MATERIALIZED (
+      SELECT t.*, r.version AS expected_version, r.event_id
+      FROM tasks t JOIN requested r ON r.id=t.id
+      ORDER BY t.id FOR UPDATE OF t
+    ), eligible AS MATERIALIZED (
+      SELECT l.* FROM locked l
+      WHERE l.deleted_at IS NULL AND l.version=l.expected_version
+        AND (l.administrator_id=${input.actorId}::uuid
+          OR EXISTS(SELECT 1 FROM users WHERE id=${input.actorId}::uuid AND role='admin'))
+    ), updated AS (
+      UPDATE tasks t SET
+        week_start=CASE WHEN ${deleting} THEN t.week_start ELSE ${weekStart}::date END,
+        deleted_at=CASE WHEN ${deleting} THEN now() ELSE t.deleted_at END,
+        version=t.version+1,updated_at=now()
+      FROM eligible e
+      WHERE t.id=e.id AND t.version=e.version
+        AND (SELECT count(*) FROM eligible)=${input.tasks.length}
+        AND (${deleting} OR t.week_start IS DISTINCT FROM ${weekStart}::date)
+      RETURNING t.*
+    ), audited AS (
+      INSERT INTO task_events(id,task_id,actor_id,kind,changes,snapshot)
+      SELECT e.event_id,u.id,${input.actorId}::uuid,${deleting ? "deleted" : "updated"},
+        CASE WHEN ${deleting} THEN '[{"field":"availability","before":"Disponível no quadro","after":"Excluída"}]'::jsonb
+          ELSE jsonb_build_array(jsonb_build_object('field','weekStart','before',e.week_start::text,'after',u.week_start::text)) END,
+        to_jsonb(u)||jsonb_build_object('assignee_ids',COALESCE((SELECT jsonb_agg(a.user_id ORDER BY a.user_id)
+          FROM task_assignees a WHERE a.task_id=u.id),'[]'::jsonb))
+      FROM updated u JOIN eligible e ON e.id=u.id
+    ) SELECT (SELECT count(*)::int FROM eligible) AS matched,(SELECT count(*)::int FROM updated) AS changed
+  `);
+  return result;
+}
