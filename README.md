@@ -10,9 +10,9 @@ Plataforma de gestão de pessoas, projetos e tarefas semanais. Aplicação indep
 - Perfil com nome, e-mail, função, foto e troca de senha.
 - Kanban semanal com status em aberto, em andamento e finalizada.
 - Atalho de próxima semana nos cards e na lista, disponível aos administradores do espaço ou do card, com histórico e acesso à semana de destino.
-- Seleção de até 200 tarefas visíveis e editáveis na lista, com barra flutuante para mudar para uma semana escolhida ou excluir. As duas operações exigem confirmação, são atômicas e conservam o histórico de cada tarefa. Trocar filtros, semana ou visualização encerra a seleção.
+- Seleção de até 200 tarefas visíveis e editáveis na lista, com barra flutuante para mudar a semana, alterar o status ou excluir. As três operações exigem confirmação, são atômicas e conservam o histórico de cada tarefa. Trocar filtros, semana ou visualização encerra a seleção.
 - Criação e edição de tarefas com projeto obrigatório, múltiplos responsáveis, administrador do card, descrição, prioridade e prazo opcional.
-- Arraste com mouse ou toque, navegação por teclado e seletor de status como alternativa.
+- Arraste pelo corpo inteiro do card com mouse ou toque prolongado, sem interferir nos controles. Navegação por teclado pelo ícone de arraste e seletor de status como alternativa.
 - Histórico com autor, horário e valores anteriores/novos, preservado no banco.
 - Controle de versão para impedir que uma edição sobrescreva outra silenciosamente.
 - Imagem do projeto nos cards e na lista de tarefas, com identificação por nome e ícone quando não há imagem.
@@ -146,3 +146,5 @@ Na Vercel, importe o repositório `joaofigueroa/projeto-brasilia` e use `main` c
 `BETTER_AUTH_URL` pode definir explicitamente a origem HTTPS da aplicação. Quando omitido na Vercel, a autenticação usa o domínio canônico informado por `VERCEL_PROJECT_PRODUCTION_URL`. Não configure uma URL de localhost nas variáveis de produção. Mantenha as credenciais do banco de produção fora dos deployments de preview.
 
 As migrations e o primeiro administrador já foram preparados no Neon dedicado ao Brasília. Novas alterações de schema devem ser migradas e verificadas antes de promover uma versão que dependa delas. Credenciais e o arquivo privado de acesso não são enviados ao GitHub.
+
+No 3C Automotive, a navegação de análise mantém Mercado endereçável, Possíveis clientes, Veículos, Favoritos e Acompanhamento. Editais, Abordagem e Inteligência comercial foram retirados do menu; registros existentes são preservados e endereços antigos dessas abas abrem a primeira análise disponível. Os outros projetos conservam suas abas.

@@ -504,12 +504,12 @@ describe("project intelligence", () => {
       saveIntelligenceRecord({ scope: { ...scope(), tab: id }, fields: fields() }),
     ).rejects.toThrow("Somente administradores");
   });
-  it("serves published commercial research to authenticated viewers with exact city and period boundaries", async () => {
+  it("serves published research through prospects with exact city and period boundaries", async () => {
     const { getIntelligence, saveAnalysisTab } = await services();
     const project = projects.find((item) => item.id === "019ab04a-1000-7000-8000-000000000003");
     expect(project).toBeDefined();
     const initial = await getIntelligence({ project: project?.id, uf: "GO" });
-    const commercial = initial.tabs.find((item) => item.kind === "commercial");
+    const commercial = initial.tabs.find((item) => item.kind === "prospects");
     expect(commercial).toBeDefined();
     session.viewer = collaborator;
     const data = await getIntelligence({
@@ -544,6 +544,33 @@ describe("project intelligence", () => {
     await expect(getIntelligence({ project: project?.id, tab: commercial?.id })).rejects.toThrow(
       "Authentication required",
     );
+  });
+  it("retires only the three initial automotive menus and resolves their old links without deleting data", async () => {
+    const { getIntelligence } = await services();
+    const { listAnalysisTabs } = await import("@/server/repositories/intelligence");
+    const project = "019ab04a-1000-7000-8000-000000000003";
+    const stored = await listAnalysisTabs(project);
+    const retired = stored.filter((item) =>
+      ["commercial", "opportunities", "notes"].includes(item.kind),
+    );
+    expect(retired).toHaveLength(3);
+    const current = await getIntelligence({ project, uf: "DF" });
+    expect(current.tabs.map((item) => item.kind)).toEqual([
+      "market",
+      "prospects",
+      "favorites",
+      "crm",
+      "vehicles",
+    ]);
+    for (const tab of retired) {
+      expect((await getIntelligence({ project, tab: tab.id, uf: "DF" })).tab.id).toBe(
+        current.tabs[0].id,
+      );
+    }
+    expect(await listAnalysisTabs(project)).toEqual(stored);
+    const wine = await getIntelligence({ project: projects[1].id, uf: "DF" });
+    expect(wine.tabs.map((item) => item.kind)).toContain("opportunities");
+    expect(wine.tabs.map((item) => item.kind)).toContain("notes");
   });
   it("detects concurrent edits of records and tabs", async () => {
     const { saveIntelligenceRecord, getIntelligence, saveAnalysisTab } = await services();
@@ -1016,11 +1043,65 @@ describe("six-digit passwords", () => {
 });
 
 describe("confirmed atomic bulk task actions", () => {
+  const changeStatus = async (raw: unknown) =>
+    (await import("@/server/services/tasks")).moveTasksInBulk(raw);
   const reschedule = async (raw: unknown) =>
     (await import("@/server/services/tasks")).rescheduleTasksInBulk(raw);
   const remove = async (raw: unknown) =>
     (await import("@/server/services/tasks")).deleteTasksInBulk(raw);
   const selection = (ids: string[]) => ids.map((id) => ({ id, version: 1 }));
+
+  it("changes selected statuses atomically, preserves planning and skips unchanged tasks without extra history", async () => {
+    const a = await createTask(input());
+    const b = await createTask(input({ status: "in_progress", projectId: projects[1].id }));
+    const c = await createTask(input({ status: "done", dueDate: null }));
+    const before = await findTask(a);
+    expect(
+      await changeStatus({ tasks: selection([a, b, c]), status: "done", confirmed: true }),
+    ).toEqual({ count: 2, status: "done" });
+    expect(await findTask(a)).toMatchObject({
+      ...before,
+      status: "done",
+      version: 2,
+      updatedAt: expect.any(String),
+    });
+    for (const [id, old] of [
+      [a, "Em aberto"],
+      [b, "Em andamento"],
+    ]) {
+      expect((await listTaskHistory(id))[0]).toMatchObject({
+        kind: "moved",
+        actor: { id: admin.id },
+        changes: [{ field: "status", before: old, after: "Finalizadas" }],
+      });
+    }
+    expect((await findTask(c))?.version).toBe(1);
+    expect(await listTaskHistory(c)).toHaveLength(1);
+    await expect(
+      changeStatus({ tasks: [{ id: a, version: 2 }], status: "done", confirmed: true }),
+    ).rejects.toThrow(/já estão neste status/);
+    expect(await listTaskHistory(a)).toHaveLength(2);
+  });
+  it("requires confirmation and a valid status and refuses an entire stale or unauthorized status batch", async () => {
+    const a = await createTask(input({ administratorId: collaborator.id }));
+    const b = await createTask(input());
+    const raw = { tasks: selection([a, b]), status: "in_progress", confirmed: true };
+    await expect(changeStatus({ ...raw, confirmed: false })).rejects.toThrow(/Confirme/);
+    await expect(changeStatus({ ...raw, status: "invalid" })).rejects.toThrow();
+    session.viewer = collaborator;
+    await expect(changeStatus(raw)).rejects.toThrow(/Nenhuma tarefa/);
+    expect((await findTask(a))?.version).toBe(1);
+    expect((await findTask(b))?.version).toBe(1);
+    expect(await changeStatus({ ...raw, tasks: selection([a]) })).toEqual({
+      count: 1,
+      status: "in_progress",
+    });
+    session.viewer = admin;
+    await expect(changeStatus({ ...raw, status: "done" })).rejects.toThrow(/Nenhuma tarefa/);
+    expect((await findTask(b))?.status).toBe("open");
+    session.viewer = null;
+    await expect(changeStatus(raw)).rejects.toThrow(/Authentication/);
+  });
 
   it("moves all selected tasks to a chosen Monday, preserving other fields and auditing each one", async () => {
     const a = await createTask(input({ title: "Bulk first", status: "in_progress" }));
@@ -1162,6 +1243,9 @@ describe("confirmed atomic bulk task actions", () => {
     );
     try {
       await expect(remove({ tasks: selection(ids), confirmed: true })).rejects.toThrow();
+      await expect(
+        changeStatus({ tasks: selection(ids), status: "done", confirmed: true }),
+      ).rejects.toThrow();
       await expect(
         reschedule({ tasks: selection(ids), confirmed: true, weekStart: "2026-12-07" }),
       ).rejects.toThrow();

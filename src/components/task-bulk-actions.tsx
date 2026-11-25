@@ -1,7 +1,8 @@
-import { CalendarDays, LoaderCircle, Trash2, X } from "lucide-react";
+import { CalendarDays, Columns3, LoaderCircle, Trash2, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { type BulkTaskResult, useTaskBulkAction } from "@/hooks/use-task-bulk-action";
 import { addDays, weekLabel } from "@/libs/calendar";
+import { statuses, statusLabels } from "@/libs/presentation";
 import type { Task } from "@/types/domain";
 import { Dialog } from "./dialog";
 import { FormError } from "./feedback";
@@ -24,6 +25,7 @@ export function TaskBulkActions({
   });
   const confirmation = bulk.confirmation;
   const deleting = confirmation?.operation === "delete";
+  const changingStatus = confirmation?.operation === "status";
   const count = confirmation?.tasks.length ?? 0;
   const taskLabel = `${count} ${count === 1 ? "tarefa" : "tarefas"}`;
   return (
@@ -53,6 +55,13 @@ export function TaskBulkActions({
               </button>
               <button
                 type="button"
+                disabled={disabled || bulk.pending}
+                onClick={() => bulk.request("status", selected)}
+              >
+                <Columns3 size={16} /> Mudar status
+              </button>
+              <button
+                type="button"
                 className="bulk-task-delete"
                 disabled={disabled || bulk.pending}
                 onClick={() => bulk.request("delete", selected)}
@@ -76,7 +85,13 @@ export function TaskBulkActions({
         {confirmation && (
           <Dialog
             variant="modal"
-            title={deleting ? `Excluir ${taskLabel}?` : `Mudar a semana de ${taskLabel}?`}
+            title={
+              deleting
+                ? `Excluir ${taskLabel}?`
+                : changingStatus
+                  ? `Mudar o status de ${taskLabel}?`
+                  : `Mudar a semana de ${taskLabel}?`
+            }
             eyebrow="CONFIRMAR AÇÃO EM MASSA"
             initialFocus="[data-cancel-bulk]"
             onClose={bulk.cancel}
@@ -85,24 +100,31 @@ export function TaskBulkActions({
               onSubmit={(event) => {
                 event.preventDefault();
                 const form = new FormData(event.currentTarget);
-                bulk.confirm(String(form.get("weekStart") ?? ""));
+                bulk.confirm({
+                  weekStart: String(form.get("weekStart") ?? ""),
+                  status: String(form.get("status") ?? ""),
+                });
               }}
             >
               <fieldset className="bulk-task-confirmation" disabled={bulk.pending}>
                 <p>
                   {deleting
                     ? "As tarefas abaixo serão removidas do quadro para todas as pessoas. O histórico de cada uma será preservado."
-                    : "As tarefas abaixo serão movidas para a semana escolhida. Prazos, responsáveis e status serão mantidos."}
+                    : changingStatus
+                      ? "As tarefas abaixo receberão o status escolhido. Semana, prazos e responsáveis serão mantidos. Tarefas que já estiverem nesse status não serão alteradas."
+                      : "As tarefas abaixo serão movidas para a semana escolhida. Prazos, responsáveis e status serão mantidos."}
                 </p>
                 <ul className="bulk-task-preview" aria-label="Tarefas afetadas">
                   {confirmation.tasks.map((task) => (
                     <li key={task.id}>
                       <strong>{task.title}</strong>
-                      <span>{weekLabel(task.weekStart)}</span>
+                      <span>
+                        {changingStatus ? statusLabels[task.status] : weekLabel(task.weekStart)}
+                      </span>
                     </li>
                   ))}
                 </ul>
-                {!deleting && (
+                {confirmation.operation === "week" && (
                   <label className="field">
                     <span>
                       <CalendarDays size={15} /> Semana de destino
@@ -116,6 +138,23 @@ export function TaskBulkActions({
                       required
                     />
                     <small>Selecione a segunda-feira que inicia a nova semana.</small>
+                  </label>
+                )}
+                {changingStatus && (
+                  <label className="field">
+                    <span>
+                      <Columns3 size={15} /> Novo status
+                    </span>
+                    <select name="status" defaultValue="" required>
+                      <option value="" disabled>
+                        Selecione o status
+                      </option>
+                      {statuses.map((status) => (
+                        <option key={status} value={status}>
+                          {statusLabels[status]}
+                        </option>
+                      ))}
+                    </select>
                   </label>
                 )}
                 <FormError message={bulk.error} />
@@ -140,7 +179,9 @@ export function TaskBulkActions({
                     ? "Aplicando…"
                     : deleting
                       ? `Excluir ${taskLabel}`
-                      : "Confirmar mudança de semana"}
+                      : changingStatus
+                        ? "Confirmar mudança de status"
+                        : "Confirmar mudança de semana"}
                 </button>
               </div>
             </form>

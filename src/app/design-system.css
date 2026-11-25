@@ -4058,9 +4058,23 @@ button:active:not(:disabled),
   margin: 0;
   line-height: 1.6;
 }
+.crm-stage-picker {
+  position: relative;
+  display: block;
+  flex-shrink: 0;
+}
+.crm-stage-picker > svg {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: white;
+  pointer-events: none;
+}
 .crm-stage-select {
+  appearance: none;
   min-width: 245px;
-  padding: 13px 37px 13px 15px;
+  padding: 13px 44px 13px 18px;
   background: var(--ink);
   color: white;
   border: 1px solid var(--ink);
@@ -4070,6 +4084,14 @@ button:active:not(:disabled),
 }
 .crm-stage-select:disabled {
   opacity: 0.65;
+}
+.task-card.can-drag,
+.task-card.can-drag .task-card-main {
+  cursor: grab;
+}
+.task-card.is-dragging,
+.task-card.is-dragging .task-card-main {
+  cursor: grabbing;
 }
 .crm-favorite-hint {
   font-size: 13px;
@@ -4284,6 +4306,14 @@ button:active:not(:disabled),
 }
 
 /* Task selection and confirmed batch operations. */
+.tasks-page:has(.bulk-task-toolbar) .toast {
+  bottom: 104px;
+}
+@media (max-width: 700px) {
+  .tasks-page:has(.bulk-task-toolbar) .toast {
+    bottom: calc(128px + env(safe-area-inset-bottom, 0px));
+  }
+}
 .task-list-shell.has-selection {
   padding-bottom: 90px;
 }

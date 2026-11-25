@@ -15,7 +15,7 @@
 | Exclusão de tarefa | taskDeletion | Retirada de uma tarefa do quadro por um administrador do espaço ou do card, após confirmação, conservando seu histórico. |
 | Semana | weekStart | Segunda-feira que identifica o período de planejamento; não é a data de criação. |
 | Adiar para a semana seguinte | taskPostponement | Mover a tarefa sete dias a partir de sua semana atual, sem duplicação, preservando prazo, status e responsáveis; permitido aos administradores do espaço ou do card e registrado no histórico. |
-| Ação em massa | bulkTaskOperation | Operação confirmada sobre até 200 tarefas explicitamente selecionadas na lista atual: mudar a semana ou excluir. Todas devem manter versão e permissão de edição válidas; caso contrário nenhuma é alterada. Cada tarefa recebe seu evento de histórico, e prazos permanecem independentes da semana. |
+| Ação em massa | bulkTaskOperation | Operação confirmada sobre até 200 tarefas explicitamente selecionadas na lista atual: mudar a semana, alterar o status ou excluir. Todas devem manter versão e permissão de edição válidas; caso contrário nenhuma é alterada. Cada tarefa recebe seu evento de histórico, e prazos permanecem independentes da semana. |
 | Prazo | dueDate | Data opcional de entrega; não determina automaticamente a semana. |
 | Histórico | taskEvent | Registro imutável de uma criação, edição, movimentação ou exclusão, com autor e instante. |
 
@@ -74,3 +74,5 @@
 **Página do possível cliente**: Endereço próprio do perfil pesquisado, com contexto de projeto, resumo e ficha Google na área principal. Dados cadastrais, oportunidade e fontes são categorias de informação em abas; a ficha Google permanece aberta na área principal. Não existe uma aba redundante de consultas.
 
 **Identificação por montadora**: Especialistas mostram pequenas logos das marcas declaradas. Multimarcas usam logos sobrepostas; quando não há marcas declaradas, os símbolos são apenas ilustrativos. Perfis a confirmar mantêm essa indicação, sem logos que sugiram confirmação.
+
+**Navegação do 3C Automotive**: As abas iniciais de Editais, Abordagem e Inteligência comercial estão retiradas da navegação, sem exclusão de registros. Endereços antigos dessas abas abrem Mercado endereçável. A configuração dos demais projetos permanece independente.

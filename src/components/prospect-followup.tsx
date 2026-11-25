@@ -1,5 +1,6 @@
 "use client";
 import {
+  ChevronDown,
   CircleHelp,
   Download,
   FileText,
@@ -49,7 +50,7 @@ export function ProspectFollowup({
           <h2>Etapa atual</h2>
           <p>{crmStageDescriptions[data.stage]}</p>
         </div>
-        <label htmlFor={`${id}-stage`}>
+        <label className="crm-stage-picker" htmlFor={`${id}-stage`}>
           <span className="sr-only">Etapa comercial do cliente</span>
           <select
             id={`${id}-stage`}
@@ -64,6 +65,7 @@ export function ProspectFollowup({
               </option>
             ))}
           </select>
+          <ChevronDown size={16} aria-hidden="true" />
         </label>
       </header>
       {!data.canManage && (

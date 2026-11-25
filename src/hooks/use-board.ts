@@ -1,7 +1,7 @@
 import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core";
 import { useOptimistic, useState, useTransition } from "react";
 import { formatDay } from "@/libs/calendar";
-import { statuses } from "@/libs/presentation";
+import { statuses, statusLabels } from "@/libs/presentation";
 import { moveTaskAction, postponeTaskAction } from "@/server/actions/tasks";
 import type { BoardData, Task, TaskStatus } from "@/types/domain";
 import { useNavigation } from "./use-navigation";
@@ -57,7 +57,9 @@ export function useBoard(data: BoardData) {
     setNotice({
       message: result.weekStart
         ? `${label} ${result.count === 1 ? "movida" : "movidas"} para a semana de ${formatDay(result.weekStart, { day: "2-digit", month: "2-digit" })}.`
-        : `${label} ${result.count === 1 ? "excluída" : "excluídas"}.`,
+        : result.status
+          ? `${label} com status atualizado para ${statusLabels[result.status]}.`
+          : `${label} ${result.count === 1 ? "excluída" : "excluídas"}.`,
       error: false,
       week: result.weekStart,
     });

@@ -1,8 +1,9 @@
 import "server-only";
 import { sql } from "drizzle-orm";
 import { v7 } from "uuid";
+import { statusLabels } from "@/libs/presentation";
 import { query } from "@/server/db/client";
-import type { Change, Task, TaskHistory } from "@/types/domain";
+import type { Change, Task, TaskHistory, TaskStatus } from "@/types/domain";
 import type { TaskFields } from "@/validators";
 
 export type StoredTask = Omit<Task, "canEdit" | "canMove">;
@@ -117,10 +118,34 @@ export async function mutateTasksInBulk(
   input: {
     tasks: { id: string; version: number }[];
     actorId: string;
-  } & ({ operation: "delete" } | { operation: "week"; weekStart: string }),
+  } & (
+    | { operation: "delete" }
+    | { operation: "week"; weekStart: string }
+    | { operation: "status"; status: TaskStatus }
+  ),
 ) {
-  const deleting = input.operation === "delete";
-  const weekStart = input.operation === "week" ? input.weekStart : null;
+  const update =
+    input.operation === "delete"
+      ? sql`deleted_at=now()`
+      : input.operation === "week"
+        ? sql`week_start=${input.weekStart}::date`
+        : sql`status=${input.status}::task_status`;
+  const changed =
+    input.operation === "delete"
+      ? sql`true`
+      : input.operation === "week"
+        ? sql`t.week_start IS DISTINCT FROM ${input.weekStart}::date`
+        : sql`t.status IS DISTINCT FROM ${input.status}::task_status`;
+  const changes =
+    input.operation === "delete"
+      ? sql`'[{"field":"availability","before":"Disponível no quadro","after":"Excluída"}]'::jsonb`
+      : input.operation === "week"
+        ? sql`jsonb_build_array(jsonb_build_object('field','weekStart','before',e.week_start::text,'after',u.week_start::text))`
+        : sql`jsonb_build_array(jsonb_build_object('field','status',
+          'before',${JSON.stringify(statusLabels)}::jsonb ->> e.status::text,
+          'after',${JSON.stringify(statusLabels)}::jsonb ->> u.status::text))`;
+  const kind =
+    input.operation === "delete" ? "deleted" : input.operation === "status" ? "moved" : "updated";
   const requested = input.tasks.map((task) => ({ ...task, event_id: v7() }));
   const [result] = await query<{ matched: number; changed: number }>(sql`
     WITH requested AS MATERIALIZED (
@@ -137,19 +162,16 @@ export async function mutateTasksInBulk(
           OR EXISTS(SELECT 1 FROM users WHERE id=${input.actorId}::uuid AND role='admin'))
     ), updated AS (
       UPDATE tasks t SET
-        week_start=CASE WHEN ${deleting} THEN t.week_start ELSE ${weekStart}::date END,
-        deleted_at=CASE WHEN ${deleting} THEN now() ELSE t.deleted_at END,
+        ${update},
         version=t.version+1,updated_at=now()
       FROM eligible e
       WHERE t.id=e.id AND t.version=e.version
         AND (SELECT count(*) FROM eligible)=${input.tasks.length}
-        AND (${deleting} OR t.week_start IS DISTINCT FROM ${weekStart}::date)
+        AND (${changed})
       RETURNING t.*
     ), audited AS (
       INSERT INTO task_events(id,task_id,actor_id,kind,changes,snapshot)
-      SELECT e.event_id,u.id,${input.actorId}::uuid,${deleting ? "deleted" : "updated"},
-        CASE WHEN ${deleting} THEN '[{"field":"availability","before":"Disponível no quadro","after":"Excluída"}]'::jsonb
-          ELSE jsonb_build_array(jsonb_build_object('field','weekStart','before',e.week_start::text,'after',u.week_start::text)) END,
+      SELECT e.event_id,u.id,${input.actorId}::uuid,${kind},${changes},
         to_jsonb(u)||jsonb_build_object('assignee_ids',COALESCE((SELECT jsonb_agg(a.user_id ORDER BY a.user_id)
           FROM task_assignees a WHERE a.task_id=u.id),'[]'::jsonb))
       FROM updated u JOIN eligible e ON e.id=u.id

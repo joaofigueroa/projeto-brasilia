@@ -20,6 +20,7 @@ import type { BoardData, Change, Project, PublicUser } from "@/types/domain";
 import {
   boardFiltersSchema,
   bulkDeleteTasksSchema,
+  bulkMoveTasksSchema,
   bulkRescheduleTasksSchema,
   createTaskSchema,
   deleteTaskSchema,
@@ -213,6 +214,20 @@ export async function postponeTask(rawInput: unknown) {
 
 const bulkConflictMessage =
   "Nenhuma tarefa foi alterada. Alguma tarefa mudou, foi excluída ou está sem permissão. Atualize a lista e selecione novamente.";
+export async function moveTasksInBulk(rawInput: unknown) {
+  const input = bulkMoveTasksSchema.parse(rawInput);
+  const viewer = await requireViewer();
+  const result = await mutateTasksInBulk({
+    tasks: input.tasks,
+    actorId: viewer.id,
+    operation: "status",
+    status: input.status,
+  });
+  if (result.matched !== input.tasks.length) fail(bulkConflictMessage);
+  if (result.changed === 0)
+    fail("As tarefas selecionadas já estão neste status. Escolha outro status.");
+  return { count: result.changed, status: input.status };
+}
 export async function rescheduleTasksInBulk(rawInput: unknown) {
   const input = bulkRescheduleTasksSchema.parse(rawInput);
   const viewer = await requireViewer();

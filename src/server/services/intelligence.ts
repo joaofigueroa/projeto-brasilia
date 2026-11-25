@@ -1,6 +1,7 @@
 import "server-only";
 import { createHash } from "node:crypto";
 import { v7 } from "uuid";
+import { automotiveProjectId } from "@/libs/company-census";
 import { parseCsv } from "@/libs/csv";
 import { resolveTerritory } from "@/libs/territories";
 import { getMunicipalMap } from "@/server/integrations/municipal-maps";
@@ -35,6 +36,17 @@ import { getCommercialResearch } from "./commercial-research";
 function fail(message: string): never {
   throw businessError(message);
 }
+const retiredAutomotiveTabs = new Set([
+  "01a1ffdc-a669-7124-97ef-f9b6e526ff5b",
+  "01a1ffdc-a669-7c8b-945d-16298a91a350",
+  "01a2071b-1000-7000-8000-000000000001",
+]);
+async function availableTabs(projectId: string) {
+  const tabs = await listAnalysisTabs(projectId);
+  return projectId === automotiveProjectId
+    ? tabs.filter((tab) => !retiredAutomotiveTabs.has(tab.id))
+    : tabs;
+}
 function territory(input: { region?: string; uf?: string; city?: string }): Territory {
   try {
     return resolveTerritory(input);
@@ -49,7 +61,7 @@ async function requireAdmin() {
   return viewer;
 }
 async function assertTab(projectId: string, tabId: string) {
-  const tabs = await listAnalysisTabs(projectId);
+  const tabs = await availableTabs(projectId);
   const tab = tabs.find((t) => t.id === tabId);
   if (!tab) fail("A aba não pertence ao projeto selecionado.");
   return tab;
@@ -60,8 +72,10 @@ export async function getIntelligence(raw: unknown): Promise<IntelligenceData> {
   const projects = await listProjects();
   const project = input.project ? projects.find((p) => p.id === input.project) : projects[0];
   if (!project) fail("Projeto não encontrado.");
-  const tabs = await listAnalysisTabs(project.id);
-  const tab = input.tab ? tabs.find((t) => t.id === input.tab) : tabs[0];
+  const tabs = await availableTabs(project.id);
+  const retired =
+    project.id === automotiveProjectId && input.tab && retiredAutomotiveTabs.has(input.tab);
+  const tab = input.tab && !retired ? tabs.find((t) => t.id === input.tab) : tabs[0];
   if (!tab) fail("Aba não encontrada neste projeto.");
   const scope = territory(input);
   const official = getOfficialContext(scope, input.years);
@@ -126,7 +140,7 @@ export async function saveAnalysisTab(raw: unknown) {
   await requireAdmin();
   const projects = await listProjects();
   if (!projects.some((p) => p.id === input.projectId)) fail("Projeto não encontrado.");
-  const tabs = await listAnalysisTabs(input.projectId);
+  const tabs = await availableTabs(input.projectId);
   const previous = input.id ? tabs.find((t) => t.id === input.id) : null;
   if (input.id && (!previous || input.version !== previous.version))
     fail("A aba foi alterada. Atualize a página antes de salvar.");

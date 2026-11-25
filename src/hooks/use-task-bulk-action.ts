@@ -1,8 +1,12 @@
 import { useState, useTransition } from "react";
-import { deleteTasksInBulkAction, rescheduleTasksInBulkAction } from "@/server/actions/tasks";
-import type { Task } from "@/types/domain";
-export type BulkTaskResult = { count: number; weekStart?: string };
-export type BulkTaskConfirmation = { operation: "week" | "delete"; tasks: Task[] };
+import {
+  deleteTasksInBulkAction,
+  moveTasksInBulkAction,
+  rescheduleTasksInBulkAction,
+} from "@/server/actions/tasks";
+import type { Task, TaskStatus } from "@/types/domain";
+export type BulkTaskResult = { count: number; weekStart?: string; status?: TaskStatus };
+export type BulkTaskConfirmation = { operation: "week" | "delete" | "status"; tasks: Task[] };
 export function useTaskBulkAction(onCompleted: (result: BulkTaskResult) => void) {
   const [confirmation, setConfirmation] = useState<BulkTaskConfirmation | null>(null);
   const [error, setError] = useState("");
@@ -18,7 +22,7 @@ export function useTaskBulkAction(onCompleted: (result: BulkTaskResult) => void)
       setError("");
     }
   }
-  function confirm(weekStart: string) {
+  function confirm(fields: { weekStart: string; status: string }) {
     if (!confirmation || pending) return;
     const input = {
       tasks: confirmation.tasks.map(({ id, version }) => ({ id, version })),
@@ -29,8 +33,10 @@ export function useTaskBulkAction(onCompleted: (result: BulkTaskResult) => void)
       try {
         const result =
           confirmation.operation === "week"
-            ? await rescheduleTasksInBulkAction({ ...input, weekStart })
-            : await deleteTasksInBulkAction(input);
+            ? await rescheduleTasksInBulkAction({ ...input, weekStart: fields.weekStart })
+            : confirmation.operation === "status"
+              ? await moveTasksInBulkAction({ ...input, status: fields.status })
+              : await deleteTasksInBulkAction(input);
         if (!result.success) {
           setError(result.error);
           return;

@@ -103,3 +103,4 @@ export const bulkDeleteTasksSchema = z.object({
   confirmed: z.literal(true, { error: "Confirme a ação em massa antes de continuar." }),
 });
 export const bulkRescheduleTasksSchema = bulkDeleteTasksSchema.extend({ weekStart: weekSchema });
+export const bulkMoveTasksSchema = bulkDeleteTasksSchema.extend({ status: statusSchema });

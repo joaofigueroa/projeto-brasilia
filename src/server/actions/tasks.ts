@@ -6,6 +6,7 @@ import {
   deleteTask,
   deleteTasksInBulk,
   moveTask,
+  moveTasksInBulk,
   postponeTask,
   rescheduleTasksInBulk,
   updateTask,
@@ -60,6 +61,13 @@ export async function rescheduleTasksInBulkAction(input: unknown) {
 export async function deleteTasksInBulkAction(input: unknown) {
   return actionResult(async () => {
     const result = await deleteTasksInBulk(input);
+    revalidatePath("/tarefas");
+    return result;
+  });
+}
+export async function moveTasksInBulkAction(input: unknown) {
+  return actionResult(async () => {
+    const result = await moveTasksInBulk(input);
     revalidatePath("/tarefas");
     return result;
   });

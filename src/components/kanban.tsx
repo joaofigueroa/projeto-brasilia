@@ -4,7 +4,8 @@ import {
   DndContext,
   DragOverlay,
   KeyboardSensor,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   useDraggable,
   useDroppable,
   useSensor,
@@ -33,6 +34,7 @@ import {
 import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import { useId, useState } from "react";
 import { useBoard } from "@/hooks/use-board";
+import { useCardDrag } from "@/hooks/use-card-drag";
 import { formatDay, todayInSaoPaulo } from "@/libs/calendar";
 import { priorityLabels, statuses, statusLabels } from "@/libs/presentation";
 import type { BoardData, Project, PublicUser, Task, TaskStatus } from "@/types/domain";
@@ -133,16 +135,19 @@ function TaskCard({
   onPostpone: (task: Task) => void;
   disabled: boolean;
 }) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
-    id: task.id,
-    disabled: disabled || !task.canMove,
-  });
+  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, isDragging } =
+    useDraggable({
+      id: task.id,
+      disabled: disabled || !task.canMove,
+    });
+  const bodyDragListeners = useCardDrag(listeners);
   return (
     <motion.article
       ref={setNodeRef}
+      {...bodyDragListeners}
       layout
       layoutId={task.id}
-      className={`task-card ${isDragging ? "is-dragging" : ""}`}
+      className={`task-card ${task.canMove && !disabled ? "can-drag" : ""} ${isDragging ? "is-dragging" : ""}`}
       style={{ transform: CSS.Translate.toString(transform), opacity: isDragging ? 0.3 : 1 }}
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: isDragging ? 0.3 : 1, y: 0 }}
@@ -163,6 +168,7 @@ function TaskCard({
             <button
               type="button"
               className="card-drag-handle"
+              ref={setActivatorNodeRef}
               {...listeners}
               {...attributes}
               aria-label={`Arrastar tarefa: ${task.title}`}
@@ -270,7 +276,8 @@ export function Kanban({ data }: { data: BoardData }) {
   const board = useBoard(data);
   const dndId = useId();
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 180, tolerance: 5 } }),
     useSensor(KeyboardSensor),
   );
   const project = data.projects.find((item) => item.id === data.projectId);
@@ -495,7 +502,7 @@ export function Kanban({ data }: { data: BoardData }) {
         <span>
           <GripVertical size={14} />
           {view === "board"
-            ? "Arraste pela alça para mover. Abra uma tarefa para editar ou consultar o histórico."
+            ? "Arraste pelo card para mover. No toque, mantenha pressionado antes de arrastar. Clique para abrir os detalhes."
             : "Selecione o status para mover. Abra o título para consultar a tarefa."}
         </span>
       </footer>
