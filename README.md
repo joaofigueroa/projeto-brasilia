@@ -9,6 +9,7 @@ Plataforma de gestão de pessoas, projetos e tarefas semanais. Aplicação indep
 - Cadastro e configuração de pessoas pelos administradores.
 - Perfil com nome, e-mail, função, foto e troca de senha.
 - Kanban semanal com status em aberto, em andamento e finalizada.
+- Atalho de próxima semana nos cards e na lista, disponível aos administradores do espaço ou do card, com histórico e acesso à semana de destino.
 - Criação e edição de tarefas com projeto obrigatório, múltiplos responsáveis, administrador do card, descrição, prioridade e prazo opcional.
 - Arraste com mouse ou toque, navegação por teclado e seletor de status como alternativa.
 - Histórico com autor, horário e valores anteriores/novos, preservado no banco.
@@ -67,7 +68,7 @@ As migrations criam o schema e os três projetos. Não criam contas de demonstra
 pnpm admin:create
 ```
 
-A senha deve ter pelo menos 12 caracteres. O comando usa o mesmo hash do Better Auth. Remova `ADMIN_PASSWORD` do ambiente depois do uso. Os próximos acessos são cadastrados na tela **Pessoas** por um administrador. O cadastro público permanece desabilitado.
+A senha deve ter pelo menos 6 caracteres, incluindo senhas numéricas de seis dígitos. O comando usa o mesmo hash do Better Auth. Remova `ADMIN_PASSWORD` do ambiente depois do uso. Os próximos acessos são cadastrados na tela **Pessoas** por um administrador. O cadastro público permanece desabilitado.
 
 ### Demonstração local isolada
 
@@ -90,6 +91,7 @@ O setup não sobrescreve uma configuração Neon existente. Para manter os dois 
 | Criar tarefa | Sim | Sim, administrando o próprio card | Sim, administrando o próprio card | Sim, administrando o próprio card |
 | Editar todos os campos | Sim | Sim | Não | Não |
 | Mover entre status | Sim | Sim | Sim | Não |
+| Mover para a semana seguinte | Sim | Sim | Não | Não |
 | Excluir tarefa | Sim | Sim | Não | Não |
 | Gerenciar pessoas e papéis | Sim | Não | Não | Não |
 | Criar e editar projetos | Sim | Não | Não | Não |

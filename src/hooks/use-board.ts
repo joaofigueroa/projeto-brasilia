@@ -1,7 +1,8 @@
 import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core";
 import { useOptimistic, useState, useTransition } from "react";
+import { formatDay } from "@/libs/calendar";
 import { statuses } from "@/libs/presentation";
-import { moveTaskAction } from "@/server/actions/tasks";
+import { moveTaskAction, postponeTaskAction } from "@/server/actions/tasks";
 import type { BoardData, Task, TaskStatus } from "@/types/domain";
 import { useNavigation } from "./use-navigation";
 
@@ -9,7 +10,9 @@ export function useBoard(data: BoardData) {
   const { navigate, pending: navigating, router } = useNavigation();
   const [creating, setCreating] = useState<TaskStatus | null>(null);
   const [active, setActive] = useState<Task | null>(null);
-  const [notice, setNotice] = useState<{ message: string; error: boolean } | null>(null);
+  const [notice, setNotice] = useState<{ message: string; error: boolean; week?: string } | null>(
+    null,
+  );
   const [moving, startTransition] = useTransition();
   const [tasks, optimisticallyMove] = useOptimistic(
     data.tasks,
@@ -25,6 +28,27 @@ export function useBoard(data: BoardData) {
         setNotice({ message: result.error, error: true });
         router.refresh();
       } else setNotice({ message: "Status da tarefa atualizado.", error: false });
+    });
+  }
+  function postpone(task: Task) {
+    if (moving || !task.canEdit) return;
+    startTransition(async () => {
+      try {
+        const result = await postponeTaskAction({ id: task.id, version: task.version });
+        if (!result.success) {
+          setNotice({ message: result.error, error: true });
+          router.refresh();
+          return;
+        }
+        setNotice({
+          message: `Tarefa movida para a semana de ${formatDay(result.data.weekStart, { day: "2-digit", month: "2-digit" })}.`,
+          error: false,
+          week: result.data.weekStart,
+        });
+      } catch {
+        setNotice({ message: "Não foi possível mover a tarefa. Tente novamente.", error: true });
+        router.refresh();
+      }
     });
   }
   function dragStart(event: DragStartEvent) {
@@ -60,6 +84,7 @@ export function useBoard(data: BoardData) {
     dragEnd,
     cancelDrag: () => setActive(null),
     move,
+    postpone,
     moving,
     navigating,
     navigate,

@@ -1,5 +1,6 @@
 import "server-only";
 import { v7 } from "uuid";
+import { addDays } from "@/libs/calendar";
 import { priorityLabels, statusLabels } from "@/libs/presentation";
 import { listProjects } from "@/server/repositories/projects";
 import {
@@ -20,8 +21,10 @@ import {
   createTaskSchema,
   deleteTaskSchema,
   moveTaskSchema,
+  postponeTaskSchema,
   type TaskFields,
   updateTaskSchema,
+  weekSchema,
 } from "@/validators";
 import { taskPermissions } from "./task-permissions";
 
@@ -182,4 +185,25 @@ export async function deleteTask(rawInput: unknown) {
   if (!deleted)
     fail("Esta tarefa foi alterada ou seu acesso mudou. Reabra o card antes de excluir.");
   return deleted;
+}
+
+export async function postponeTask(rawInput: unknown) {
+  const input = postponeTaskSchema.parse(rawInput);
+  const viewer = await requireViewer();
+  const previous = await findTask(input.id);
+  if (!previous) fail("Tarefa não encontrada ou já excluída.");
+  if (!taskPermissions(viewer, previous).canEdit)
+    fail("Somente administradores da plataforma ou deste card podem alterar a semana.");
+  if (previous.version !== input.version)
+    fail("Esta tarefa foi alterada. Atualize o quadro e tente novamente.");
+  const weekStart = weekSchema.parse(addDays(previous.weekStart, 7));
+  const id = await saveTask({
+    ...previous,
+    weekStart,
+    actorId: viewer.id,
+    kind: "updated",
+    changes: [{ field: "weekStart", before: previous.weekStart, after: weekStart }],
+  });
+  if (!id) fail("Esta tarefa foi alterada ou seu acesso mudou. Atualize o quadro.");
+  return { id, weekStart };
 }

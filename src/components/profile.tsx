@@ -200,8 +200,8 @@ export function Profile({ user }: { user: PublicUser }) {
                       id={`${fieldId}-new-password`}
                       name="newPassword"
                       autoComplete="new-password"
-                      minLength={12}
-                      placeholder="Pelo menos 12 caracteres"
+                      minLength={6}
+                      placeholder="Pelo menos 6 caracteres"
                     />
                   </label>
                   <label className="field" htmlFor={`${fieldId}-confirm-password`}>
@@ -210,7 +210,7 @@ export function Profile({ user }: { user: PublicUser }) {
                       id={`${fieldId}-confirm-password`}
                       name="confirmPassword"
                       autoComplete="new-password"
-                      minLength={12}
+                      minLength={6}
                       placeholder="Repita a nova senha"
                     />
                   </label>

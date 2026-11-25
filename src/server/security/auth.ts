@@ -26,7 +26,7 @@ async function createAuth() {
     emailAndPassword: {
       enabled: true,
       disableSignUp: true,
-      minPasswordLength: 12,
+      minPasswordLength: 6,
       maxPasswordLength: 128,
     },
     disabledPaths: ["/sign-up/email", "/update-user", "/change-email"],

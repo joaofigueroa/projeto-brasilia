@@ -4,12 +4,14 @@ import { priorityLabels, statuses, statusLabels } from "@/libs/presentation";
 import type { BoardData, Task, TaskStatus } from "@/types/domain";
 import { Avatar } from "./avatar";
 import { ProjectImage } from "./project-image";
+import { TaskNextWeekButton } from "./task-next-week-button";
 export function TaskList({
   data,
   tasks,
   moving,
   onOpen,
   onMove,
+  onPostpone,
   onAdd,
 }: {
   data: BoardData;
@@ -17,6 +19,7 @@ export function TaskList({
   moving: boolean;
   onOpen: (id: string) => void;
   onMove: (task: Task, status: TaskStatus) => void;
+  onPostpone: (task: Task) => void;
   onAdd: () => void;
 }) {
   return (
@@ -29,6 +32,7 @@ export function TaskList({
             <th scope="col">Responsáveis</th>
             <th scope="col">Prazo</th>
             <th scope="col">Status</th>
+            <th scope="col">Planejamento</th>
           </tr>
         </thead>
         <tbody>
@@ -74,6 +78,9 @@ export function TaskList({
                     </option>
                   ))}
                 </select>
+              </td>
+              <td>
+                <TaskNextWeekButton task={task} disabled={moving} onPostpone={onPostpone} />
               </td>
             </tr>
           ))}

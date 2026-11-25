@@ -19,7 +19,7 @@ export const roleSchema = z.enum(["admin", "collaborator"]);
 export const statusSchema = z.enum(["open", "in_progress", "done"]);
 export const passwordSchema = z
   .string()
-  .min(12, "Use uma senha de pelo menos 12 caracteres.")
+  .min(6, "Use uma senha de pelo menos 6 caracteres.")
   .max(128, "Use no máximo 128 caracteres.");
 export const imageSchema = z.union([
   z.literal(""),
@@ -63,6 +63,7 @@ export const updateTaskSchema = taskFieldsSchema.extend({
   version: z.number().int().positive(),
 });
 export const deleteTaskSchema = z.object({ id: idSchema, version: z.number().int().positive() });
+export const postponeTaskSchema = z.object({ id: idSchema, version: z.number().int().positive() });
 export const moveTaskSchema = z.object({
   id: idSchema,
   version: z.number().int().positive(),

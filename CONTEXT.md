@@ -14,6 +14,7 @@
 | Administrador do card | administrator | Pessoa que pode editar os dados e os responsáveis daquele card, independentemente do papel global. |
 | Exclusão de tarefa | taskDeletion | Retirada de uma tarefa do quadro por um administrador do espaço ou do card, após confirmação, conservando seu histórico. |
 | Semana | weekStart | Segunda-feira que identifica o período de planejamento; não é a data de criação. |
+| Adiar para a semana seguinte | taskPostponement | Mover a tarefa sete dias a partir de sua semana atual, sem duplicação, preservando prazo, status e responsáveis; permitido aos administradores do espaço ou do card e registrado no histórico. |
 | Prazo | dueDate | Data opcional de entrega; não determina automaticamente a semana. |
 | Histórico | taskEvent | Registro imutável de uma criação, edição, movimentação ou exclusão, com autor e instante. |
 

@@ -4228,3 +4228,44 @@ button:active:not(:disabled),
     flex-wrap: wrap;
   }
 }
+
+.task-next-week {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 8px;
+  min-height: 32px;
+  border-radius: 5px;
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+  transition:
+    background-color 160ms ease-out,
+    color 160ms ease-out;
+}
+.task-next-week.compact {
+  order: 1;
+  width: 32px;
+  padding: 0;
+}
+.task-next-week:disabled {
+  opacity: 0.45;
+  cursor: wait;
+}
+.task-next-week:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+.toast-action {
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+}
+@media (hover: hover) and (pointer: fine) {
+  .task-next-week:hover:not(:disabled) {
+    background: var(--surface-hover, #eae9e3);
+    color: var(--ink);
+  }
+}

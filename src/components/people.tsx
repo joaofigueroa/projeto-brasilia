@@ -107,8 +107,8 @@ function PersonDialog({
                 id={passwordId}
                 name="password"
                 autoComplete="new-password"
-                minLength={12}
-                placeholder="Pelo menos 12 caracteres"
+                minLength={6}
+                placeholder="Pelo menos 6 caracteres"
               />
               <small>
                 Compartilhe o acesso com a pessoa. Ela poderá alterar a senha no perfil.

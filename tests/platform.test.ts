@@ -909,3 +909,108 @@ describe("task deletion", () => {
     expect(await listTaskHistory(id)).toHaveLength(1);
   });
 });
+
+describe("moving tasks to the following week", () => {
+  const postpone = async (id: string, version: number) =>
+    (await import("@/server/services/tasks")).postponeTask({ id, version });
+
+  it("moves from the task's own week across the year without duplicating or changing its other fields", async () => {
+    const id = await createTask(
+      input({
+        title: "Carry across year",
+        weekStart: "2026-12-28",
+        dueDate: "2026-12-30",
+        status: "in_progress",
+      }),
+    );
+    const before = await findTask(id);
+    expect(await postpone(id, 1)).toEqual({ id, weekStart: "2027-01-04" });
+    expect(await findTask(id)).toMatchObject({
+      ...before,
+      weekStart: "2027-01-04",
+      version: 2,
+      updatedAt: expect.any(String),
+    });
+    expect((await getBoard({ week: "2026-12-28", q: "Carry across year" })).tasks).toHaveLength(0);
+    expect(
+      (await getBoard({ week: "2027-01-04", q: "Carry across year" })).tasks.map((task) => task.id),
+    ).toEqual([id]);
+    expect((await listTaskHistory(id))[0]).toMatchObject({
+      kind: "updated",
+      actor: { id: admin.id },
+      changes: [{ field: "weekStart", before: "2026-12-28", after: "2027-01-04" }],
+    });
+    await expect(postpone(id, 1)).rejects.toThrow(/alterada/);
+    expect(await listTaskHistory(id)).toHaveLength(2);
+  });
+  it("allows a card administrator, but denies an assignee without editing access and unrelated people", async () => {
+    const id = await createTask(input({ administratorId: stranger.id, dueDate: null }));
+    session.viewer = collaborator;
+    await expect(postpone(id, 1)).rejects.toThrow(/administradores/);
+    session.viewer = { ...collaborator, id: v7() };
+    await expect(postpone(id, 1)).rejects.toThrow(/administradores/);
+    session.viewer = stranger;
+    await postpone(id, 1);
+    expect(await findTask(id)).toMatchObject({ weekStart: "2026-11-23", dueDate: null });
+  });
+  it("has one winner for concurrent requests and refuses deleted tasks or unauthenticated users", async () => {
+    const id = await createTask(input());
+    const results = await Promise.allSettled([postpone(id, 1), postpone(id, 1)]);
+    expect(results.filter((result) => result.status === "fulfilled")).toHaveLength(1);
+    expect((await findTask(id))?.weekStart).toBe("2026-11-23");
+    expect(await listTaskHistory(id)).toHaveLength(2);
+    await (await import("@/server/services/tasks")).deleteTask({ id, version: 2 });
+    await expect(postpone(id, 3)).rejects.toThrow(/excluída/);
+    session.viewer = null;
+    await expect(postpone(id, 3)).rejects.toThrow(/Authentication/);
+  });
+});
+
+describe("six-digit passwords", () => {
+  beforeEach(async () => {
+    await query(sql`DELETE FROM rate_limits`);
+  });
+  it("accepts a six-digit initial password, hashes it and authenticates normally", async () => {
+    const user = await createUser({
+      name: "Six Digit User",
+      email: "six-digit@test.local",
+      jobTitle: "Operations",
+      role: "collaborator",
+      password: "047295",
+    });
+    expect((await signIn(user.email, "047295")).response.status).toBe(200);
+    const [stored] = await query<{ password: string }>(
+      sql`SELECT password FROM accounts WHERE user_id=${user.id}::uuid`,
+    );
+    expect(stored.password).not.toBe("047295");
+    await expect(
+      createUser({
+        name: "Too Short",
+        email: "short@test.local",
+        jobTitle: "Operations",
+        role: "collaborator",
+        password: "12345",
+      }),
+    ).rejects.toThrow(/6 caracteres/);
+  });
+  it("changes an existing password to six digits through Better Auth and rejects fewer digits", async () => {
+    const user = await createUser({
+      name: "Password Change",
+      email: "six-change@test.local",
+      jobTitle: "Operations",
+      role: "collaborator",
+      password,
+    });
+    const { response, cookie } = await signIn(user.email);
+    expect(response.status).toBe(200);
+    expect(cookie).not.toBe("");
+    session.viewer = user;
+    session.cookie = cookie;
+    await expect(
+      changePassword({ currentPassword: password, newPassword: "12345" }),
+    ).rejects.toThrow(/6 caracteres/);
+    await changePassword({ currentPassword: password, newPassword: "093714" });
+    expect((await signIn(user.email, "093714")).response.status).toBe(200);
+    expect((await signIn(user.email, password)).response.status).toBe(401);
+  });
+});

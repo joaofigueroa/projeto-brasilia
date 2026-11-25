@@ -38,10 +38,12 @@ export function Toast({
   message,
   onClose,
   error = false,
+  action,
 }: {
   message: string;
   onClose: () => void;
   error?: boolean;
+  action?: { label: string; onClick: () => void };
 }) {
   return (
     <motion.div
@@ -53,6 +55,11 @@ export function Toast({
     >
       {error ? <AlertCircle size={19} /> : <CheckCircle2 size={19} />}
       <span>{message}</span>
+      {action && (
+        <button type="button" className="toast-action" onClick={action.onClick}>
+          {action.label}
+        </button>
+      )}
       <button type="button" className="icon-button" onClick={onClose} aria-label="Fechar aviso">
         <X size={16} />
       </button>

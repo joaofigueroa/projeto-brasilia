@@ -41,6 +41,7 @@ import { Toast } from "./feedback";
 import { ProjectImage } from "./project-image";
 import { TaskDialog } from "./task-dialog";
 import { TaskList } from "./task-list";
+import { TaskNextWeekButton } from "./task-next-week-button";
 import { WeeklyPlanner } from "./weekly-planner";
 
 const statusIcons = { open: CircleDashed, in_progress: Circle, done: CircleCheck };
@@ -121,6 +122,7 @@ function TaskCard({
   users,
   onOpen,
   onMove,
+  onPostpone,
   disabled,
 }: {
   task: Task;
@@ -128,6 +130,7 @@ function TaskCard({
   users: PublicUser[];
   onOpen: () => void;
   onMove: (status: TaskStatus) => void;
+  onPostpone: (task: Task) => void;
   disabled: boolean;
 }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
@@ -154,6 +157,7 @@ function TaskCard({
         <CardContent task={task} project={project} users={users} />
       </button>
       <div className="task-card-controls">
+        <TaskNextWeekButton task={task} compact disabled={disabled} onPostpone={onPostpone} />
         {task.canMove && (
           <>
             <button
@@ -412,6 +416,7 @@ export function Kanban({ data }: { data: BoardData }) {
             moving={board.moving}
             onOpen={(task) => board.navigate({ task })}
             onMove={board.move}
+            onPostpone={board.postpone}
             onAdd={() => board.setCreating("open")}
           />
         ) : (
@@ -458,6 +463,7 @@ export function Kanban({ data }: { data: BoardData }) {
                             users={data.users}
                             onOpen={() => board.navigate({ task: task.id })}
                             onMove={(target) => board.move(task, target)}
+                            onPostpone={board.postpone}
                             disabled={board.moving}
                           />
                         ))}
@@ -515,6 +521,17 @@ export function Kanban({ data }: { data: BoardData }) {
             message={board.notice.message}
             error={board.notice.error}
             onClose={board.dismissNotice}
+            action={
+              board.notice.week
+                ? {
+                    label: "Ver semana",
+                    onClick: () => {
+                      board.navigate({ week: board.notice?.week ?? data.weekStart, task: null });
+                      board.dismissNotice();
+                    },
+                  }
+                : undefined
+            }
           />
         )}
       </AnimatePresence>
