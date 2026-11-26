@@ -60,14 +60,34 @@ describe("live research authorization and storage", () => {
     expect(list.research?.live?.pagination).toMatchObject({ total: 20, page: 2, pages: 2 });
     expect(list.research?.prospects).toHaveLength(10);
     expect(list.research?.prospects.every((profile) => profile.cityCode === "5208707")).toBe(true);
-    const brasilia = await getIntelligence({
+    const df = {
       project: wineProjectId,
       tab: prospects?.id,
       uf: "DF",
       city: "5300108",
+    };
+    const restaurants = await getIntelligence({
+      ...df,
+      researchSegment: "restaurant",
+      researchSize: 10,
+      researchPage: 4,
+    });
+    expect(restaurants.research?.live?.pagination).toMatchObject({ total: 39, page: 4, pages: 4 });
+    expect(restaurants.research?.prospects).toHaveLength(9);
+    expect(restaurants.research?.prospects.every((item) => item.segment === "restaurant")).toBe(
+      true,
+    );
+    const markets = await getIntelligence({ ...df, researchSegment: "supermarket" });
+    expect(markets.research?.live?.stats).toMatchObject({ total: 59, filtered: 13 });
+    const rosario = await prospectPages.getProspectPage("trattoria-rosario-df", wineProjectId);
+    expect(rosario?.prospect).toMatchObject({ cityCode: "5300108", priority: "first" });
+    expect(rosario?.prospect.sources).toHaveLength(2);
+    expect(rosario?.products.find((item) => item.id === "frankstein")?.catalogPage).toBe(10);
+    const brasilia = await getIntelligence({
+      ...df,
       researchSegment: "distributor",
     });
-    expect(brasilia.research?.live?.stats).toMatchObject({ total: 16, filtered: 4 });
+    expect(brasilia.research?.live?.stats).toMatchObject({ total: 59, filtered: 4 });
     const [prospect] = brasilia.research?.prospects ?? [];
     const page = await prospectPages.getProspectPage(prospect.databaseId ?? "", wineProjectId);
     expect(page?.prospect.sources.length).toBeGreaterThan(0);
