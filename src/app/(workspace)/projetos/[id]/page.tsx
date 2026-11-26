@@ -15,11 +15,17 @@ export default async function ProjectPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ folder?: string; page?: string; size?: string; q?: string }>;
+  searchParams: Promise<{
+    folder?: string;
+    page?: string;
+    size?: string;
+    q?: string;
+    view?: string;
+  }>;
 }) {
   const viewer = await requireViewer();
   if (viewer.role !== "admin") redirect("/tarefas");
-  const [{ id }, { folder, page, size, q }] = await Promise.all([params, searchParams]);
+  const [{ id }, { folder, page, size, q, view }] = await Promise.all([params, searchParams]);
   const data = await getProjectFiles({ id, folderId: folder, page, size, q });
   if (!data) notFound();
 
@@ -46,6 +52,7 @@ export default async function ProjectPage({
           folder={data.folder}
           folders={data.folders}
           files={data.files}
+          layout={view === "list" ? "list" : "grid"}
           storageConfigured={data.storageConfigured}
         />
       </div>

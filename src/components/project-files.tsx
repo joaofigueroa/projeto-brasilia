@@ -4,12 +4,16 @@ import {
   ArrowUpRight,
   ChevronRight,
   Download,
+  FileImage,
+  FileSpreadsheet,
   FileText,
   Folder,
   FolderInput,
   FolderOpen,
   FolderPlus,
   HardDrive,
+  LayoutGrid,
+  List,
   Pencil,
   Search,
   X,
@@ -17,11 +21,11 @@ import {
 import { AnimatePresence } from "motion/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { type DragEvent, useId, useState, useTransition } from "react";
+import { type DragEvent, useId, useRef, useState, useTransition } from "react";
 import { useWorkspaceAttachments } from "@/hooks/use-workspace-attachments";
 import { timestampLabel } from "@/libs/presentation";
 import { projectFilePath } from "@/libs/project-file-path";
-import { fileSizeLabel } from "@/libs/prospect-crm";
+import { attachmentMime, fileSizeLabel } from "@/libs/prospect-crm";
 import { moveProjectFilesAction } from "@/server/actions/workspace-attachments";
 import type { getProjectFiles } from "@/server/services/projects";
 import { AttachmentUpload } from "./attachment-upload";
@@ -30,6 +34,9 @@ import { Pagination } from "./pagination";
 import { type MoveFile, ProjectFileDialog, type ProjectFileOperation } from "./project-file-dialog";
 
 type Data = NonNullable<Awaited<ReturnType<typeof getProjectFiles>>>;
+type ProjectFile = Data["files"]["items"][number];
+type ProjectFolder = Data["folders"][number];
+type Layout = "grid" | "list";
 const fileDragType = "application/x-brasilia-project-files";
 
 export function ProjectFiles({
@@ -37,6 +44,7 @@ export function ProjectFiles({
   folder,
   folders,
   files,
+  layout,
   search,
   storageConfigured,
 }: {
@@ -44,6 +52,7 @@ export function ProjectFiles({
   folder: Data["folder"];
   folders: Data["folders"];
   files: Data["files"];
+  layout: Layout;
   search: Data["search"];
   storageConfigured: boolean;
 }) {
@@ -56,7 +65,7 @@ export function ProjectFiles({
   );
   const [error, setError] = useState("");
   const [selection, setSelection] = useState<{ view: string; ids: string[] } | null>(null);
-  const [dragFiles, setDragFiles] = useState<MoveFile[]>([]);
+  const dragFiles = useRef<MoveFile[]>([]);
   const [dropTarget, setDropTarget] = useState<string | null>(null);
   const folderId = folder?.id ?? null;
   const up = useWorkspaceAttachments({ kind: "project", id: projectId }, folderId);
@@ -72,12 +81,19 @@ export function ProjectFiles({
       )
     : folders.filter((entry) => entry.parentId === folderId);
 
-  function href(target: string | null, q = "", page = 1, size = pagination.pageSize) {
+  function href(
+    target: string | null,
+    q = "",
+    page = 1,
+    size = pagination.pageSize,
+    nextLayout = layout,
+  ) {
     const params = new URLSearchParams();
     if (target) params.set("folder", target);
     if (q) params.set("q", q);
     if (page !== 1) params.set("page", String(page));
     if (size !== 20) params.set("size", String(size));
+    if (nextLayout === "list") params.set("view", "list");
     return `/projetos/${projectId}${params.size ? `?${params}` : ""}`;
   }
 
@@ -95,11 +111,12 @@ export function ProjectFiles({
   }
 
   function dropFiles(event: DragEvent, target: string | null) {
-    if (!dragFiles.length || !event.dataTransfer.types.includes(fileDragType)) return;
+    const dragged = dragFiles.current;
+    if (!dragged.length || !event.dataTransfer.types.includes(fileDragType)) return;
     event.preventDefault();
     setDropTarget(null);
-    setDragFiles([]);
-    if (pending || dragFiles.every((entry) => entry.folderId === target)) return;
+    dragFiles.current = [];
+    if (pending || dragged.every((entry) => entry.folderId === target)) return;
     setError("");
     setNotice(null);
     startTransition(async () => {
@@ -107,7 +124,7 @@ export function ProjectFiles({
         const result = await moveProjectFilesAction({
           projectId,
           folderId: target,
-          files: dragFiles.map((entry) => ({
+          files: dragged.map((entry) => ({
             attachmentId: entry.id,
             sourceFolderId: entry.folderId,
           })),
@@ -133,7 +150,7 @@ export function ProjectFiles({
         if (
           pending ||
           !event.dataTransfer.types.includes(fileDragType) ||
-          !dragFiles.some((file) => file.folderId !== target)
+          !dragFiles.current.some((file) => file.folderId !== target)
         )
           return;
         event.preventDefault();
@@ -149,6 +166,140 @@ export function ProjectFiles({
       },
       onDrop: (event: DragEvent<HTMLAnchorElement>) => dropFiles(event, target),
     };
+  }
+
+  function folderLink(entry: ProjectFolder) {
+    return (
+      <Link
+        href={href(entry.id)}
+        prefetch={false}
+        className="project-file-name"
+        {...folderDrop(entry.id)}
+      >
+        <Folder size={layout === "grid" ? 24 : 19} aria-hidden="true" />
+        <span>{entry.name}</span>
+        {layout === "list" && <ChevronRight size={15} aria-hidden="true" />}
+      </Link>
+    );
+  }
+
+  function renameFolder(entry: ProjectFolder) {
+    return (
+      <button
+        type="button"
+        className="icon-button"
+        title="Renomear pasta"
+        aria-label={`Renomear ${entry.name}`}
+        disabled={pending}
+        onClick={() => {
+          setNotice(null);
+          setOperation({ kind: "rename", folder: entry });
+        }}
+      >
+        <Pencil size={15} />
+      </button>
+    );
+  }
+
+  function selectAllFiles() {
+    return (
+      <input
+        type="checkbox"
+        id={`${id}-select-all`}
+        aria-label="Selecionar arquivos desta página"
+        disabled={!items.length || pending}
+        checked={items.length > 0 && picked.length === items.length}
+        ref={(element) => {
+          if (element) element.indeterminate = picked.length > 0 && picked.length < items.length;
+        }}
+        onChange={(event) =>
+          setSelection({ view, ids: event.target.checked ? items.map((file) => file.id) : [] })
+        }
+      />
+    );
+  }
+
+  function fileCheckbox(file: ProjectFile) {
+    return (
+      <input
+        type="checkbox"
+        aria-label={`Selecionar ${file.name}`}
+        checked={selected.has(file.id)}
+        disabled={pending}
+        onChange={(event) => selectFile(file.id, event.target.checked)}
+      />
+    );
+  }
+
+  function fileName(file: ProjectFile) {
+    const mime = attachmentMime(file.name, "");
+    let Icon = FileText;
+    if (layout === "grid") {
+      if (mime?.startsWith("image/")) Icon = FileImage;
+      else if (mime && /spreadsheet|excel|csv/.test(mime)) Icon = FileSpreadsheet;
+    }
+    return (
+      <button
+        type="button"
+        className="project-file-name"
+        aria-pressed={selected.has(file.id)}
+        disabled={pending}
+        onClick={() => selectFile(file.id, !selected.has(file.id))}
+        draggable={!pending}
+        onDragStart={(event) => {
+          event.dataTransfer.setData(fileDragType, "files");
+          event.dataTransfer.effectAllowed = "move";
+          dragFiles.current = selected.has(file.id) ? picked : [file];
+        }}
+        onDragEnd={() => {
+          dragFiles.current = [];
+          setDropTarget(null);
+        }}
+      >
+        <Icon size={layout === "grid" ? 30 : 18} aria-hidden="true" />
+        <span>
+          {file.name}
+          <small>{fileSizeLabel(file.size)}</small>
+        </span>
+      </button>
+    );
+  }
+
+  function locationLink(target: string | null) {
+    return (
+      <Link className="project-file-location" href={href(target)} prefetch={false}>
+        {projectFilePath(folderIndex, target)
+          .map((part) => part.name)
+          .join(" / ") || "Raiz do projeto"}
+      </Link>
+    );
+  }
+
+  function fileActions(file: ProjectFile) {
+    return (
+      <div className="project-file-actions">
+        <button
+          type="button"
+          className="icon-button"
+          title="Mover para outra pasta"
+          aria-label={`Mover ${file.name}`}
+          disabled={pending}
+          onClick={() => openMove([file])}
+        >
+          <FolderInput size={16} />
+        </button>
+        <button
+          type="button"
+          className="icon-button"
+          title="Baixar"
+          aria-label={`Baixar ${file.name}`}
+          disabled={up.pending}
+          onClick={() => up.download(file.id)}
+        >
+          <Download size={16} />
+        </button>
+      </div>
+    );
   }
 
   return (
@@ -287,152 +438,121 @@ export function ProjectFiles({
                 {search ? `Resultados para “${search}”` : (folder?.name ?? "Conteúdo do projeto")}
               </span>
             )}
+            <nav className="project-file-views" aria-label="Visualização de arquivos">
+              <Link
+                href={href(folderId, search, pagination.page, pagination.pageSize, "grid")}
+                scroll={false}
+                aria-current={layout === "grid" ? "true" : undefined}
+              >
+                <LayoutGrid size={15} aria-hidden="true" /> Cards
+              </Link>
+              <Link
+                href={href(folderId, search, pagination.page, pagination.pageSize, "list")}
+                scroll={false}
+                aria-current={layout === "list" ? "true" : undefined}
+              >
+                <List size={16} aria-hidden="true" /> Lista
+              </Link>
+            </nav>
           </div>
-          <table className="project-file-table">
-            <thead>
-              <tr>
-                <th scope="col">
-                  <input
-                    type="checkbox"
-                    aria-label="Selecionar arquivos desta página"
-                    disabled={!items.length || pending}
-                    checked={items.length > 0 && picked.length === items.length}
-                    ref={(element) => {
-                      if (element)
-                        element.indeterminate = picked.length > 0 && picked.length < items.length;
-                    }}
-                    onChange={(event) =>
-                      setSelection({
-                        view,
-                        ids: event.target.checked ? items.map((file) => file.id) : [],
-                      })
-                    }
-                  />
-                </th>
-                <th scope="col">Nome</th>
-                <th scope="col" className="project-file-meta">
-                  Origem
-                </th>
-                <th scope="col" className="project-file-meta">
-                  Adicionado
-                </th>
-                <th scope="col">
-                  <span className="sr-only">Ações</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentFolders.map((entry) => (
-                <tr key={entry.id} className="project-folder-row">
-                  <td />
-                  <td>
-                    <Link
-                      href={href(entry.id)}
-                      prefetch={false}
-                      className="project-file-name"
-                      {...folderDrop(entry.id)}
-                    >
-                      <Folder size={19} aria-hidden="true" />
-                      <span>{entry.name}</span>
-                      <ChevronRight size={15} aria-hidden="true" />
-                    </Link>
-                  </td>
-                  <td className="project-file-meta">
-                    {search
-                      ? (folderIndex.get(entry.parentId ?? "")?.name ?? "Raiz do projeto")
-                      : "Pasta"}
-                  </td>
-                  <td className="project-file-meta" />
-                  <td>
-                    <button
-                      type="button"
-                      className="icon-button"
-                      title="Renomear pasta"
-                      aria-label={`Renomear ${entry.name}`}
-                      disabled={pending}
-                      onClick={() => {
-                        setNotice(null);
-                        setOperation({ kind: "rename", folder: entry });
-                      }}
-                    >
-                      <Pencil size={15} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {items.map((file) => (
-                <tr key={file.id} data-selected={selected.has(file.id)}>
-                  <td>
-                    <input
-                      type="checkbox"
-                      aria-label={`Selecionar ${file.name}`}
-                      checked={selected.has(file.id)}
-                      disabled={pending}
-                      onChange={(event) => selectFile(file.id, event.target.checked)}
-                    />
-                  </td>
-                  <td>
-                    <button
-                      type="button"
-                      className="project-file-name"
-                      aria-pressed={selected.has(file.id)}
-                      disabled={pending}
-                      onClick={() => selectFile(file.id, !selected.has(file.id))}
-                      draggable={!pending}
-                      onDragStart={(event) => {
-                        event.dataTransfer.setData(fileDragType, "files");
-                        event.dataTransfer.effectAllowed = "move";
-                        setDragFiles(selected.has(file.id) ? picked : [file]);
-                      }}
-                      onDragEnd={() => {
-                        setDragFiles([]);
-                        setDropTarget(null);
-                      }}
-                    >
-                      <FileText size={18} aria-hidden="true" />
-                      <span>
-                        {file.name}
-                        <small>{fileSizeLabel(file.size)}</small>
-                      </span>
-                    </button>
-                    {search && (
-                      <Link className="project-file-location" href={href(file.folderId)}>
-                        {projectFilePath(folderIndex, file.folderId)
-                          .map((part) => part.name)
-                          .join(" / ") || "Raiz do projeto"}
-                      </Link>
-                    )}
-                  </td>
-                  <td className="project-file-meta">{file.taskTitle ?? "Projeto"}</td>
-                  <td className="project-file-meta">{timestampLabel(file.createdAt)}</td>
-                  <td>
-                    <div className="project-file-actions">
-                      <button
-                        type="button"
-                        className="icon-button"
-                        title="Mover para outra pasta"
-                        aria-label={`Mover ${file.name}`}
-                        disabled={pending}
-                        onClick={() => openMove([file])}
+          {layout === "grid" ? (
+            <div className="project-file-grid">
+              {currentFolders.length > 0 && (
+                <section aria-labelledby={`${id}-folders`}>
+                  <h3 id={`${id}-folders`}>Pastas</h3>
+                  <ul className="project-file-card-list">
+                    {currentFolders.map((entry) => (
+                      <li key={entry.id} className="project-folder-card">
+                        <div className="project-folder-card-main">
+                          {folderLink(entry)}
+                          {search && locationLink(entry.parentId)}
+                        </div>
+                        {renameFolder(entry)}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+              {items.length > 0 && (
+                <section aria-labelledby={`${id}-files`}>
+                  <div className="project-file-grid-heading">
+                    <h3 id={`${id}-files`}>Arquivos</h3>
+                    <label htmlFor={`${id}-select-all`}>
+                      {selectAllFiles()}
+                      Selecionar nesta página
+                    </label>
+                  </div>
+                  <ul className="project-file-card-list">
+                    {items.map((file) => (
+                      <li
+                        key={file.id}
+                        className="project-file-card"
+                        data-selected={selected.has(file.id)}
                       >
-                        <FolderInput size={16} />
-                      </button>
-                      <button
-                        type="button"
-                        className="icon-button"
-                        title="Baixar"
-                        aria-label={`Baixar ${file.name}`}
-                        disabled={up.pending}
-                        onClick={() => up.download(file.id)}
-                      >
-                        <Download size={16} />
-                      </button>
-                    </div>
-                  </td>
+                        <div className="project-file-card-bar">
+                          {fileCheckbox(file)}
+                          {fileActions(file)}
+                        </div>
+                        {fileName(file)}
+                        {search && locationLink(file.folderId)}
+                        <div className="project-file-card-meta" title={file.taskTitle ?? "Projeto"}>
+                          <span>{file.taskTitle ?? "Projeto"}</span>
+                          <time dateTime={new Date(file.createdAt).toISOString()}>
+                            {timestampLabel(file.createdAt)}
+                          </time>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+            </div>
+          ) : (
+            <table className="project-file-table">
+              <thead>
+                <tr>
+                  <th scope="col">{selectAllFiles()}</th>
+                  <th scope="col">Nome</th>
+                  <th scope="col" className="project-file-meta">
+                    Origem
+                  </th>
+                  <th scope="col" className="project-file-meta">
+                    Adicionado
+                  </th>
+                  <th scope="col">
+                    <span className="sr-only">Ações</span>
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {currentFolders.map((entry) => (
+                  <tr key={entry.id} className="project-folder-row">
+                    <td />
+                    <td>{folderLink(entry)}</td>
+                    <td className="project-file-meta">
+                      {search
+                        ? (folderIndex.get(entry.parentId ?? "")?.name ?? "Raiz do projeto")
+                        : "Pasta"}
+                    </td>
+                    <td className="project-file-meta" />
+                    <td>{renameFolder(entry)}</td>
+                  </tr>
+                ))}
+                {items.map((file) => (
+                  <tr key={file.id} data-selected={selected.has(file.id)}>
+                    <td>{fileCheckbox(file)}</td>
+                    <td>
+                      {fileName(file)}
+                      {search && locationLink(file.folderId)}
+                    </td>
+                    <td className="project-file-meta">{file.taskTitle ?? "Projeto"}</td>
+                    <td className="project-file-meta">{timestampLabel(file.createdAt)}</td>
+                    <td>{fileActions(file)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
           {!items.length && !currentFolders.length && (
             <p className="project-files-empty">
               {search ? "Nenhum arquivo ou pasta encontrado." : "Esta pasta está vazia."}
