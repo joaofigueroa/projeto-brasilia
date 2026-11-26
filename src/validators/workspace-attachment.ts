@@ -18,6 +18,7 @@ export const workspaceAttachmentInputSchema = attachmentSchema
 export const projectFileListSchema = z.object({
   id: idSchema,
   folderId: idSchema.nullable().catch(null),
+  q: z.string().trim().max(120).catch(""),
   page: z.coerce.number().int().min(1).max(100000).catch(1),
   size: z.coerce
     .number()
@@ -26,6 +27,7 @@ export const projectFileListSchema = z.object({
 });
 export const createFileFolderSchema = z.object({
   projectId: idSchema,
+  parentId: idSchema.nullable().default(null),
   name: z
     .string()
     .trim()
@@ -36,11 +38,32 @@ export const createFileFolderSchema = z.object({
       "Use um nome sem barras ou caracteres de controle.",
     ),
 });
-export const moveProjectFileSchema = z
+export const renameFileFolderSchema = createFileFolderSchema.omit({ parentId: true }).extend({
+  folderId: idSchema,
+  previousName: createFileFolderSchema.shape.name,
+});
+const fileSelection = z.object({ attachmentId: idSchema, sourceFolderId: idSchema.nullable() });
+export const moveProjectFilesSchema = z
   .object({
     projectId: idSchema,
-    attachmentId: idSchema,
-    sourceFolderId: idSchema.nullable(),
+    folderId: idSchema.nullable(),
+    files: z
+      .array(fileSelection)
+      .min(1)
+      .max(50)
+      .refine(
+        (files) => new Set(files.map((file) => file.attachmentId)).size === files.length,
+        "A seleção contém arquivos repetidos.",
+      ),
+  })
+  .refine(
+    ({ files, folderId }) => files.some((file) => file.sourceFolderId !== folderId),
+    "Escolha outra pasta.",
+  );
+export const moveProjectFileSchema = z
+  .object({
+    ...fileSelection.shape,
+    projectId: idSchema,
     folderId: idSchema.nullable(),
   })
   .refine((input) => input.sourceFolderId !== input.folderId, {

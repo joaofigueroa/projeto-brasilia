@@ -3,6 +3,7 @@ import {
   bigint,
   boolean,
   date,
+  foreignKey,
   index,
   integer,
   jsonb,
@@ -182,12 +183,22 @@ export const projectFileFolders = pgTable(
       .notNull()
       .references(() => projects.id),
     name: text("name").notNull(),
+    parentId: uuid("parent_id"),
   },
   (table) => [
-    uniqueIndex("project_file_folders_project_name_idx").on(
-      table.projectId,
-      sql`lower(${table.name})`,
-    ),
+    uniqueIndex("project_file_folders_project_id_idx").on(table.projectId, table.id),
+    index("project_file_folders_parent_idx").on(table.projectId, table.parentId),
+    uniqueIndex("project_file_folders_root_name_idx")
+      .on(table.projectId, sql`lower(${table.name})`)
+      .where(sql`${table.parentId} IS NULL`),
+    uniqueIndex("project_file_folders_child_name_idx")
+      .on(table.projectId, table.parentId, sql`lower(${table.name})`)
+      .where(sql`${table.parentId} IS NOT NULL`),
+    foreignKey({
+      name: "project_file_folders_parent_fk",
+      columns: [table.projectId, table.parentId],
+      foreignColumns: [table.projectId, table.id],
+    }),
   ],
 );
 

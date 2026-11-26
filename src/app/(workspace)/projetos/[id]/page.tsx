@@ -1,4 +1,4 @@
-import { ArrowLeft, FolderOpen } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -15,12 +15,12 @@ export default async function ProjectPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ folder?: string; page?: string; size?: string }>;
+  searchParams: Promise<{ folder?: string; page?: string; size?: string; q?: string }>;
 }) {
   const viewer = await requireViewer();
   if (viewer.role !== "admin") redirect("/tarefas");
-  const [{ id }, { folder, page, size }] = await Promise.all([params, searchParams]);
-  const data = await getProjectFiles({ id, folderId: folder, page, size });
+  const [{ id }, { folder, page, size, q }] = await Promise.all([params, searchParams]);
+  const data = await getProjectFiles({ id, folderId: folder, page, size, q });
   if (!data) notFound();
 
   return (
@@ -39,13 +39,10 @@ export default async function ProjectPage({
             )}
           </div>
         </header>
-        <nav className="project-detail-nav" aria-label="Seções do projeto">
-          <Link href={`/projetos/${data.project.id}`} aria-current="page">
-            <FolderOpen size={16} /> Arquivos
-          </Link>
-        </nav>
         <ProjectFiles
           projectId={data.project.id}
+          key={data.folder?.id ?? "root"}
+          search={data.search}
           folder={data.folder}
           folders={data.folders}
           files={data.files}

@@ -2,6 +2,7 @@ import "server-only";
 import { sql } from "drizzle-orm";
 import { v7 } from "uuid";
 import { paginationRange } from "@/libs/pagination";
+import type { ProjectFileFolder } from "@/libs/project-file-path";
 import { query } from "@/server/db/client";
 import type { AttachmentScope, TaskAttachment } from "@/types/domain";
 
@@ -95,8 +96,8 @@ function allowedFolder(projectId: string | null, folderId: string | null) {
 }
 
 export function listProjectFileFolders(projectId: string) {
-  return query<{ id: string; name: string }>(sql`
-    SELECT id, name FROM project_file_folders WHERE project_id=${projectId}::uuid
+  return query<ProjectFileFolder>(sql`
+    SELECT id, name, parent_id AS "parentId" FROM project_file_folders WHERE project_id=${projectId}::uuid
     ORDER BY lower(name), id
   `);
 }
@@ -105,45 +106,78 @@ export async function insertProjectFileFolder(input: {
   projectId: string;
   actorId: string;
   name: string;
+  parentId: string | null;
 }) {
   const [result] = await query<{ id: string | null; allowed: boolean }>(sql`
-    WITH permitted AS (${permittedOwner({ scope: { kind: "project", id: input.projectId }, actorId: input.actorId })}),
+    WITH permitted AS (
+      SELECT id FROM (${permittedOwner({ scope: { kind: "project", id: input.projectId }, actorId: input.actorId })}) p
+      WHERE ${allowedFolder(input.projectId, input.parentId)}
+    ),
     inserted AS (
-      INSERT INTO project_file_folders (id, project_id, name)
-      SELECT ${v7()}::uuid, id, ${input.name} FROM permitted
-      ON CONFLICT (project_id, lower(name)) DO NOTHING RETURNING id
+      INSERT INTO project_file_folders (id, project_id, parent_id, name)
+      SELECT ${v7()}::uuid, id, ${input.parentId}::uuid, ${input.name} FROM permitted
+      ON CONFLICT DO NOTHING RETURNING id
     )
     SELECT (SELECT id FROM inserted) AS id, EXISTS (SELECT 1 FROM permitted) AS allowed
   `);
   return result;
 }
 
-export async function moveProjectAttachment(input: {
+export async function updateProjectFileFolderName(input: {
   projectId: string;
   actorId: string;
-  attachmentId: string;
-  sourceFolderId: string | null;
+  folderId: string;
+  previousName: string;
+  name: string;
+}) {
+  const [row] = await query<{ id: string }>(sql`
+    UPDATE project_file_folders f SET name=${input.name}
+    FROM (${permittedOwner({ scope: { kind: "project", id: input.projectId }, actorId: input.actorId })}) p
+    WHERE f.id=${input.folderId}::uuid AND f.project_id=p.id AND f.name=${input.previousName}
+    RETURNING f.id
+  `);
+  return row ?? null;
+}
+
+export async function moveProjectAttachments(input: {
+  projectId: string;
+  actorId: string;
+  files: { attachmentId: string; sourceFolderId: string | null }[];
   folderId: string | null;
 }) {
-  const { projectId, actorId, attachmentId, sourceFolderId, folderId } = input;
-  const rows = await query<{ id: string }>(sql`
-    WITH permitted AS (${permittedOwner({ scope: { kind: "project", id: projectId }, actorId })}),
-    locked_task AS MATERIALIZED (
-      SELECT t.id FROM tasks t
-      JOIN workspace_attachments a ON a.task_id=t.id AND a.id=${attachmentId}::uuid
-      JOIN permitted p ON p.id=t.project_id
-      WHERE t.deleted_at IS NULL AND a.status='ready'
-      FOR UPDATE OF t
+  const { projectId, actorId, files, folderId } = input;
+  const requested = JSON.stringify(
+    files.map((file) => ({ id: file.attachmentId, source: file.sourceFolderId })),
+  );
+  const [result] = await query<{ matched: number; changed: number }>(sql`
+    WITH requested AS MATERIALIZED (
+      SELECT * FROM jsonb_to_recordset(${requested}::jsonb) AS r(id uuid, source uuid)
+    ), permitted AS (
+      SELECT id FROM (${permittedOwner({ scope: { kind: "project", id: projectId }, actorId })}) p
+      WHERE ${allowedFolder(projectId, folderId)}
+    ), locked_tasks AS MATERIALIZED (
+      SELECT t.id FROM tasks t JOIN permitted p ON p.id=t.project_id
+      WHERE t.deleted_at IS NULL AND EXISTS (
+        SELECT 1 FROM workspace_attachments a JOIN requested r ON r.id=a.id WHERE a.task_id=t.id
+      )
+      ORDER BY t.id FOR UPDATE OF t
+    ), eligible AS MATERIALIZED (
+      SELECT a.id, a.folder_id FROM workspace_attachments a
+      JOIN requested r ON r.id=a.id JOIN permitted p ON true
+      WHERE a.status='ready' AND a.folder_id IS NOT DISTINCT FROM r.source
+        AND (a.project_id=p.id OR a.task_id IN (SELECT id FROM locked_tasks))
+      ORDER BY a.id FOR UPDATE OF a
+    ), moved AS (
+      UPDATE workspace_attachments a SET folder_id=${folderId}::uuid
+      FROM eligible e
+      WHERE a.id=e.id AND e.folder_id IS DISTINCT FROM ${folderId}::uuid
+        AND (SELECT count(*) FROM eligible)=${files.length}
+      RETURNING a.id
     )
-    UPDATE workspace_attachments a SET folder_id=${folderId}::uuid
-    FROM permitted p
-    WHERE a.id=${attachmentId}::uuid AND a.status='ready'
-      AND (a.project_id=p.id OR a.task_id IN (SELECT id FROM locked_task))
-      AND a.folder_id IS NOT DISTINCT FROM ${sourceFolderId}::uuid
-      AND ${allowedFolder(projectId, folderId)}
-    RETURNING a.id
+    SELECT (SELECT count(*)::int FROM eligible) AS matched,
+      (SELECT count(*)::int FROM moved) AS changed
   `);
-  return rows[0] ?? null;
+  return result;
 }
 
 export async function listProjectFiles(
@@ -151,14 +185,21 @@ export async function listProjectFiles(
   folderId: string | null,
   page: number,
   pageSize: number,
+  search: string,
 ) {
   const files = sql`FROM workspace_attachments a LEFT JOIN tasks t ON t.id=a.task_id
     WHERE ${attachmentOwner({ kind: "project", id: projectId })} AND a.status='ready'
-      AND ${folderId ? sql`a.folder_id=${folderId}::uuid` : sql`a.folder_id IS NULL`}`;
+      AND ${
+        search
+          ? sql`strpos(lower(a.name), lower(${search})) > 0`
+          : sql`a.folder_id IS NOT DISTINCT FROM ${folderId}::uuid`
+      }`;
   const [count] = await query<{ total: number }>(sql`SELECT count(*)::int AS total ${files}`);
   const pagination = paginationRange(count.total, page, pageSize);
-  const items = await query<TaskAttachment & { taskTitle: string | null; createdAt: string }>(sql`
-    SELECT a.id, a.name, a.size, t.title AS "taskTitle", a.created_at::text AS "createdAt"
+  const items = await query<
+    TaskAttachment & { taskTitle: string | null; createdAt: string; folderId: string | null }
+  >(sql`
+    SELECT a.id, a.name, a.size, t.title AS "taskTitle", a.created_at::text AS "createdAt", a.folder_id AS "folderId"
     ${files} ORDER BY a.created_at DESC, a.id DESC LIMIT ${pagination.pageSize} OFFSET ${pagination.offset}
   `);
   return { pagination, items };

@@ -1,7 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createProjectFileFolder, moveProjectFile } from "@/server/services/projects";
+import {
+  createProjectFileFolder,
+  moveProjectFiles,
+  renameProjectFileFolder,
+} from "@/server/services/projects";
 import {
   downloadWorkspaceAttachment,
   finishWorkspaceAttachment,
@@ -34,9 +38,16 @@ export async function createProjectFileFolderAction(input: unknown) {
     return result;
   });
 }
-export async function moveProjectFileAction(input: unknown) {
+export async function moveProjectFilesAction(input: unknown) {
   return actionResult(async () => {
-    const result = await moveProjectFile(input);
+    const result = await moveProjectFiles(input);
+    revalidatePath(`/projetos/${result.projectId}`);
+    return result;
+  });
+}
+export async function renameProjectFileFolderAction(input: unknown) {
+  return actionResult(async () => {
+    const result = await renameProjectFileFolder(input);
     revalidatePath(`/projetos/${result.projectId}`);
   });
 }

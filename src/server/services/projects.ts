@@ -6,7 +6,8 @@ import {
   insertProjectFileFolder,
   listProjectFileFolders,
   listProjectFiles,
-  moveProjectAttachment,
+  moveProjectAttachments,
+  updateProjectFileFolderName,
 } from "@/server/repositories/workspace-attachments";
 import { businessError } from "@/server/security/business-error";
 import { requireViewer } from "@/server/security/session";
@@ -14,7 +15,9 @@ import { projectFieldsSchema, updateProjectSchema } from "@/validators/projects"
 import {
   createFileFolderSchema,
   moveProjectFileSchema,
+  moveProjectFilesSchema,
   projectFileListSchema,
+  renameFileFolderSchema,
 } from "@/validators/workspace-attachment";
 
 async function requireAdmin() {
@@ -31,7 +34,7 @@ export async function getProjectFiles(raw: unknown) {
   const viewer = await requireAdmin();
   const input = projectFileListSchema.safeParse(raw);
   if (!input.success) return null;
-  const { id, folderId, page, size } = input.data;
+  const { id, folderId, page, size, q } = input.data;
   const [projects, folders] = await Promise.all([listProjects(), listProjectFileFolders(id)]);
   const project = projects.find((item) => item.id === id);
   if (!project) return null;
@@ -42,7 +45,8 @@ export async function getProjectFiles(raw: unknown) {
     project,
     folders,
     folder,
-    files: await listProjectFiles(project.id, folderId, page, size),
+    search: q,
+    files: await listProjectFiles(project.id, folderId, page, size, q),
     storageConfigured: neonStorageConfigured(),
   };
 }
@@ -50,17 +54,35 @@ export async function createProjectFileFolder(raw: unknown) {
   const viewer = await requireAdmin();
   const input = createFileFolderSchema.parse(raw);
   const result = await insertProjectFileFolder({ ...input, actorId: viewer.id });
-  if (!result.allowed) throw businessError("Projeto indisponível. Confira seu acesso.");
-  if (!result.id) throw businessError("Já existe uma pasta com esse nome neste projeto.");
+  if (!result.allowed) throw businessError("Pasta ou projeto indisponível. Confira seu acesso.");
+  if (!result.id) throw businessError("Já existe uma pasta com esse nome neste local.");
   return { projectId: input.projectId, folderId: result.id };
 }
 export async function moveProjectFile(raw: unknown) {
+  const { projectId, folderId, ...file } = moveProjectFileSchema.parse(raw);
+  return moveProjectFiles({ projectId, folderId, files: [file] });
+}
+export async function moveProjectFiles(raw: unknown) {
   const viewer = await requireAdmin();
-  const input = moveProjectFileSchema.parse(raw);
-  const moved = await moveProjectAttachment({ ...input, actorId: viewer.id });
-  if (!moved)
-    throw businessError("Não foi possível mover o arquivo. Atualize a lista e confira o destino.");
-  return { projectId: input.projectId };
+  const input = moveProjectFilesSchema.parse(raw);
+  const result = await moveProjectAttachments({ ...input, actorId: viewer.id });
+  if (result.matched !== input.files.length)
+    throw businessError("Não foi possível mover a seleção. Atualize a lista e confira o destino.");
+  return { projectId: input.projectId, count: result.changed };
+}
+export async function renameProjectFileFolder(raw: unknown) {
+  const viewer = await requireAdmin();
+  const input = renameFileFolderSchema.parse(raw);
+  try {
+    const folder = await updateProjectFileFolderName({ ...input, actorId: viewer.id });
+    if (!folder) throw businessError("A pasta mudou. Atualize a lista e tente novamente.");
+    return { projectId: input.projectId };
+  } catch (error) {
+    const failure = error as { code?: string; cause?: { code?: string } };
+    if ((failure.cause?.code ?? failure.code) === "23505")
+      throw businessError("Já existe uma pasta com esse nome neste local.");
+    throw error;
+  }
 }
 export async function createProject(raw: unknown) {
   const viewer = await requireAdmin();

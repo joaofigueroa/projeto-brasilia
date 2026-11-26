@@ -224,10 +224,63 @@ describe("attachment ownership and finalization", () => {
         name: "  Evidências  ",
       });
       const proposals = await projects.createProjectFileFolder({ projectId, name: "Propostas" });
+      const nested = await projects.createProjectFileFolder({
+        projectId,
+        parentId: proposals.folderId,
+        name: "Evidências",
+      });
+      await expect(
+        projects.createProjectFileFolder({
+          projectId,
+          parentId: proposals.folderId,
+          name: "evidências",
+        }),
+      ).rejects.toThrow("Já existe");
+      await projects.renameProjectFileFolder({
+        projectId,
+        folderId: nested.folderId,
+        previousName: "Evidências",
+        name: "Anexos revisados",
+      });
+      expect(
+        (await projects.getProjectFiles({ id: projectId, folderId: nested.folderId }))?.folder,
+      ).toEqual({ id: nested.folderId, name: "Anexos revisados", parentId: proposals.folderId });
+      const batch = [first, second].map((file) => ({
+        attachmentId: file.attachmentId,
+        sourceFolderId: null,
+      }));
+      await expect(
+        projects.moveProjectFiles({
+          projectId,
+          folderId: nested.folderId,
+          files: [batch[0], { ...batch[1], sourceFolderId: proposals.folderId }],
+        }),
+      ).rejects.toThrow("Não foi possível mover");
+      expect(
+        (await projects.getProjectFiles({ id: projectId, folderId: nested.folderId }))?.files.items,
+      ).toEqual([]);
+      expect(
+        await projects.moveProjectFiles({ projectId, folderId: nested.folderId, files: batch }),
+      ).toMatchObject({ count: 2 });
+      expect(
+        (await projects.getProjectFiles({ id: projectId, q: "FOTO.PNG" }))?.files.items,
+      ).toEqual([expect.objectContaining({ id: second.attachmentId, folderId: nested.folderId })]);
+      await projects.moveProjectFiles({
+        projectId,
+        folderId: null,
+        files: batch.map((file) => ({ ...file, sourceFolderId: nested.folderId })),
+      });
       const outside = await projects.createProjectFileFolder({
         projectId: otherProject,
         name: "Evidências",
       });
+      await expect(
+        projects.createProjectFileFolder({
+          projectId,
+          parentId: outside.folderId,
+          name: "Inacessível",
+        }),
+      ).rejects.toThrow("indisponível");
       await expect(
         projects.createProjectFileFolder({ projectId, name: "evidências" }),
       ).rejects.toThrow("Já existe");
