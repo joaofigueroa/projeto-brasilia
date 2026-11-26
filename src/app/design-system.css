@@ -4472,7 +4472,7 @@ button:active:not(:disabled),
 }
 
 .project-file-table th:last-child {
-  width: 76px;
+  width: 114px;
 }
 
 .project-file-content input[type="checkbox"] {
@@ -4877,6 +4877,169 @@ button:active:not(:disabled),
   background: var(--surface);
   color: var(--ink);
   text-align: left;
+}
+
+.history-attachment-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.history-attachment-actions .history-attachment {
+  min-width: 0;
+  margin-top: 0;
+}
+
+.history-attachment-actions > .icon-button {
+  flex: none;
+}
+
+.app-dialog.modal .attachment-preview-panel {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 1024px);
+  height: min(85dvh, 950px);
+  overflow: hidden;
+}
+
+.attachment-preview-panel .dialog-header {
+  flex: none;
+  padding: 12px 18px;
+  gap: 12px;
+  background: var(--surface);
+}
+
+.modal .attachment-preview-panel .dialog-header h2 {
+  font-size: 18px;
+  overflow-wrap: anywhere;
+}
+
+.attachment-preview-panel .dialog-header .icon-button {
+  flex: none;
+}
+
+.attachment-preview-body {
+  display: grid;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  background: var(--background);
+}
+
+.attachment-preview-status {
+  align-self: center;
+  justify-self: center;
+  padding: 18px;
+  color: var(--muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+.attachment-preview-status .button {
+  margin-top: 12px;
+}
+
+.attachment-preview-image {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+  padding: 16px;
+}
+
+.attachment-preview-image img {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  object-fit: contain;
+}
+
+.attachment-preview-footer {
+  display: flex;
+  justify-content: flex-end;
+  flex: none;
+  padding: 10px 16px;
+  border-top: 1px solid var(--line);
+}
+
+.attachment-pdf {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-width: 0;
+  min-height: 0;
+}
+
+.attachment-pdf-toolbar,
+.attachment-pdf-toolbar > div {
+  display: flex;
+  align-items: center;
+}
+
+.attachment-pdf-toolbar {
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  padding: 4px 12px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.attachment-pdf-toolbar > div {
+  gap: 3px;
+}
+
+.attachment-pdf-toolbar .icon-button {
+  width: 36px;
+  height: 36px;
+}
+
+.attachment-pdf-toolbar span {
+  min-width: 4ch;
+  text-align: center;
+}
+
+.attachment-pdf-scroller {
+  min-width: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.attachment-pdf-scroller:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: -2px;
+}
+
+.attachment-pdf-scroller canvas:not([hidden]) {
+  display: block;
+  max-width: none;
+  margin: 16px auto;
+  background: var(--surface);
+  box-shadow: 0 2px 14px #242a2c24;
+}
+
+@media (max-width: 590px) {
+  .app-dialog.modal .attachment-preview-panel {
+    height: 90dvh;
+  }
+
+  .attachment-pdf-toolbar {
+    padding-inline: 6px;
+  }
+
+  .project-file-table th:last-child {
+    width: 94px;
+  }
+
+  .project-file-actions .icon-button {
+    width: 30px;
+    height: 34px;
+    flex: none;
+  }
 }
 
 .history-attachment:hover {

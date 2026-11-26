@@ -9,6 +9,7 @@
       "!**/.next",
       "!**/output",
       "!**/node_modules",
+      "!**/public/pdfjs",
       "!next-env.d.ts",
       "!src/data"
     ]

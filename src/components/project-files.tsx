@@ -28,6 +28,7 @@ import { projectFilePath } from "@/libs/project-file-path";
 import { attachmentMime, fileSizeLabel } from "@/libs/prospect-crm";
 import { moveProjectFilesAction } from "@/server/actions/workspace-attachments";
 import type { getProjectFiles } from "@/server/services/projects";
+import { AttachmentPreviewButton } from "./attachment-preview";
 import { AttachmentUpload } from "./attachment-upload";
 import { FormError } from "./feedback";
 import { Pagination } from "./pagination";
@@ -278,6 +279,11 @@ export function ProjectFiles({
   function fileActions(file: ProjectFile) {
     return (
       <div className="project-file-actions">
+        <AttachmentPreviewButton
+          file={file}
+          scope={{ kind: "project", id: projectId }}
+          disabled={up.pending || pending}
+        />
         <button
           type="button"
           className="icon-button"

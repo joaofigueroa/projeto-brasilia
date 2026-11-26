@@ -117,6 +117,7 @@ export async function downloadWorkspaceAttachment(raw: unknown) {
   if (!file || file.status !== "ready") throw businessError("Arquivo não encontrado.");
   return {
     name: file.name,
+    contentType: file.contentType,
     url: await neonDownloadUrl(file.storageBucket, file.storagePath, file.name),
   };
 }

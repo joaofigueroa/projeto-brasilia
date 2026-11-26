@@ -57,6 +57,20 @@ export function attachmentMime(name: string, supplied: string) {
     return null;
   return allowed[0];
 }
+
+export function attachmentPreviewKind(contentType: string | null) {
+  switch (contentType) {
+    case "application/pdf":
+      return "pdf";
+    case "image/png":
+    case "image/jpeg":
+    case "image/webp":
+      return "image";
+    default:
+      return null;
+  }
+}
+
 export function fileSizeLabel(bytes: number) {
   return bytes >= 1024 * 1024
     ? `${(bytes / 1024 / 1024).toLocaleString("pt-BR", { maximumFractionDigits: 1 })} MB`

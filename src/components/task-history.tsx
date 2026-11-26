@@ -1,10 +1,11 @@
 "use client";
-import { CircleHelp, Download, History } from "lucide-react";
+import { CircleHelp, Download, Eye, History } from "lucide-react";
 import { useState, useTransition } from "react";
 import { useWorkspaceAttachments } from "@/hooks/use-workspace-attachments";
 import { fileSizeLabel } from "@/libs/prospect-crm";
 import { getOlderTaskHistoryAction } from "@/server/actions/workspace-attachments";
 import type { BoardData, Task, TaskHistory } from "@/types/domain";
+import { AttachmentPreviewButton, canPreviewAttachment } from "./attachment-preview";
 import { AttachmentUpload } from "./attachment-upload";
 import { FormError } from "./feedback";
 import { HistoryTimeline } from "./history-timeline";
@@ -79,20 +80,41 @@ export function TaskHistoryPanel({ data, task }: { data: BoardData; task: Task }
         fieldLabels={fieldLabels}
         entries={entries.map((entry) => {
           const { attachment } = entry;
+          const previewable = attachment && canPreviewAttachment(attachment);
           return {
             ...entry,
             label: labels[entry.kind],
             extra: attachment && (
-              <button
-                className="history-attachment"
-                type="button"
-                disabled={up.pending}
-                onClick={() => up.download(attachment.id)}
-              >
-                <Download size={15} aria-hidden="true" />
-                <span>{attachment.name}</span>
-                <small>{fileSizeLabel(attachment.size)}</small>
-              </button>
+              <div className="history-attachment-actions">
+                {previewable && (
+                  <AttachmentPreviewButton
+                    file={attachment}
+                    scope={{ kind: "task", id: task.id }}
+                    disabled={up.pending}
+                    className="history-attachment"
+                  >
+                    <Eye size={15} aria-hidden="true" />
+                    <span>{attachment.name}</span>
+                    <small>{fileSizeLabel(attachment.size)}</small>
+                  </AttachmentPreviewButton>
+                )}
+                <button
+                  className={previewable ? "icon-button" : "history-attachment"}
+                  type="button"
+                  title="Baixar arquivo"
+                  aria-label={`Baixar ${attachment.name}`}
+                  disabled={up.pending}
+                  onClick={() => up.download(attachment.id)}
+                >
+                  <Download size={15} aria-hidden="true" />
+                  {!previewable && (
+                    <>
+                      <span>{attachment.name}</span>
+                      <small>{fileSizeLabel(attachment.size)}</small>
+                    </>
+                  )}
+                </button>
+              </div>
             ),
           };
         })}

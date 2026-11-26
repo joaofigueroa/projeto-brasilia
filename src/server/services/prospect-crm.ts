@@ -152,5 +152,6 @@ export async function downloadProspectAttachment(raw: unknown) {
   return {
     url: await neonDownloadUrl(file.storageBucket, file.storagePath, file.name),
     name: file.name,
+    contentType: file.contentType,
   };
 }

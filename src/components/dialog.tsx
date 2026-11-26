@@ -10,6 +10,7 @@ export function Dialog({
   onClose,
   variant = "drawer",
   initialFocus,
+  panelClassName,
 }: {
   children: React.ReactNode;
   title: string;
@@ -17,6 +18,7 @@ export function Dialog({
   onClose: () => void;
   variant?: "drawer" | "modal";
   initialFocus?: string;
+  panelClassName?: string;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const labelId = useId();
@@ -44,6 +46,7 @@ export function Dialog({
       exit={{ opacity: 0 }}
       onCancel={(event) => {
         event.preventDefault();
+        event.stopPropagation();
         onClose();
       }}
     >
@@ -55,7 +58,7 @@ export function Dialog({
         type="button"
       />
       <motion.section
-        className="dialog-panel"
+        className={panelClassName ? `dialog-panel ${panelClassName}` : "dialog-panel"}
         initial={variant === "drawer" ? { x: 65 } : { y: 18, scale: 0.97 }}
         animate={{ x: 0, y: 0, scale: 1 }}
         exit={variant === "drawer" ? { x: 65 } : { y: 18, scale: 0.97 }}

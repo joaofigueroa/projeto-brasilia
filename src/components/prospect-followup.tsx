@@ -21,6 +21,7 @@ import {
   fileSizeLabel,
 } from "@/libs/prospect-crm";
 import type { ProspectCrm } from "@/types/prospect-crm";
+import { AttachmentPreviewButton } from "./attachment-preview";
 import { FormError } from "./feedback";
 import { HistoryTimeline } from "./history-timeline";
 
@@ -171,6 +172,11 @@ export function ProspectFollowup({
                       {timestampLabel(file.createdAt)}
                     </small>
                   </div>
+                  <AttachmentPreviewButton
+                    file={file}
+                    scope={{ kind: "prospect", id: prospectId, projectId }}
+                    disabled={crm.pending}
+                  />
                   <button
                     type="button"
                     className="icon-button"

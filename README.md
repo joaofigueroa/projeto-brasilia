@@ -30,6 +30,8 @@ Consulte [fontes, cobertura, permissões e formato de importação](docs/intelli
 
 ## Interface
 
+O botão **Visualizar** abre imagens PNG, JPEG e WebP e documentos PDF no histórico de tarefas, nos arquivos do projeto e no acompanhamento de clientes. PDFs têm navegação por página e zoom. O download continua disponível e a prévia usa a autorização temporária do mesmo arquivo no Neon.
+
 O sistema visual compartilhado está em `src/app/design-system.css`. A identidade usa uma marca vetorial própria, curvas atravessadas por um eixo, e o nome **Brasília**. A composição usa superfícies planas, divisórias e hierarquia tipográfica, com as skills `apple-design` e `emil-design-eng` como referências de interação.
 
 O Kanban combina planejamento semanal, filtro local por dia do prazo, progresso compacto e vistas de quadro ou lista. A lista conserva abertura de detalhes, histórico e alteração de status com as mesmas permissões do quadro. Trocar de semana encerra o filtro de dia. Os filtros de projeto, pessoa e texto continuam na URL.

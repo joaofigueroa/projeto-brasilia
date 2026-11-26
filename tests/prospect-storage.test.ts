@@ -82,11 +82,22 @@ describe("attachment ownership and finalization", () => {
     expect((await services.getProspectAttachments(scope())).total).toBe(0);
     const pending = await repository.findCrmAttachment(input);
     expect(pending?.status).toBe("pending");
+    await expect(services.downloadProspectAttachment(input)).rejects.toThrow(
+      "Arquivo não encontrado",
+    );
     await services.finishProspectAttachment(input);
     const ready = await repository.findCrmAttachment(input);
     expect(ready?.status).toBe("ready");
     expect(ready?.storagePath).not.toBe(pending?.storagePath);
     expect(ready?.storagePath).toMatch(/^clients\//);
+    await expect(services.downloadProspectAttachment(input)).resolves.toMatchObject({
+      name: "Proposta.pdf",
+      contentType: "application/pdf",
+      url: expect.stringContaining("/clients/"),
+    });
+    await expect(
+      services.downloadProspectAttachment({ ...input, projectId: v7() }),
+    ).rejects.toThrow("neste projeto");
     expect(state.objects.has(pending?.storagePath ?? "")).toBe(false);
     await services.finishProspectAttachment(input);
     const [count] = await query<{ total: number }>(
@@ -180,7 +191,17 @@ describe("attachment ownership and finalization", () => {
         scope: taskScope,
         attachmentId: first.attachmentId,
       }),
-    ).toMatchObject({ name: "Relatório.pdf", url: expect.stringContaining("/workspace/task/") });
+    ).toMatchObject({
+      name: "Relatório.pdf",
+      contentType: "application/pdf",
+      url: expect.stringContaining("/workspace/task/"),
+    });
+    await expect(
+      workspace.downloadWorkspaceAttachment({
+        scope: projectScope,
+        attachmentId: second.attachmentId,
+      }),
+    ).rejects.toThrow("administradores");
     await expect(
       workspace.prepareWorkspaceAttachment({
         scope: projectScope,
@@ -192,6 +213,12 @@ describe("attachment ownership and finalization", () => {
     await query(sql`UPDATE users SET role='admin' WHERE id=${user.id}::uuid`);
     state.viewer = { ...user, role: "admin" };
     try {
+      await expect(
+        workspace.downloadWorkspaceAttachment({
+          scope: projectScope,
+          attachmentId: second.attachmentId,
+        }),
+      ).resolves.toMatchObject({ name: "Foto.png", contentType: "image/png" });
       const direct = await workspace.prepareWorkspaceAttachment({
         scope: projectScope,
         name: "Projeto.csv",
